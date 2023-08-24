@@ -1,0 +1,13 @@
+.DS_Store
+*.bak
+*.blg
+*.bbl
+*.aux
+*.log
+*.gz
+*.~vsd
+*.synctex
+*.fdb_latexmk
+*.fls
+*.out
+UPPRESSO.pdf

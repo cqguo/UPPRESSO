@@ -1,0 +1,188 @@
+%usenix 2023
+\documentclass[letterpaper,twocolumn,10pt]{article}
+\usepackage{usenix-2020-09}
+
+
+
+\usepackage[small]{titlesec}
+% to be able to draw some self-contained figs
+%\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{bm}
+
+% inlined bib file
+\usepackage{filecontents}
+
+\usepackage{wasysym}
+
+
+\usepackage{lipsum,cuted}
+\usepackage{float}
+\usepackage{caption}
+
+
+\pagestyle{plain}
+
+
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{caption}
+%
+
+%\usepackage{algpseudocode}
+\usepackage{amsmath,amssymb,amsthm}
+
+%\usepackage{graphicx}
+%\usepackage{geometry}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{cite}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{multicol}
+\usepackage{macros}
+\usepackage{xspace}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%\usepackage{algcompatible}
+%\usepackage[compatible]{algpseudocode}
+
+
+\renewcommand{\thefootnote}{*}
+
+\newcommand\usso{\textsf{UPPRESSO}}
+\newcommand\dyu{{DYU}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{thm}{\textsc{Theorem}}
+\newtheorem{lemma}{\textsc{Lemma}}
+%\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{\textsc{Definition}}
+%\newtheorem{lemma}{Lemma}
+
+
+
+
+
+\definecolor{Blue}{RGB}{0,0,255}
+\newcommand{\newc} {\color{Blue}}
+\newcommand{\oldc} {\color{black}}
+
+% correct bad hyphenation here
+\hyphenation{target-Origin js-rsa-sign op-tical net-works semi-conduc-tor}
+
+\begin{document}
+\date{}
+\pagenumbering{arabic}
+%\title{\Large \bf \usso: Untraceable and Unlinkable Privacy-PREserving\\Single Sign-On Services\footnotemark[1]}
+\title{\Large \bf \usso: Untraceable and Unlinkable Privacy-PREserving\\Single Sign-On Services}
+
+
+% Chengqian Guo, Jingqiang Lin, Quanwei Cai, Fengjun Li, Wentian Zhu, Wei Wang, Jiwu Jing, Qiongxiao Wang, Bin Zhao
+
+%\author{
+%{\rm Chengqian Guo$^{\sharp\nabla}$, \ \ Jingqiang Lin$^{\ddag}$, \ \ Quanwei Cai$^{\P}$, \ \ Fengjun Li$^{\S}$, \ \ Wentian Zhu$^{\ddag}$, \ \ Wei Wang$^{\nabla}$,}\\
+%{\rm Jiwu Jing$^{\diamondsuit}$, \ \ Qiongxiao Wang$^{\nabla}$, \ \ Bin Zhao$^{\triangle}$}\\
+%$\sharp$ Shenyang Aircraft Design \& Research Institute, China\\
+%$\ddag$ School of Cyber Security, University of Science and Technology of China\\
+%$\P$ Beijing Zitiao Network Technology Co., Ltd, China\\
+%$\S$  Department of Electrical Engineering \& Computer Science, the University of Kansas, USA\\
+%${\diamondsuit}$ School of Computer Science \& Technology, University of Chinese Academy of Sciences\\
+%$\nabla$ Institute of Information Engineering, CAS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+%$\triangle$ JD.com Silicon Valley R\&D Center, USA}
+
+
+
+\maketitle
+\begin{abstract}
+Single sign-on (SSO) allows a user to maintain only the credential at an identity provider (IdP) to log into multiple relying parties (RPs).
+However, SSO introduces privacy threats, as ({\em a}) a curious IdP could potentially track a user's visits to all RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
+This paper presents a privacy-preserving SSO protocol, called \usso, to protect an honest user's online profile against (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs and users who could collude.
+\usso\ proposes an identity-transformation approach to generate untraceable \emph{ephemeral pseudo-identities} for an RP and a user (denoted as $PID_{RP}$ and $PID_U$, respectively) from which the target RP derives a \emph{permanent account} for the user (denoted as $Acct$), while the transformations provide unlinkability.
+This approach protects the unique identities of the user and the RPs that she requests to log into while working compatibly with SSO services and satisfying all the security requirements.
+Compared with existing SSO protocols, \usso\ is among the first to prevent both types of privacy threats. Compared with existing privacy-preserving identity federation schemes, \usso\ supports all the desired SSO features while providing sufficient privacy protections.
+% \usso\ proposes a novel identity-transformation approach. In each SSO login, an \emph{ephemeral pseudo-identity} of an RP, denoted as $PID_{RP}$, is negotiated between a user and the RP. $PID_{RP}$ is sent to the IdP and designated in the identity token, so that the IdP is not aware of the visited RP.
+% The IdP then uses $PID_{RP}$ to transform the user's permanent identity $ID_U$, into an ephemeral user pseudo-identity $PID_U$, in the token.
+% On receiving the identity token, %%%% the RP just waits for it.
+% the RP transforms $PID_U$ into a \emph{permanent account} of the user, denoted as $Acct$. Given a user, the account at each RP is unique and different from $ID_U$, %%%% for different users, the accounts may be the same.
+%so colluding RPs cannot link a user's identities across RPs.
+We have built a prototype of \usso\ on top of MITREid Connect, an open-source SSO system. The extensive evaluations show that it fulfills the security and privacy requirements of SSO
+while introducing reasonable overheads.
+\end{abstract}
+
+%\begin{IEEEkeywords}
+%Single sign-on, security, privacy. %, trace, linkage
+%\end{IEEEkeywords}
+
+%\footnotetext[1]{Chengqian Guo participated in this work since his PhD study in Institute of Information Engineering, Chinese Academy of Sciences (CAS).}
+
+\setcounter{footnote}{0}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+
+\input{chap_Compact/introduction.tex}
+\input{chap_Compact/background.tex}
+\input{chap_Compact/relatedwork.tex}
+\input{chap_Compact/challenges.tex}
+\input{chap_Compact/threatmodel.tex}
+\input{chap_Compact/protocol.tex}
+\input{chap_Compact/analysis.tex}
+
+%\input{chap_Compact/uid.tex}
+
+\input{chap_Compact/implementation.tex}
+\input{chap_Compact/evaluation.tex}
+\input{chap_Compact/discussion.tex}
+\input{chap_Compact/conclusion.tex}
+
+
+
+
+% conference papers do not normally have an appendix
+
+
+% use section* for acknowledgement
+%\section*{Acknowledgment}
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtranS}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+%\begin{thebibliography}{1}
+
+%\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\input{chap_Compact/appendix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input{chap_Compact/appendix.tex}
+
+
+% that's all folks
+\end{document}
