@@ -2403,60 +2403,57 @@ The set $E^0$ contains only the trigger events.
         without any change to state or output events.
     \end{description}
   
-    \begin{lemma}\label{thm-idp-untraceability}
-      In UPPRESSO, the IdP cannot distinguish 
-      $PID_{RP} = [t]ID_{RP}$ from a random variable on 
-      $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$.
-    \end{lemma}
-    \begin{proof}
-      Consider a finite cyclic group $\mathbb{E}$ where the 
-      number of points on $\mathbb{E}$ is $n$. Because $G$ is a 
-      generator of order $n$, $ID_{RP} = [r]G$ is also a 
-      generator on $\mathbb{E}$ of order $n$. $t$ is randomly 
-      chosen in $\mathbb{Z}_n$ and always kept unknown to the 
-      IdP. Therefore, $PID_{RP} = [t]ID_{RP}$ is 
-      \emph{indistinguishable} from a point $Q$ that is randomly 
-      chosen on $\mathbb{E}$.
-    \end{proof}
-  
   %lemma放在后面
   %需要在with case5部分添加补充说明，说明每个case具体说明了什么。
   %在详细说说semi-honest的IdP
   %只要保留web attacker
   %lemma16纯数学表达
     \paragraph{\underline{Case $p_1$ is some attacker:}}
+
+    When $p_1$ is some attacker, the most important party we talk about here is IdP.
+    In UPPRESSO, there is a centralized identity provider so we think that IdP is always honest but curious.
+    Therefore, when we analyze IdP's processing steps, 
+    we assume that the output events from IdP follow our models' design.
+    However, IdP may be curious and derive something in its states that destroys our privacy property, 
+    so what we try to do is to prove that with the equivalent states and events, 
+    two systems can only process another equivalent states and events.
     
-    Here, only Case~\ref{eqe:prototagequiv} from
-    Definition~\ref{def:Events} can apply to the input events,
-    i.e., the input events are term-equivalent under proto-tags
-    $\theta$. This implies that the message was delivered to the 
-    same attacker process in both processing steps. Let $A$ be 
-    that attacker process. With Case~\ref{eqs:att} of 
-    Definition~\ref{def:eq-of-states} we have that 
-    $S_1(A) \prototagequiv\theta S_2(A)$ and with 
-    Case~\ref{eqe:pre:t} and Case~\ref{eqs:att-not-t} of 
-    Definition~\ref{def:Events} and 
-    lemma~\ref{thm-idp-untraceability} 
-    it follows immediately that the 
-    attacker cannot decrypt any of the tags in $\theta$ in its 
-    knowledge. Further, in the attackers state there are no 
-    variables (from $V_\text{process}$). 
-  
+    Here, only Case~\ref{eqe:prototagequiv} from Definition~\ref{def:Events} can apply to the input events,
+    i.e., the input events are term-equivalent under proto-tags $\theta$. 
+    This implies that the message was delivered to the same attacker process in both processing steps. 
+    
+    Let $A$ be that attacker process. 
+    With Case~\ref{eqs:att} of Definition~\ref{def:eq-of-states} we have that $S_1(A) \prototagequiv\theta S_2(A)$.
+    With Case~\ref{eqe:pre:t} of Definition~\ref{def:Events} and Case~\ref{eqs:att-not-t} of Definition~\ref{def:eq-of-states}, 
+    we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain the nonce t, nor does the events $e_i^{(1)}$ and $e_i^{(2)}$.
+    Further with lemma~\ref{thm-idp-untraceability}, it follows immediately that the attacker cannot decrypt any of the tags in $\theta$ in its knowledge.
+    Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
+
+    Obviously, there are no variables (from $V_\text{process}$) in the attackers' states.
     With the output term being a fixed term (with variables)
     $\tau_{\text{process}} \in \terms(\{x\} \cup V_\text{process})$ 
-    and $x$ being $S_1(A)$ or $S_2(A)$, respectively, and there 
-    is no subterm $l \in L$ contained in either $S_1(A)$ or 
-    $S_2(A)$ (Condition~\ref{eqs:att-not-l} of 
-    Definition~\ref{def:eq-of-states}), it is easy to see that 
-    the output events are $\beta$-equivalent under $\theta$, i.e., 
-    $E ^{(1)}_\text{out} \prototagequiv\theta E^{(2)}_\text{out}$, there
-    are not $t \in T$ contained in the output events and the 
-    used nonces are the same, i.e., $N_1' = N_2'$. The new state 
-    of the attacker in both processing steps consists of the 
-    input events, the output events, and the former state of the 
-    event, and, as such, is $\beta$-equivalent under proto-tags 
-    $\theta$. Therefore we have $\alpha$-equivalence on the
-    new configurations.
+    and $x$ being $S_1(A)$ or $S_2(A)$ respectively, 
+    there is no subterm $l \in L$ contained in either $S_1(A)$ or $S_2(A)$ 
+    (Case~\ref{eqs:att-not-l} of Definition~\ref{def:eq-of-states}), 
+    it is easy to see that only Case~\ref{eqe:prototagequiv} from Definition~\ref{def:Events} can apply to the output events 
+    and the output events are $\beta$-equivalent under $\theta$, 
+    i.e., $E ^{(1)}_\text{out} \prototagequiv\theta E^{(2)}_\text{out}$. 
+    There are not any $t \in T$ contained in the output events meaning that 
+    the new state of the attacker in both processing steps is $\beta$-equivalent under proto-tags $\theta$.
+    The used nonces are the same, i.e., $N_1' = N_2'$. 
+    Therefore we have $\alpha$-equivalence on the new configurations.
+  \end{proof}
+
+  \begin{lemma}\label{thm-idp-untraceability}
+    Given a point on the elliptic curve denoted by $[r]G$, 
+    an adversary cannot distinguish $[tr]G$ from a random variable on $\mathbb{E}$, 
+    where $t$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
+  \end{lemma}
+  \begin{proof}
+    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+    Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
+    $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+    Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
   \end{proof}
   
   This proves Theorem~\ref{theorem:A}.\QED
