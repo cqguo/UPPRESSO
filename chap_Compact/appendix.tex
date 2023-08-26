@@ -585,13 +585,13 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{n, method, path, parameters, headers, body} \textbf{such that} \breakalgohook{0}
       \myss{\myangle{\mathtt{HTTPReq},n,method,path,parameters,headers,body} \equiv m_{dec}}\breakalgohook{0}
       \textbf{if possible; otherwise stop} \myss{\myangle{}, s'}}
-    \myif{path \equiv /script}
+    \myif{path \equiv /script}\label{line:idp-script}
       \mystate{\myss{m':=\encs{\myangle{\mathtt{HTTPResp},n,200, \myangle{}, \str{script\_idp}}}{k}}}
       \mystop{b, a, m'}
-    \myelse{path \equiv /authentication}
+    \myelse{path \equiv /authentication}\label{line:idp-authentication}
       \mystate{\myss{\mi{username} := \mi{body}[\str{username}]}}
       \mystate{\myss{\mi{password} := \mi{body}[\str{password}]}}
-      \myif{\mi{password} \not\equiv s'.\str{userset}[\mi{username}].\mi{secret}}
+      \myif{\mi{password} \not\equiv s'.\str{userset}[\mi{username}].\mi{secret}}\label{line:check-username-password}
         \mystate{\myss{m':=\encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{},\mathtt{LoginFailure}}}{k}}}
         \mystop{b, a, m'}
       \ENDIF
@@ -600,22 +600,22 @@ The set $E^0$ contains only the trigger events.
       \mystate{\myss{\mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \mi{sessionid}, \True, \True, \True}}}}}
       \mystate{\myss{m' :=\myangle{\mathtt{HTTPResp},n,200,\myangle{\mi{setCookie}},\mathtt{LoginSucess}}}}
       \mystop{b, a, m'}
-    \myelse{path \equiv /reqToken}
+    \myelse{path \equiv /reqToken}\label{line:idp-reqToken}
       \mystate{\myss{\mi{cookie} := headers[\str{Cookie}]}}
-      \myif{\mi{cookie}[\str{sessionid}] \equiv \myangle{}}
+      \myif{\mi{cookie}[\str{sessionid}] \equiv \myangle{}}\label{line:check-sessionid}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{},\mathtt{Unauthenticated}}}{k}}}
         \mystop{b, a, m'}
       \ENDIF
       \mystate{\myss{\mi{sessionid} := \mi{cookie}[\str{sessionid}]}}
       \mystate{\myss{\mi{PID_{rp}} := \mi{parameters}[\str{PID_{rp}}]}}
-      \myif{s'.\str{sessions}[\mi{sessionid}].\mi{IDToken}[\mi{PID_{rp}}] \equiv \myangle{}}
+      \myif{s'.\str{sessions}[\mi{sessionid}].\mi{IDToken}[\mi{PID_{rp}}] \equiv \myangle{}}\label{line:check-session-pidrp}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{},\mathtt{Unauthorized}}}{k}}}
         \mystop{b, a, m'}
       \ENDIF
       \mystate{\myss{\mi{IDToken} := s'.\str{sessions}[\mi{sessionid}].\mi{IDToken}[\mi{PID_{rp}}]}}
       \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{}, \mi{IDToken}}}{k}}}
       \mystop{b, a, m'}
-    \myelse{path \equiv /authorize}\label{line:uppresso-idp-set-pidu}
+    \myelse{path \equiv /authorize}\label{line:idp-authorize}
       \mystate{\myss{\mi{cookie} := headers[\str{Cookie}]}}
       \myif{\mi{cookie}[\str{sessionid}] \equiv \myangle{}}\label{line:uppresso-idp-check-login-state}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{},\mathtt{Unauthenticated}}}{k}}}
@@ -634,7 +634,7 @@ The set $E^0$ contains only the trigger events.
       
       \mystate{\myss{\mi{username} := s'.\str{sessions}[\mi{sessionid}].username}}
       \mystate{\myss{\mi{ID_u} := s'.\str{userset}[\mi{username}].\mi{id}}}\label{line:get-idu}
-      \mystate{\myss{\mi{PID_u} := [\mi{ID_u}]\mi{PID_{rp}}}}
+      \mystate{\myss{\mi{PID_u} := [\mi{ID_u}]\mi{PID_{rp}}}}\label{line:uppresso-idp-set-pidu}
       %\mystate{\myss{Validity := \mathtt{CurrentTime} ()+ s'.Validity}}
       %\mystate{\myss{Content := \myangle{PID_{RP}, PID_U, s'.Issuer, Validity}}}
       \mystate{\myss{\mi{content} := \myangle{PID_{rp}, PID_u}}}
@@ -1701,7 +1701,7 @@ The set $E^0$ contains only the trigger events.
           \begin{align*}
             & \an{\tXMLHTTPRequest,*,*},\\
             & \an{\tPostMessage,*,\an{\mapDomain(dr_j), \https},\an{\str{t}, *}},\\
-            %& \an{\tPostMessage,*,\an{\mapDomain(dr_j), \https},\mi{IDToken}}\\
+            & \an{\tPostMessage,*,\an{\mapDomain(dr_j), \https},\an{\str{IDToken}, *}}\\
             & \an{\tPostMessage,*,\an{\mapDomain(idp), \https},\an{\str{Cert}, *}}
           \end{align*}
           $\}$ we have
@@ -2481,85 +2481,47 @@ The set $E^0$ contains only the trigger events.
   %benign user对于rp是不可区分的
   %IDToken equivalence：由同一个user对两个RP分别产生的两个IDToken不可区分
   \begin{definition}[Challenge IdP]
-    Let $\mi{dr}$ some domain and 
-    $idp(\mi{dr}_1, \mi{dr}_2, u_x, u_y)$ a DY process. 
-    We call it a \emph{challenge IdP} iff $b$
-    is defined exactly the same as a identity server with two 
-    exceptions: (1) the state contains one more property, 
-    namely $\mi{challenge}$, which initially contains the term 
-    $\top$. 
-    (2) The IdP's algorithm is modified by the following at 
-    line~\ref{line:uppresso-idp-set-pidu} in 
-    algorithm~\ref{alg:idp}: It is checked if the login 
-    request $m$ is addressed to the domain $\mi{dr}_1$ 
-    If $m$ is sent from $\mapDomain(b_1)$ and addressed to this 
-    domain, then the $PID_u$ is generated using the given $u_x$.
-    It is also checked if the login request $m$ is sent from 
-    $\mapDomain(b1)$ and addressed to the domain $\mi{dr}_2$ 
-    and no other message $m'$ was 
-    addressed to this domain before (i.e., $\mi{challenge} 
-    \not\equiv \bot$), then the $PID_u$ is generated using 
-    the given $u_y$ and $\mi{challenge}$ is set to $\bot$ to 
-    recorded that a message was addressed to $\mi{dr}_2$. 
+    Let $\mi{dr}$ some domain, $u$ some identity and $\mi{idp}(\mi{dr}, u)$ a DY process. 
+    We call it a \emph{challenge IdP} iff $\mi{idp}$ is defined exactly the same as a identity server with two exceptions: 
+    (1) the state contains one more property, namely $\mi{challenge}$, which initially contains the term $\top$. 
+    (2) The IdP's algorithm is modified by the following at line~\ref{line:uppresso-idp-set-pidu} in algorithm~\ref{alg:idp}: 
+    It is checked if the login request $m$ is addressed to the domain $\mi{dr}$ and no other message $m'$ was addressed to this domain before.(i.e., $\mi{challenge} \not\equiv \bot$)
+    Then the $PID_u$ is generated using the given $u$ and $\mi{challenge}$ is set to $\bot$ to recorded that a message was addressed to $\mi{dr}$. 
   \end{definition}
   
   %B->b1
   \begin{definition}[\uppresso Web System for Privacy Analysis]\label{def:uppresso-ws-priv}
-    Let $\uppressowebsystem = (\bidsystem, \scriptset, 
-    \mathsf{script}, E^0)$ be an UPPRESSO web system with 
-    $\bidsystem = \mathsf{Hon} \cup \mathsf{Web} \cup 
-    \mathsf{Net}$, 
-    $\mathsf{Hon} = \fAP{B} \cup \fAP{RP} \cup \fAP{IDP}$.
-    (as described in Appendix~\ref{app:outlineuppressomodel}).
-    $\fAP{B} = \{b_1,b_2\}$, $b_1$ is honest and $b_2$ is 
-    malicious and they both own some identities. 
-    $\fAP{RP} = \{r_1,r_2\}$, $r_1$ and $r_2$ two (malicious) 
-    relying parties, 
-    Let $\fAP{attacker} = \{b_2\} \cup \{r_1,r_2\}$ be some 
-    web attacker.
-    Let $\mi{dr}_1$ be the domain of $r_1$, $\mi{dr}_2$ be the 
-    domain of $r_2$ and $u_x, u_y$ be identities owned only by
-    IdP, then $idp_c = idp(\myangle{\mi{dr}_1, \mi{dr}_2, 
-    u_x, u_y})$ is a challenge IdP. 
-    Let $\mathsf{Hon}' := \fAP{B} \cup \{idp_c\}$, 
-    $\mathsf{Web}' := \mathsf{Web}$, 
-    and $\mathsf{Net}' := \emptyset$ 
-    (i.e., there is no network attacker).
-    Let $\bidsystem' := \mathsf{Hon}' \cup \mathsf{Web}' \cup 
-    \mathsf{Net}'$. 
+    Let $\uppressowebsystem = (\bidsystem, \scriptset, \mathsf{script}, E^0)$ be an UPPRESSO web system with 
+    $\bidsystem = \mathsf{Hon} \cup \mathsf{Web} \cup \mathsf{Net}$, 
+    $\mathsf{Hon} = \fAP{B} \cup \fAP{RP} \cup \fAP{IDP}$. (as described in Appendix~\ref{app:outlineuppressomodel}).
+    $\fAP{RP} = \{r_1,r_2\}$, $r_1$ and $r_2$ two relying parties, 
+    Let $\fAP{attacker} = \{r_1,r_2\}$ be some web attacker.
+    Let $\mi{dr}$ be the domain of $r_2$, $u_x$ an identity owned by the browser $b$ 
+    and $u_y$ an identity only known by the IdP, then $\mi{idp}_c = \mi{idp}(\mi{dr}, u_x/u_y)$ is a challenge IdP. 
+    Let $\mathsf{Hon}' := \fAP{B} \cup \{\mi{idp}_c\}$, $\mathsf{Web}' := \mathsf{Web}$, and $\mathsf{Net}' := \emptyset$ (i.e., there is no network attacker).
+    Let $\bidsystem' := \mathsf{Hon}' \cup \mathsf{Web}' \cup \mathsf{Net}'$. 
     Let $\scriptset' := \scriptset$ and $\mathsf{script}'$ be accordingly.
-    We call $\uppressoprivwebsystem(\mi{dr}_1, \mi{dr}_2, 
-    u_x, u_y) = (\bidsystem', \scriptset', \mathsf{script}', 
-    E^0, \fAP{attacker})$ an \emph{\uppresso web system for 
-    privacy analysis} 
-    iff the domain $\mi{dr}_1$ the only domain assigned to 
-    $r_1$, and $\mi{dr}_2$ the only domain assigned to $r_2$. 
-    All honest parties (in $\mathsf{Hon}$) are not corruptible, 
-    i.e., they ignore any $\str{CORRUPT}$ message. Relying 
-    Parties and some browsers are assumed to be dishonest, 
-    and hence, are subsumed by the web attackers.
+    We call $\uppressoprivwebsystem(\mi{dr}, u_x, u_y) = (\bidsystem', \scriptset', \mathsf{script}', E^0, \fAP{attacker})$ 
+    an \emph{\uppresso web system for privacy analysis} 
+    iff the domain $\mi{dr}$ the only domain assigned to $r_2$. 
+    All honest parties (in $\mathsf{Hon}$) are not corruptible, i.e., they ignore any $\str{CORRUPT}$ message. 
+    Relying Parties are assumed to be dishonest, and hence, are subsumed by the web attackers.
   \end{definition}
   
   \begin{definition}[RP-Privacy]\label{def:rp-privacy}
     Let 
     \begin{align*}
-      \uppressoprivwebsystem_1 := \uppressoprivwebsystem(\mi{dr}_1, \mi{dr}_2, u_x, u_x) =
+      \uppressoprivwebsystem_1 := \uppressoprivwebsystem(\mi{dr}, u_x) =
       (\bidsystem_1, \scriptset, \mathsf{script}, E^0, \fAP{attacker}_1)&\text{ and}\\
-      \uppressoprivwebsystem_2 := \uppressoprivwebsystem(\mi{dr}_1, \mi{dr}_2, u_x, u_y) =
+      \uppressoprivwebsystem_2 := \uppressoprivwebsystem(\mi{dr}, u_y) =
       (\bidsystem_2, \scriptset, \mathsf{script}, E^0, \fAP{attacker}_2)&
     \end{align*}
-    be \uppresso web systems for privacy analysis.  Further, we 
-    require $\fAP{attacker}_1 = \fAP{attacker}_2 =: 
-    \fAP{attacker}$ and for 
-    $idp_1 := idp(\myangle{\mi{dr}_1, \mi{dr}_2, u_x, u_x})$, 
-    $idp_2 := idp(\myangle{\mi{dr}_1, \mi{dr}_2, u_x, u_y})$ 
-    we require $S(idp_1) = S(idp_2)$ and 
-    $\bidsystem_1 \setminus \{idp_1\} = \bidsystem_2 \setminus \{idp_2\}$ 
-    (i.e., the web systems are the same up to the parameter of
-    the challenge idps).  
-    We say that $\uppressoprivwebsystem$ is \emph{RP-private} 
-    iff $\uppressoprivwebsystem_1$ and 
-    $\uppressoprivwebsystem_2$ are indistinguishable.
+    be \uppresso web systems for privacy analysis. 
+    Further, we require $\fAP{attacker}_1 = \fAP{attacker}_2 =: \fAP{attacker}$ 
+    and for $idp_1 := idp(\mi{dr}, u_x)$, $idp_2 := idp(\mi{dr}, u_y)$, 
+    we require $S(idp_1) = S(idp_2)$ and $\bidsystem_1 \setminus \{idp_1\} = \bidsystem_2 \setminus \{idp_2\}$ 
+    (i.e., the web systems are the same up to the parameter of the challenge idps).  
+    We say that $\uppressoprivwebsystem$ is \emph{RP-private} iff $\uppressoprivwebsystem_1$ and $\uppressoprivwebsystem_2$ are indistinguishable.
   \end{definition}
   
   \subsection{Definition of Equivalent Configurations}\label{app:rp:defin-equiv-stat}
@@ -2567,10 +2529,8 @@ The set $E^0$ contains only the trigger events.
   Let $\uppressoprivwebsystem_1 = (\bidsystem_1, \scriptset, \mathsf{script}, E^0, \fAP{attacker})$ 
   and $\uppressoprivwebsystem_2 = (\bidsystem_2, \scriptset, \mathsf{script}, E^0, \fAP{attacker})$ 
   be \uppresso web systems for privacy analysis. 
-  Let $(S_1,E_1,N_1)$ 
-  be a configuration of $\uppressoprivwebsystem_1$ and 
-  $(S_2,E_2,N_2)$ 
-  be a configuration of $\uppressoprivwebsystem_2$.
+  Let $(S_1,E_1,N_1)$ be a configuration of $\uppressoprivwebsystem_1$ 
+  and $(S_2,E_2,N_2)$ be a configuration of $\uppressoprivwebsystem_2$.
   
   \begin{definition}[Proto-Accts]
     We call a term of the form $[u]ID_{r_2}$ with the variable
@@ -2580,14 +2540,11 @@ The set $E^0$ contains only the trigger events.
   \end{definition}
   
   \begin{definition}[Term Equivalence up to Proto-Accts]
-    Let $\theta = \{a_1, \ldots, a_l \}$ be a finite set of 
-    proto-accts.
+    Let $\theta = \{a_1, \ldots, a_l \}$ be a finite set of proto-accts.
     Let $t_1$ and $t_2$ be terms. We call $t_1$ and $t_2$
     \emph{term-equivalent under a set of proto-accts $\theta$} 
-    iff there exists a term $\tau \in \terms(\{x_1,\dots,x_l\})$ 
-    such that
-    $t_1 = (\tau [ a_1 / x_1 , \dots , a_l / x_l ])[ u_x / u ]$ 
-    and
+    iff there exists a term $\tau \in \terms(\{x_1,\dots,x_l\})$ such that
+    $t_1 = (\tau [ a_1 / x_1 , \dots , a_l / x_l ])[ u_x / u ]$ and
     $t_2 = (\tau [ a_1 / x_1 , \dots , a_l / x_l ])[ u_y / u ]$.
     We write $t_1 \prototagequiv{\theta} t_2$.
   
@@ -2599,6 +2556,12 @@ The set $E^0$ contains only the trigger events.
     have that for all 
     $i \in \{1,\dots,|D|\}$: $d_i \prototagequiv{\theta} d'_i$. 
     We then write $D \prototagequiv{\theta} D'$.
+  \end{definition}
+
+  \begin{definition}
+    Let $a$ be a proto-acct, $S_1$ and $S_2$ be states of \uppresso web systems for privacy analysis, and $l$ a nonce. 
+    We call $l$ a login session token for the proto-acct $a$, written $l \in \mathsf{loginSessionTokens}(a,S_1,S_2)$ 
+    iff for any $i \in \{1,2\}$ we have that $\proj{2}{S_i(\mi{idp}).\str{sessions}[l].\mi{IDToken}} = a[ID_{u_{x/y}}/u]$.
   \end{definition}
   
   \begin{definition}[Equivalence of States]\label{def:rp:eq-of-states}
@@ -2621,28 +2584,38 @@ The set $E^0$ contains only the trigger events.
     \item\label{eqs:rp:att} 
       for each attacker $A$:
       $S_1(A) \prototagequiv{\theta} S_2(A)$, and
+    \item\label{eqs:rp:att-not-l} 
+      for all $a\in\theta$ and all attackers $A$ we have that
+      $\nexists\ l \in \mathsf{loginSessionTokens}(a,S_1,S_2)$ 
+      such that $l$ is a subterm of $S_1(A)$ or $S_2(A)$.
     \item\label{eqs:rp:b} 
       $S_1(b_1)$ equals $S_2(b_1)$ except for the subterms 
       $\str{windows}$ and we have that
       \begin{enumerate}
       \item\label{eqs:rp:b:w}
-        $S_1(b_1).\str{windows}$ equals $S_2(b_1).\str{windows}$ 
-        with the exception of the subterms $\str{scriptstate}$ 
+        $S_1(b_1).\str{windows}$ equals $S_2(b_2).\str{windows}$ 
+        with the exception of the subterms $\str{location}$, $\str{referrer}$, $\str{scriptstate}$ 
         and $\str{scriptinputs}$ of some document terms pointed 
         to by $\mathsf{Docs}^+(S_1(b_1)) = \mathsf{Docs}^+(S_2(b_1)) =: J$. 
         For all $j \in J$ we have that: 
         \begin{enumerate}
+        \item there is no $x\in\myangle{u_x, u_y, r_1, r_2}$ such that
+          \begin{align*}
+            x \in d_{\nonces \setminus \{x\}}(\{&S_1(b_1).j.\str{location}
+            ,  S_2(b_2).j.\str{location},\\ & S_1(b_1).j.\str{referrer} , 
+            S_2(b_2).j.\str{referrer}\})
+          \end{align*}
         \item for $p \in \{$
           \begin{align*}
             & \an{\tXMLHTTPRequest,*,*},\\
             & \an{\tPostMessage,*,\an{\mapDomain(r_{1,2}), \https},\an{\str{t}, *}},\\
-            & \an{\tPostMessage,*,\an{\mapDomain(r_{1,2}), \https},\mi{IDToken}}\\
+            & \an{\tPostMessage,*,\an{\mapDomain(r_{1,2}), \https},\an{\str{IDToken}, *}}\\
             & \an{\tPostMessage,*,\an{\mapDomain(idp), \https},\an{\str{Cert}, *}}
           \end{align*}
           $\}$ we have
-  
+
           $S_1(b_1).j.\str{scriptinputs} |\, p \prototagequiv{\theta}
-          S_2(b_1).j.\str{scriptinputs} |\, p$, and
+          S_2(b_2).j.\str{scriptinputs} |\, p$, and
         \item\label{eqs:rp:b:w:script}
           $S_1(b_1).j.\str{scriptstate} \prototagequiv{\theta}
           S_2(b_2).j.\str{scriptstate}$, and 
@@ -2656,18 +2629,30 @@ The set $E^0$ contains only the trigger events.
   
   \begin{definition}[Equivalence of Events]\label{def:rp:Events}
     Let $\theta$ be a set of proto-tags, 
-    %$L$ be a set of login session tokens, 
+    $L$ be a set of login session tokens, 
     %$H$ be a set of nonces, and
     %$T:=\{t\mid [t]R\in \theta\}$. 
     We call $E_1 = (e_1^{(1)}, e_2^{(1)}\dots)$ and
     $E_2= (e_1^{(2)}, e_2^{(2)} \dots)$ 
-    \emph{$\beta$-equivalent under $\theta$} 
+    \emph{$\beta$-equivalent under $(\theta, L)$} 
     iff all of the following conditions are satisfied for every 
     $i \in \mathbb{N}$:
   
     \begin{enumerate}
       \item\label{eqe:rp:distinction} 
         $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$, and
+      \item\label{eqe:rp:pre:l} If there exists $l \in L$ such that $l$ is a
+        subterm of $e_i^{(1)}$ or $e_i^{(2)}$ then we have that
+        $e_i^{(1)}$ is a message from $b_1$ to $\mi{idp}$ and $e_i^{(2)}$ is a
+        message from $b_2$ to $\mi{idp}$ or we have that $e_i^{(1)}$ is a
+        message from $\mi{idp}$ to $b_1$ and $e_i^{(2)}$ is a message from
+        $\mi{idp}$ to $b_2$.
+      \item\label{eqe:rp:pre:t} $u_x, u_y, r_1, r_2 \not\in e_i^{(1)}, e_i^{(2)}$
+      \item\label{eqe:rp:pre:rp-scripts} If $e_i^{(1)}$ or $e_i^{(2)}$ is an
+        HTTP(S) response with body $g$ from a identity provider, then it does
+        not contain any $\str{Location}$ or $\cSTS$ header
+        and if $\proj{1}{g}$ is a string representing a script, then
+        $\proj{1}{g}$ is $\str{script\_idp}$.
       \item\label{eqe:rp:pre:unencrypted-http} 
         If $e_i^{(1)}$ or $e_i^{(2)}$ is an unencrypted HTTP 
         response, then the message was sent by some attacker.
@@ -2679,7 +2664,9 @@ The set $E^0$ contains only the trigger events.
     \emph{$\alpha$-equivalent} iff there exists a set of 
     proto-accts $\theta$ such that $S_1$ and $S_2$ are
     $\gamma$-equivalent under $\theta$, $E_1$ and $E_2$ are
-    $\beta$-equivalent under $\theta$ and $N_1 = N_2$.
+    $\beta$-equivalent under $(\theta,L)$ 
+    for $L := \bigcup_{a\in\theta} \mathsf{loginSessionTokens}(a,S_1,S_2)$, 
+    and $N_1 = N_2$.
   \end{definition}
   
   \subsection{Privacy Proof}
@@ -2688,15 +2675,13 @@ The set $E^0$ contains only the trigger events.
     Every UPPRESSO web system for privacy analysis is RP-private.
   \end{theorem}
   
-  Let $\mathcal{U\!W\!S}^{priv}$ be UPPRESSO web system for 
-  privacy analysis.
-  
+  Let $\mathcal{U\!W\!S}^{priv}$ be UPPRESSO web system for privacy analysis.
   To prove Theorem \ref{theorem:rp-privacy}, we have to show that 
   the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and 
   $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable. To show 
   the indistinguishability of $\mathcal{U\!W\!S}^{priv}_1$ and 
   $\mathcal{U\!W\!S}^{priv}_2$, we show that they are 
-  indistinguishable under all schedules $\sigma$. For this , 
+  indistinguishable under all schedules $\sigma$. For this, 
   we first note that for all $\sigma$, there is only one run 
   induced by each $\sigma$(as our web system, when scheduled, is deterministic).
   We now proceed to show that for all schedules $\sigma=(\zeta _1, \zeta_2,\dots)$, 
@@ -2790,9 +2775,83 @@ The set $E^0$ contains only the trigger events.
         (S_2,E_2,N_2)\xrightarrow[p_2\rightarrow E_{out}^{(2)}]{\left \langle a_2,f_2,m_2\right \rangle\rightarrow p_2}(S_2\prime,E_2\prime,N_2\prime)
       \end{aligned}
     \end{equation}
-    \paragraph{\underline{Case $p_1 = idp_1$}}
-  
-    \paragraph{\underline{Case $p_1 = b_1$}}
+    \paragraph{\underline{Case $p_1 = \fAP{idp_1}$}}
+    $\implies p_2 = \fAP{idp_2}$
+
+    In this case, we distinct several cases of HTTP(S) requests that can happen.
+    There are four possible types of HTTP requests that are accepted by $\mi{idp}_1$ in Algorithm \ref{alg:idp}:
+    
+    \begin{itemize}
+      \item path=$\str{/script}$(get the idp-script), Line~\ref{line:idp-script};
+      \item path=$\str{/authentication}$(set the login session), Line~\ref{line:idp-authentication};
+      \item path=$\str{/reqToken}$(retrieve the IDToken), Line~\ref{line:idp-reqToken};
+      \item path=$\str{/authorize}$(construct the IDToken), Line~\ref{line:idp-authorize}.
+    \end{itemize}
+
+    Here, Condition~\ref{eqe:rp:distinction} from Definition~\ref{def:rp:Events} applys to the input events,
+    i.e., the input events are term-equivalent under proto-accts $\theta$. 
+    \begin{itemize}
+      \item path=$\str{/script}$ 
+        In this case, the same output event is produced whose message is 
+        \begin{equation}
+          \begin{aligned}
+            \myangle{HTTPResp,n,200,\myangle{},IdPScript}
+          \end{aligned}
+        \end{equation}
+        We can note that Condition~\ref{eqe:rp:pre:rp-scripts} of Definition \ref{def:rp:Events} holds true and the remaining conditions are trivially fulfilled.
+        Therefore, $E_1\prime$ and $E_2\prime$ are $\beta$-equivalent under $(\theta, L)$. 
+        As there are no changes to any state, we have that $S_1\prime$ and $S_2\prime$ are $\gamma$-equivalent under $\theta$. 
+        No new nonces are chosen, hence $N_1\prime=N_1=N_2=N_2\prime$.
+      \item path=$\str{/authentication}$ 
+        Here, since $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$, we can see that the username and password in the HTTP body is equal. 
+        Hence, the check at Line~\ref{line:uppresso-idp-check-login-state} in Algorithm~\ref{alg:idp} either both fail or not . 
+        If the username and password are correct, IdP will set up a login session and output a respones whose message is 
+        \begin{align*}
+          \myangle{\cHttpResp,n,200,\an{\mi{setCookie}},\str{LoginSuccess}}
+        \end{align*}
+        with
+        \begin{align*}
+          \mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \nu_3, \True, \True, \True}}} \\
+        \end{align*}
+        We can note that Condition~\ref{eqs:rp:idp-sessions} of Definition~\ref{def:rp:eq-of-states} holds true for the new sates of $\mi{idp}_1$ and $\mi{idp}_2$ because only a username is added to the sessions.
+        As there are not any other changes to the state and $\theta\prime = \theta$, we have that $S_1\prime$ and $S_2\prime$ are $\gamma$-equivalent under $\theta$. 
+        
+        For $N_1 = N_2 = (n_1, n_2, \dots)$, we set $N_1' = N_2' = (n_2, \dots)$ (as exactly one nonce is chosen in both processing steps) and $L' = L \cup \{n_1\}$. 
+        So Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} holds true the output event.
+        Obviously we can have that Condition~\ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} holds true, so $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta, L')$.
+      \item path=$\str{/reqToken}$ 
+        Here, since $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$, 
+        we can see that the $\str{sessionid}$ in the HTTP headers either both exist or not.
+        Therefore, the check at Line~\ref{line:check-sessionid} in Algorithm~\ref{alg:idp} either both fail or not. 
+        Obviously, we can have that if the $\str{sessionid}$ exists, it must be the same in both systems.
+        Since $S_1(\mi{idp}_1).\str{sessions} \prototagequiv{\theta} S_2(\mi{idp}_2).\str{sessions}$, 
+        the second check at Line~\ref{line:check-session-pidrp} also either both fail or not.
+        If the two checks both pass, the same output event is produced whose message is 
+        \begin{align*}
+          \myangle{\cHttpResp,n,200,\myangle{},\mi{IDToken}}
+        \end{align*}
+        Since the IDToken has already been constructed, there are not any changes to the new states of IdP.
+        We can easily have that $S_1\prime$ and $S_2\prime$ are $\gamma$-equivalent under $\theta$. 
+        
+        As $L' = L$ and $u_x, u_y, r_1, r_2$ do not present directly in the IDToken, $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta, L')$.
+        No new nonces are chosen, hence $N_1\prime=N_1=N_2=N_2\prime$.
+      \item path=$\str{/authorize}$ 
+        Here, the first check is the same as $\str{/reqToken}$.
+        Since $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$, the second and third check either both pass or not.
+        If IdP accepts the request, it will start to sign an IDToken.
+        There are two cases for $\theta\prime$, if the $\mi{PID_{rp}}$ is mapped to $r_2$ and $S_i(\mi{idp_i}).\str{challenge} = \True$, 
+        $\theta\prime = \theta \cup \{ [u_{x/y}]\mi{PID_{r_2}} \}$, otherwise, $\theta\prime = \theta$.
+        In the first case, $S_1(\mi{idp_1}).\str{sessions} \prototagequiv{\theta\prime} S_2(\mi{idp_2}).\str{sessions}$, 
+        while in the second case, the newly added sessions are equal.
+        Therefore, we can see that Condition~\ref{eqs:rp:idp-sessions} of Definition~\ref{def:rp:eq-of-states} holds true for the new states, 
+        and $S_1\prime$ and $S_2\prime$ are $\gamma$-equivalent under $\theta\prime$
+
+        In this case, the output event is as same as $\str{/reqToken}$, 
+        so we can have that $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta\prime, L)$.
+        No new nonces are chosen, hence $N_1\prime=N_1=N_2=N_2\prime$.
+    \end{itemize}
+
+    \paragraph{\underline{Case $p_1 = \fAP{b_1}$}}
   
     \paragraph{\underline{Case $p_1$ is some attacker:}}
     
