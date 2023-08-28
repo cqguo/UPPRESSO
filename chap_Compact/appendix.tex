@@ -2605,7 +2605,7 @@ The set $E^0$ contains only the trigger events.
             ,  S_2(b_2).j.\str{location},\\ & S_1(b_1).j.\str{referrer} , 
             S_2(b_2).j.\str{referrer}\})
           \end{align*}
-        \item for $p \in \{$
+        \item \label{eqs:rp:b:w:scriptinputs} for $p \in \{$
           \begin{align*}
             & \an{\tXMLHTTPRequest,*,*},\\
             & \an{\tPostMessage,*,\an{\mapDomain(r_{1,2}), \https},\an{\str{t}, *}},\\
@@ -2852,6 +2852,128 @@ The set $E^0$ contains only the trigger events.
     \end{itemize}
 
     \paragraph{\underline{Case $p_1 = \fAP{b_1}$}}
+
+    \begin{description}
+      \item[TRIGGER] We now distinguish between the possible values for $\mi{cmd}_\text{switch}$.
+        \begin{description}
+          \item[1 (trigger script):] In this case, the script in the window indexed by $\mi{cmd}_\text{window}$ is triggered. Let $j$ be a pointer to that window.
+            
+            We first note that such a window exists in $b_1$ iff it exists in $b_2$ and that $S_1(b_1).j.\str{script} \equiv S_2(b_2).j.\str{script}$. 
+            We now distinguish between the following cases, which cover all possible states of the windows/documents:
+            
+            \begin{enumerate}
+            \item $S_1(b_1).j.\str{origin} \in \{\an{r_1,\https},\an{r_2,\https}\}$ and $S_1(b_1).j.\str{script} \equiv \str{script\_rp}$.
+              Similar to the following scripts, the main distinction in this script is between the script's internal states (named $\str{phase}$). 
+              With the term-equivalence under proto-accts $\theta$ we have that $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$ 
+              
+              We can therefore now distinguish between the possible values of $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$:
+              \begin{description}
+              \item[start:] In this case, the script open a blank page addressed to its own origin which is equal in both systems.
+                The path is the (static) string $\str{/loginSSO}$. 
+                The script saves a (static) value for $\str{phase}$ in its scriptstate.
+      
+                Obviously, we can have that the command is term-equivalent under proto-accts $\theta$ 
+                and hence, the browser emits a HTTP request which is term-equivalent.
+                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states, 
+                $\beta$-equivalence under $(\theta,L)$ for the new events, and $\alpha$-equivalence for the new configuration.
+              \item[expectt:] In this case, the script retrieves the result of a \pm from $\mi{scriptinputs}$. 
+                As we know that $S_1(b_1).j.\str{scriptstate} \prototagequiv{\theta} S_2(b_2).j.\str{scriptstate}$ 
+                and that for all matching \pms that they also have to be term-equivalent up to $\theta$ 
+                and that the window structure is equal in both browsers, 
+                we have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers.
+      
+                Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
+                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
+                We also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
+                and $\alpha$-equivalence for the new configuration.
+              \item[expectCert:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+                Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
+      
+                The script now constructs a \pm that is sent to exactly the same window in both browsers 
+                and that requires that the receiver origin has to be $\an{\str{IdPdomain},\https}$. 
+                The postMessage is only sent to this origin, we have that $\gamma$-equivalence cannot be violated.
+      
+                We now have that $S_1'$ and $S_2'$ are $\gamma$-equivalent under $\theta$, 
+                $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta,L)$, 
+                and as exactly none of nonces is chosen, 
+                we have that the new configuration is $\alpha$-equivalent.
+              \item[expectToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+                Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
+
+                Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
+                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
+                The $IDToken$ in the output event's message is term-equivalent up to $\theta$, 
+                so we also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
+                Hence, we have $\alpha$-equivalence for the new configuration.
+              \end{description}
+            \item $S_1(b_1).j.\str{script} \equiv \str{script\_idp}$.
+              \begin{description}
+              \item[start:] In this case, the script chooses a new nonce for $t$ which does not violate the Definition~\ref{def:rp:eq-of-states}.
+                Hence, we have $\gamma$-equivalence under $\theta$ for the new states.
+    
+                From the equivalence definition of states (Definition~\ref{def:rp:eq-of-states}), 
+                we can see that the window tree has the same structure in both processing steps. 
+                So the script now constructs a \pm that is sent to exactly the same window in both browsers 
+                and that requires that the receiver has to be the opener of this window. 
+                Since there are no $l\in L$ or $u_x, u_y, r_1, r_2$ contained in the message, 
+                Condition~\ref{eqe:rp:pre:l} and \ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} holds, 
+                we have $\beta$-equivalence under $(\theta, L)$.
+              \item[expectCert:] The same as above, we can have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers 
+                and the result of $checksig$ is same as well. 
+                As The state $Cert_{rp}$ and $PID_{rp}$ are equal in both $\str{scriptstate}$, 
+                we have $\gamma$-equivalence under $(\theta,L)$ for the new states.
+    
+                We can note that regardless of whether the browser has logined in IdP or not, 
+                the Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} always holds.
+                Therefore, Condition~\ref{eqe:rp:distinction} of Definition~\ref{def:rp:Events} holds, 
+                and we have $\beta$-equivalence under $(\theta, L)$.   
+              \item[expectReqToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+                Hence, in both browsers, both scripts will reach the same if-else branch.
+    
+                Since there aren't any new states stored, we can have $\gamma$-equivalence under $\theta$ for the new states.
+                The output events's destination are fixed and $IDToken$ in the message is term-equivalent up to $\theta$.
+                Therefore, we have $\beta$-equivalence under $(\theta,L)$ for the new events. 
+              \item[expectLoginResult:] This case is the same as the second branch of $\str{expectReqToken}$.
+              \item[expectToken:] This case is the same as the third branch of $\str{expectReqToken}$.
+              \end{description}
+            \end{enumerate}
+          \item[2 (navigate to URL):] In this case, a new window is opened in the browser and a document is loaded from $\mi{url}$.
+            The states of both browsers are changed in the same way, where a new (at this point empty) window is created and appended the $\str{windows}$ subterm of the browsers. 
+            This subterm is therefore changed in exactly the same way.
+            
+            A new HTTP request is created and the request cannot contain any $l \in L$. 
+            The Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} holds true.
+            
+            In both processing steps, three nonces are chosen. 
+            Therefore, we have $\alpha$-equivalence for $(S_1',E_1',N_1')$ and $(S_2',E_2',N_2')$.
+
+          \item[3 (reload document):]
+            Here, an existing document is retrieved from its original location again. 
+            From the definition of $\gamma$-equivalence under $\theta$ we can see that
+            whatever document is reloaded, its location is term-equivalent under $\theta$.
+      
+            We note that the requests are constructed from
+            the location and referrer properties of the document that is to
+            be reloaded, and therefore, cannot contain any $u_x, u_y, r_1, r_2$.
+      
+            We also note that if the document is reloaded, the same 
+            request is issued in both browsers (therefore,
+            $\beta$-equivalence under $(\theta, L)$ is given), and 
+            none states are changed such that we have
+            $\gamma$-equivalence under $\theta$. The same number of
+            nonces is chosen in both runs, and we have $\alpha$-equivalence.
+        \end{description}
+      \item[Other] Any other message is discarded by the browsers without any change to state or output events.
+    \end{description}
   
     \paragraph{\underline{Case $p_1$ is some attacker:}}
     
