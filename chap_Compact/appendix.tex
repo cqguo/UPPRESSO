@@ -2426,7 +2426,7 @@ The set $E^0$ contains only the trigger events.
     With Case~\ref{eqs:att} of Definition~\ref{def:eq-of-states} we have that $S_1(A) \prototagequiv\theta S_2(A)$.
     With Case~\ref{eqe:pre:t} of Definition~\ref{def:Events} and Case~\ref{eqs:att-not-t} of Definition~\ref{def:eq-of-states}, 
     we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain the nonce t, nor does the events $e_i^{(1)}$ and $e_i^{(2)}$.
-    Further with lemma~\ref{thm-idp-untraceability}, it follows immediately that the attacker cannot decrypt any of the tags in $\theta$ in its knowledge.
+    Further with lemma~\ref{thm-idp-untraceability}, it follows immediately that the attacker cannot distinguish any of the tags in $\theta$ in its knowledge.
     Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
 
     Obviously, there are no variables (from $V_\text{process}$) in the attackers' states.
@@ -2676,7 +2676,7 @@ The set $E^0$ contains only the trigger events.
   \end{theorem}
   
   Let $\mathcal{U\!W\!S}^{priv}$ be UPPRESSO web system for privacy analysis.
-  To prove Theorem \ref{theorem:rp-privacy}, we have to show that 
+  To prove Theorem \ref{theorem:rp-privacy}, first we have to show that 
   the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and 
   $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable. To show 
   the indistinguishability of $\mathcal{U\!W\!S}^{priv}_1$ and 
@@ -2692,7 +2692,7 @@ The set $E^0$ contains only the trigger events.
   We now show that if two configurations are $\alpha$-equivalent, 
   then the view of the attacker is statically equivalent.
   
-  \begin{lemma}
+  \begin{lemma}\label{lemma:statically-equivalent}
     Let $(S_1,E_1,N_1)$ and $(S_2,E_2,N_2)$ be two 
     $\alpha$-equivalent configurations. 
     Then $S_1(attacker)\approx S_2(attacker)$.
@@ -2856,155 +2856,287 @@ The set $E^0$ contains only the trigger events.
     \begin{description}
       \item[TRIGGER] We now distinguish between the possible values for $\mi{cmd}_\text{switch}$.
         \begin{description}
-          \item[1 (trigger script):] In this case, the script in the window indexed by $\mi{cmd}_\text{window}$ is triggered. Let $j$ be a pointer to that window.
+        \item[1 (trigger script):] In this case, the script in the window indexed by $\mi{cmd}_\text{window}$ is triggered. Let $j$ be a pointer to that window.
             
-            We first note that such a window exists in $b_1$ iff it exists in $b_2$ and that $S_1(b_1).j.\str{script} \equiv S_2(b_2).j.\str{script}$. 
-            We now distinguish between the following cases, which cover all possible states of the windows/documents:
+          We first note that such a window exists in $b_1$ iff it exists in $b_2$ and that $S_1(b_1).j.\str{script} \equiv S_2(b_2).j.\str{script}$. 
+          We now distinguish between the following cases, which cover all possible states of the windows/documents:
             
-            \begin{enumerate}
-            \item $S_1(b_1).j.\str{origin} \in \{\an{r_1,\https},\an{r_2,\https}\}$ and $S_1(b_1).j.\str{script} \equiv \str{script\_rp}$.
-              Similar to the following scripts, the main distinction in this script is between the script's internal states (named $\str{phase}$). 
-              With the term-equivalence under proto-accts $\theta$ we have that $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$ 
+          \begin{enumerate}
+          \item $S_1(b_1).j.\str{origin} \in \{\an{r_1,\https},\an{r_2,\https}\}$ and $S_1(b_1).j.\str{script} \equiv \str{script\_rp}$.
+            Similar to the following scripts, the main distinction in this script is between the script's internal states (named $\str{phase}$). 
+            With the term-equivalence under proto-accts $\theta$ we have that $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$ 
               
-              We can therefore now distinguish between the possible values of $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$:
-              \begin{description}
-              \item[start:] In this case, the script open a blank page addressed to its own origin which is equal in both systems.
-                The path is the (static) string $\str{/loginSSO}$. 
-                The script saves a (static) value for $\str{phase}$ in its scriptstate.
+            We can therefore now distinguish between the possible values of $S_1(b_1).j.\str{scriptstate}.\str{phase} = S_2(b_2).j.\str{scriptstate}.\str{phase}$:
+            \begin{description}
+            \item[start:] In this case, the script open a blank page addressed to its own origin which is equal in both systems.
+              The path is the (static) string $\str{/loginSSO}$. 
+              The script saves a (static) value for $\str{phase}$ in its scriptstate.
       
-                Obviously, we can have that the command is term-equivalent under proto-accts $\theta$ 
-                and hence, the browser emits a HTTP request which is term-equivalent.
-                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states, 
-                $\beta$-equivalence under $(\theta,L)$ for the new events, and $\alpha$-equivalence for the new configuration.
-              \item[expectt:] In this case, the script retrieves the result of a \pm from $\mi{scriptinputs}$. 
-                As we know that $S_1(b_1).j.\str{scriptstate} \prototagequiv{\theta} S_2(b_2).j.\str{scriptstate}$ 
-                and that for all matching \pms that they also have to be term-equivalent up to $\theta$ 
-                and that the window structure is equal in both browsers, 
-                we have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers.
+              Obviously, we can have that the command is term-equivalent under proto-accts $\theta$ 
+              and hence, the browser emits a HTTP request which is term-equivalent.
+              Therefore, we have $\gamma$-equivalence under $\theta$ for the new states, 
+              $\beta$-equivalence under $(\theta,L)$ for the new events, and $\alpha$-equivalence for the new configuration.
+            \item[expectt:] In this case, the script retrieves the result of a \pm from $\mi{scriptinputs}$. 
+              As we know that $S_1(b_1).j.\str{scriptstate} \prototagequiv{\theta} S_2(b_2).j.\str{scriptstate}$ 
+              and that for all matching \pms that they also have to be term-equivalent up to $\theta$ 
+              and that the window structure is equal in both browsers, 
+              we have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers.
       
-                Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
-                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
-                We also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
-                and $\alpha$-equivalence for the new configuration.
-              \item[expectCert:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
-                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
-                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
-                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
-                Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
+              Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
+              Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
+              We also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
+              and $\alpha$-equivalence for the new configuration.
+            \item[expectCert:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+              From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+              we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+              and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+              Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
       
-                The script now constructs a \pm that is sent to exactly the same window in both browsers 
-                and that requires that the receiver origin has to be $\an{\str{IdPdomain},\https}$. 
-                The postMessage is only sent to this origin, we have that $\gamma$-equivalence cannot be violated.
+              The script now constructs a \pm that is sent to exactly the same window in both browsers 
+              and that requires that the receiver origin has to be $\an{\str{IdPdomain},\https}$. 
+              The postMessage is only sent to this origin, we have that $\gamma$-equivalence cannot be violated.
       
-                We now have that $S_1'$ and $S_2'$ are $\gamma$-equivalent under $\theta$, 
-                $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta,L)$, 
-                and as exactly none of nonces is chosen, 
-                we have that the new configuration is $\alpha$-equivalent.
-              \item[expectToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
-                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
-                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
-                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
-                Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
+              We now have that $S_1'$ and $S_2'$ are $\gamma$-equivalent under $\theta$, 
+              $E_1'$ and $E_2'$ are $\beta$-equivalent under $(\theta,L)$, 
+              and as exactly none of nonces is chosen, 
+              we have that the new configuration is $\alpha$-equivalent.
+            \item[expectToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+              From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+              we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+              and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+              Hence, in both browsers, both scripts stop with an empty command or both continue as they successfully retrieved such an \xhr.
 
-                Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
-                Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
-                The $IDToken$ in the output event's message is term-equivalent up to $\theta$, 
-                so we also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
-                Hence, we have $\alpha$-equivalence for the new configuration.
-              \end{description}
-            \item $S_1(b_1).j.\str{script} \equiv \str{script\_idp}$.
-              \begin{description}
-              \item[start:] In this case, the script chooses a new nonce for $t$ which does not violate the Definition~\ref{def:rp:eq-of-states}.
-                Hence, we have $\gamma$-equivalence under $\theta$ for the new states.
+              Then the script saves a (static) value for $\str{phase}$ in its scriptstate. 
+              Therefore, we have $\gamma$-equivalence under $\theta$ for the new states. 
+              The $IDToken$ in the output event's message is term-equivalent up to $\theta$, 
+              so we also have $\beta$-equivalence under $(\theta, L)$ for the new events, 
+              Hence, we have $\alpha$-equivalence for the new configuration.
+            \end{description}
+          \item $S_1(b_1).j.\str{script} \equiv \str{script\_idp}$.
+            \begin{description}
+            \item[start:] In this case, the script chooses a new nonce for $t$ which does not violate the Definition~\ref{def:rp:eq-of-states}.
+              Hence, we have $\gamma$-equivalence under $\theta$ for the new states.
     
-                From the equivalence definition of states (Definition~\ref{def:rp:eq-of-states}), 
-                we can see that the window tree has the same structure in both processing steps. 
-                So the script now constructs a \pm that is sent to exactly the same window in both browsers 
-                and that requires that the receiver has to be the opener of this window. 
-                Since there are no $l\in L$ or $u_x, u_y, r_1, r_2$ contained in the message, 
-                Condition~\ref{eqe:rp:pre:l} and \ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} holds, 
-                we have $\beta$-equivalence under $(\theta, L)$.
-              \item[expectCert:] The same as above, we can have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers 
-                and the result of $checksig$ is same as well. 
-                As The state $Cert_{rp}$ and $PID_{rp}$ are equal in both $\str{scriptstate}$, 
-                we have $\gamma$-equivalence under $(\theta,L)$ for the new states.
+              From the equivalence definition of states (Definition~\ref{def:rp:eq-of-states}), 
+              we can see that the window tree has the same structure in both processing steps. 
+              So the script now constructs a \pm that is sent to exactly the same window in both browsers 
+              and that requires that the receiver has to be the opener of this window. 
+              Since there are no $l\in L$ or $u_x, u_y, r_1, r_2$ contained in the message, 
+              Condition~\ref{eqe:rp:pre:l} and \ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} holds, 
+              we have $\beta$-equivalence under $(\theta, L)$.
+            \item[expectCert:] The same as above, we can have that either the same \pm is retrieved from $\mi{scriptinputs}$ or none in both browsers 
+              and the result of $checksig$ is same as well. 
+              As The state $Cert_{rp}$ and $PID_{rp}$ are equal in both $\str{scriptstate}$, 
+              we have $\gamma$-equivalence under $(\theta,L)$ for the new states.
     
-                We can note that regardless of whether the browser has logined in IdP or not, 
-                the Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} always holds.
-                Therefore, Condition~\ref{eqe:rp:distinction} of Definition~\ref{def:rp:Events} holds, 
-                and we have $\beta$-equivalence under $(\theta, L)$.   
-              \item[expectReqToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
-                From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
-                we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
-                and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
-                Hence, in both browsers, both scripts will reach the same if-else branch.
+              We can note that regardless of whether the browser has logined in IdP or not, 
+              the Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} always holds.
+              Therefore, Condition~\ref{eqe:rp:distinction} of Definition~\ref{def:rp:Events} holds, 
+              and we have $\beta$-equivalence under $(\theta, L)$.   
+            \item[expectReqToken:] In this case, the script retrieves the result of an \xhr from $\mi{scriptinputs}$ that matches the reference contained in $\mi{scriptstate}$. 
+              From Condition~\ref{eqs:rp:b:w:scriptinputs} and \ref{eqs:rp:b:w:script} of Definition~\ref{def:rp:eq-of-states}, 
+              we know that all results from \xhr{}s in $\mi{scriptinput}$ are term-equivalent up to $\theta$ 
+              and that $\mi{scriptstate}$ is term-equivalent up to $\theta$. 
+              Hence, in both browsers, both scripts will reach the same if-else branch.
     
-                Since there aren't any new states stored, we can have $\gamma$-equivalence under $\theta$ for the new states.
-                The output events's destination are fixed and $IDToken$ in the message is term-equivalent up to $\theta$.
-                Therefore, we have $\beta$-equivalence under $(\theta,L)$ for the new events. 
-              \item[expectLoginResult:] This case is the same as the second branch of $\str{expectReqToken}$.
-              \item[expectToken:] This case is the same as the third branch of $\str{expectReqToken}$.
-              \end{description}
-            \end{enumerate}
-          \item[2 (navigate to URL):] In this case, a new window is opened in the browser and a document is loaded from $\mi{url}$.
-            The states of both browsers are changed in the same way, where a new (at this point empty) window is created and appended the $\str{windows}$ subterm of the browsers. 
-            This subterm is therefore changed in exactly the same way.
+              Since there aren't any new states stored, we can have $\gamma$-equivalence under $\theta$ for the new states.
+              The output events's destination are fixed and $IDToken$ in the message is term-equivalent up to $\theta$.
+              Therefore, we have $\beta$-equivalence under $(\theta,L)$ for the new events. 
+            \item[expectLoginResult:] This case is as same as the second branch in $\str{expectReqToken}$.
+            \item[expectToken:] This case is as same as the third branch in $\str{expectReqToken}$.
+            \end{description}
+          \end{enumerate}
+        \item[2 (navigate to URL):] In this case, a new window is opened in the browser and a document is loaded from $\mi{url}$.
+          The states of both browsers are changed in the same way, where a new (at this point empty) window is created and appended the $\str{windows}$ subterm of the browsers. 
+          This subterm is therefore changed in exactly the same way.
             
-            A new HTTP request is created and the request cannot contain any $l \in L$. 
-            The Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} holds true.
+          A new HTTP request is created and the request cannot contain any $l \in L$. 
+          The Condition~\ref{eqe:rp:pre:l} of Definition~\ref{def:rp:Events} holds true.
             
-            In both processing steps, three nonces are chosen. 
-            Therefore, we have $\alpha$-equivalence for $(S_1',E_1',N_1')$ and $(S_2',E_2',N_2')$.
+          In both processing steps, three nonces are chosen. 
+          Therefore, we have $\alpha$-equivalence for $(S_1',E_1',N_1')$ and $(S_2',E_2',N_2')$.
 
-          \item[3 (reload document):]
-            Here, an existing document is retrieved from its original location again. 
-            From the definition of $\gamma$-equivalence under $\theta$ we can see that
-            whatever document is reloaded, its location is term-equivalent under $\theta$.
+        \item[3 (reload document):]
+          Here, an existing document is retrieved from its original location again. 
+          From the definition of $\gamma$-equivalence under $\theta$ we can see that
+          whatever document is reloaded, its location is term-equivalent under $\theta$.
       
-            We note that the requests are constructed from
-            the location and referrer properties of the document that is to
-            be reloaded, and therefore, cannot contain any $u_x, u_y, r_1, r_2$.
+          We note that the requests are constructed from
+          the location and referrer properties of the document that is to
+          be reloaded, and therefore, cannot contain any $u_x, u_y, r_1, r_2$.
       
-            We also note that if the document is reloaded, the same 
-            request is issued in both browsers (therefore,
-            $\beta$-equivalence under $(\theta, L)$ is given), and 
-            none states are changed such that we have
-            $\gamma$-equivalence under $\theta$. The same number of
-            nonces is chosen in both runs, and we have $\alpha$-equivalence.
+          We also note that if the document is reloaded, the same 
+          request is issued in both browsers (therefore,
+          $\beta$-equivalence under $(\theta, L)$ is given), and 
+          none states are changed such that we have
+          $\gamma$-equivalence under $\theta$. The same number of
+          nonces is chosen in both runs, and we have $\alpha$-equivalence.
         \end{description}
       \item[Other] Any other message is discarded by the browsers without any change to state or output events.
     \end{description}
   
     \paragraph{\underline{Case $p_1$ is some attacker:}}
     
-    Here, Case~\ref{eqe:rp:distinction} from 
-    Definition~\ref{def:rp:Events} applys to the input events,
-    i.e., the input events are term-equivalent under proto-tags
-    $\theta$. This implies that the message was delivered to the 
-    same attacker process in both processing steps. Let $A$ be 
-    that attacker process. With Case~\ref{eqs:rp:att} of 
-    Definition~\ref{def:rp:eq-of-states} we have that 
-    $S_1(A) \prototagequiv\theta S_2(A)$ and with 
-    Case~\ref{eqs:att-not-t} of Definition~\ref{def:rp:Events},  
-    it follows immediately that the attacker cannot decrypt any 
-    of the accts in $\theta$ in its knowledge. Further, in the 
-    attackers state there are no variables (from $V_\text{process}$). 
-  
+    Here, when we talk about attackers, 
+    we mean two colluding relying parties.
+    They act as web attackers and try to bind browser's identities 
+    based on what they get during the login process, 
+    especially the $IDToken$.
+    
+    We can note that Case~\ref{eqe:rp:distinction} from Definition~\ref{def:rp:Events} applys to the input events,
+    i.e., the input events are term-equivalent under proto-accts $\theta$. 
+    This implies that the message was delivered to the 
+    same attacker process in both processing steps. 
+    Let $A$ be that attacker process. 
+    With Case~\ref{eqs:rp:att} of Definition~\ref{def:rp:eq-of-states}, 
+    we have that $S_1(A) \prototagequiv\theta S_2(A)$. 
+    With Case~\ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} and Case~\ref{eqs:rp:att-unknown} of Definition~\ref{def:rp:eq-of-states}, 
+    we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain $u_x, u_y, r_1, r_2$, 
+    nor do the events $e_i^{(1)}$ and $e_i^{(2)}$.
+    Further with lemma~\ref{thm-rp-untraceability}, it follows immediately that the attacker cannot distinguish any of the accts in $\theta$ in its knowledge.
+    Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
+
+    Obviously, we can have that in the attackers state, 
+    there are no variables (from $V_\text{process}$). 
     With the output term being a fixed term (with variables)
     $\tau_{\text{process}} \in \terms(\{x\} \cup V_\text{process})$ 
-    and $x$ being $S_1(A)$ or $S_2(A)$, respectively. 
+    and $x$ being $S_1(A)$ or $S_2(A)$, respectively.
+    and there is no subterm $l\in L$ contained in  
+    $e_i^{(1)}$ or $e_i^{(2)}$ (Condition~\ref{eqe:rp:pre:l} of 
+    Definition~\ref{def:rp:Events}), 
     it is easy to see that the output events are 
     $\beta$-equivalent under $\theta$, i.e., 
-    $E ^{(1)}_\text{out} \prototagequiv\theta E^{(2)}_\text{out}$, there
-    are the used nonces are the same, i.e., $N_1' = N_2'$. 
+    $E ^{(1)}_\text{out} \prototagequiv\theta E^{(2)}_\text{out}$. 
     The new state of the attacker in both processing steps 
     consists of the input events, the output events, and the 
     former state of the event, and, as such, is 
-    $\beta$-equivalent under proto-accts $\theta$. 
+    either $\beta$-equivalent or $\gamma$-equivalent 
+    under proto-accts $\theta$. 
+    Hence, the new states are $\gamma$-equivalent under $\theta$
+    The used nonces are the same, i.e., $N_1' = N_2'$. 
     Therefore we have $\alpha$-equivalence on the new configurations.
   \end{proof}
+
+  \begin{lemma}\label{thm-rp-untraceability}
+    Given two points on the elliptic curve denoted by $[u_xr_1]G$ and $[u_yr_2]G$, 
+    an adversary cannot tell whether $u_x\equiv u_y$, where $u_x, u_y, r_1, r_2$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
+  \end{lemma}
+  \begin{proof}
+    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+    Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
+    $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+    Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
+  \end{proof}
+
+  Now we have shown that the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.
+  However, it is not enough to prove Theorem~\ref{theorem:rp-privacy}.
+  We only have two relying-parties in out models $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$, 
+  so we need to further prove that it is still RP-private in the scenario of three or more RPs.
   
-  This proves Theorem~\ref{theorem:rp-privacy}.\QED
+  What's more, It is necessary to broaden the knowledge available to the attackers. 
+  We introduce some malicious users in our model which act as web attackers. 
+  These users login in the RPs and give their identities to the RPs.
+  Therefore, colluding RPs can bind these users' login instances. 
+  So what we need to prove is that even if colluding RPs and users share $PID_U$s and other information observed in all the logins, they still cannot link any login from an honest user to any other logins from any other honest users to these RPs.
+
+  \newc
+  It should be pointed out that we omit the model analysis here after we add extra parties into the privacy model $\mathcal{U\!W\!S}^{priv}$ because the proof doesn't change too much.
+  What really changes is that Lemma~\ref{lemma:statically-equivalent} doesn't seem obvious anymore.
+  i.e., We cannot easily see that the views of RPs are statically-equivalent without RPs' knowing any keys for the accts contained in its view.
+  However, the proof is out of formal analysis's scope, so we use provable security here.
+  \oldc
+
+  With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa. Therefore, we denote the information that an RP learns from a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
+
+  When $c$ malicious RPs collude with each other, they create a shared view of all their logins, denoted as $\mathbb{L}$.
+  %some of which are initiated by honest users and denoted as $\mathbb{L}^h$, and the others by $v$ malicious users  are $\mathbb{L}^m = \mathbb{L} \setminus \mathbb{L}^h$.
+  When they collude further with $v$ malicious users, the logins initiated by these malicious users are picked out and linked together as
+  $\mathfrak{L}^m=\left \{ \begin{matrix}
+  L^m_{1,1},&L^m_{1,2},&\cdots,&L^m_{1,c}\\
+  L^m_{2,1},& L^m_{2,2},&\cdots,&L^m_{2,c}\\
+  \cdots,&\cdots,&L^m_{i,j},&\cdots\\
+  L^m_{v,1},&L^m_{v,2},&\cdots,&L^m_{v,c}
+  \end{matrix}\right\}$,
+  where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G)$ for $1 \le i \le v$ and $1 \le j \le c$, and $L^m_{i,j} \in \mathbb{L}$. Any login in $\mathbb{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to one of the $c$ malicious RPs.
+
+
+  \begin{theorem}
+  \emph{In \usso, given $\mathbb{L}$ and $\mathfrak{L}^m$, $c$ malicious RPs and $v$ malicious users cannot link any login from an honest user to a malicious RP to any subset of logins from honest users to any other malicious RPs.}
+  \end{theorem}
+
+
+  \begin{proof} 
+  From the logins in $\mathbb{L}$,
+  we randomly choose one login $L' \neq L^m_{i,j}$,
+  which is from an (unknown) honest user with $ID_{U'}=u'$ to a malicious $RP_a$ and $a \in [1,c]$.
+  Then, we randomly choose another malicious $RP_b$, where $b \in [1,c]$ and $b \neq a$.
+  Consider any subset $\mathbb{L}''$ of $w$ logins visiting $RP_b$ by unknown honest users,
+  we denote the identities of the honest users who initiate these logins as $\mathbf{u}_w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
+  Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}_w$ or randomly selected from the universal user set.
+  This indicates the colluding adversaries cannot link $L'$ to another login visiting $RP_b$
+  or to another subset of logins visiting $RP_b$.
+
+  We first define an RP-based linkage game $\mathcal{G}_r$ between an adversary and a challenger, which describes this login linkage privacy threat: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger and outputs $s$, where $s = 1$ if it decides $u'$ is in $\mathbf{u}_w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$
+  and $s=0$ if it believes $u'$ is randomly chosen from the universal user set.
+  Thus, the adversary succeeds in $\mathcal{G}_r$ with an advantage $\mathbf{Adv}$:
+  \begin{align*}
+  %&{\rm Pr}_1={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \{{u''_1}, {u''_2}, \cdots, {u''_w}\})=1\} \\
+  &{\rm Pr}_1={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \;| \; u' \in \mathbf{u}_w)  \\
+  %&{\rm Pr}_2={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \mathbb{Z}_n)=1\}\\
+  &{\rm Pr}_2={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbb{Z}_n)\\
+  &{\mathbf{Adv}}=|{\rm Pr}_1-{\rm Pr}_2|
+  \end{align*}
+
+  As depicted in Figure \ref{fig:dalgorithm}, we design a PPT algorithm $\mathcal{D}^*_r$ based on $\mathcal{G}_r$ to solve the elliptic curve decisional Diffie-Hellman (ECDDH) problem: given $(G, [x]G$, $[y]G$, $[z]G)$, decide whether $z$ is equal to $xy$ or randomly chosen in $\mathbb{Z}_n$, where $G$ is a point on an elliptic curve $\mathbb{E}$ of order $n$, and $x$ and $y$ are integers randomly and independently chosen in $\mathbb{Z}_n$.
+
+  \begin{figure}[tb]
+    \centering
+    \includegraphics[width=1.0\linewidth]{fig/rp-linkage-game.pdf}
+    \caption{The PPT algorithm $\mathcal{D}^*_r$ constructed based on the RP-based linkage game to solve the ECDDH problem.}
+    \label{fig:dalgorithm}
+  \end{figure}
+
+
+  The algorithm $\mathcal{D}^*_r$ works as below. (1) Upon receiving an input $(G, Q_1=[x]G, Q_2=[y]G, Q_3=[z]G)$, %of $\mathcal{D}^*_r$
+  the challenger
+  chooses random numbers in $\mathbb{Z}_n$ to construct $\{u_i\}$, $\{r_j\}$, and $\{t_{i, j}\}$ for $1 \le i \le v$ and $1 \le j \le c$, with which it assembles $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G)$.
+  In this process, it ensures $[r_{j}]G \neq Q_2$ so that $r_j \neq y$.  % 这个应该反过来讲；因为y是离散对数。
+  (2) It randomly chooses $a \in [1, c]$ and $t' \in \mathbb{Z}_n$, to assemble $L' = ([r_{a}]G, t', [r_{a}]Q_1) = ([r_{a}]G, t', [xr_{a}]G)$.
+  (3)
+  % Here, $L'$ represents the knowledge of the login visiting $RP_{j'}$ by a user with $ID_U = x$.
+  Next, the challenger randomly chooses $b \in [1, c]$ and $b \neq a$, and replaces $ID_{RP_b}$ with $Q_2 = [y]G$.
+  Hence, for $1 \le i \le v$, the challenger replaces $L^m_{i, b}=([r_b]G, t_{i,b}, [u_ir_b]G)$ with $(Q_2, t_{i,b}, [u_i]Q_2) = ([y]G, t_{i,b}, [u_iy]G)$, and then constructs $\mathfrak{L}^m$.
+  (4) the challenger chooses random numbers in $\mathbb{Z}_n$ to construct $\{u''_k\}$ and $\{t''_k\}$ for $1 \leq k \leq w$,
+  with which it assembles $\mathbb{L}'' = \{L''_{k; 1\leq k \leq w}\} = \{(Q_2, t''_k, [u''_k]Q_2)\} = \{([y]G, t''_k, [u''_ky]G)\}$.
+  In this process, it ensures that $[u''_k]G \neq Q_1$ (i.e., $u''_k \neq x$) and $u''_k \neq u_i$,
+  for $1 \le i \le v$ and $1 \le k \le w$.
+  Finally, it randomly chooses $d \in [1, w]$ and replaces $L''_{d}$ with $(Q_2, t''_d, Q_3) = ([y]G, t''_d, [z]G)$.
+  Thus, $\mathbb{L}'' = \{L''_{k;1\leq k \leq w}\}$ represents the logins initiated by $w$ honest users, i.e., $\mathbf{u}_w=\{u''_1, u''_2, \cdots, u''_{d-1}, z/y, u''_{d+1}, \cdots, u''_w\}$.
+  (5) When the adversary of $\mathcal{G}_r$ receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger, it returns $s$ as the output of $\mathcal{D}^*_r$.
+
+  According to the above construction, % of $\mathfrak{L}$, $L'$ and $\mathbb{L}''$,
+  $x$ is embedded as $ID_{U'}$ in the login $L'$ visiting the RP with $ID_{RP_{a}} = [r_{a}]G$,
+  and $z/y$ is embedded as $ID_{U''_d}$ in $\mathbb{L}''$ visiting the RP with $ID_{RP_{b}}=[y]G$,
+  together with $\{u''_1, \cdots, u''_{d-1}, u''_{d+1}, \cdots, u''_w\}$.
+  Meanwhile, $[r_{a}]G$ and $[y]G$ are two malicious RPs' identities in $\mathfrak{L}^m$.
+  Because $x \neq u''_{k; 1\leq k \leq w, k \neq d}$ and then $x$ is not in $\{u''_1, \cdots, u''_{d-1}, u''_{d+1}, \cdots, u''_w\}$, the adversary outputs $s=1$ and succeeds in the game \emph{only if} $x = z/y$.
+  % 这里不是if and only if. "if, 就变成了the adversary必胜了；并不是，而是“有显著的概率”"
+  % 当“the adversary outputs s=1 且 succeeds in the game”，=> "x = z/y"
+  % 但是，"x = z/y"  => 不能推导得到“the adversary outputs s=1 且 succeeds in the game”。因为adversary有时候fail、不总是succeed
+  Therefore, using $\mathcal{D}^*_r$ to solve the ECDDH problem, we have an advantage $\mathbf{Adv}^*=|{\rm Pr}^*_1 - {\rm Pr}^*_2|$, where
+  \begin{align*}
+  &{\rm Pr}^*_1 =  {\rm Pr}(\mathcal{D}^*_r(G, [x]G, [y]G, [xy]G)=1) \\
+  =&{\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbf{u}_w) = {\rm Pr}_1 \\
+  &{\rm Pr}^*_2= {\rm Pr}(\mathcal{D}^*_r(G, [x]G, [y]G, [z]G)=1) \\
+  =&{\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbb{Z}_n) = {\rm Pr}_2 \\
+  &\mathbf{Adv}^*=|{\rm Pr}^*_1-{\rm Pr}^*_2|=|{\rm Pr}_1-{\rm Pr}_2|={\mathbf{Adv}}
+  \end{align*}
+
+  If in $\mathcal{G}_r$ the adversary has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption. Therefore, the adversary has no advantage in $\mathcal{G}_r$ and cannot decide whether $L'$ is initiated by some user with an identity in $\mathbf{u}_w$ or by a user in the universal user set.
+  Moreover, because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
+  \end{proof}
   
-  \end{document}
+  These prove Theorem~\ref{theorem:rp-privacy}.\QED
+  
+\end{document}
   
