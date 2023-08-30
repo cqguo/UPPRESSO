@@ -875,9 +875,20 @@ The set $E^0$ contains only the trigger events.
   
   In the following definition, when we say a browser 
   $b\in \fAP{B}$ owns an $Acct$, we holds that for some relying 
-  party $rp\in \fAP{RP}$ that calculate it and 
+  party $rp\in \fAP{RP}$ that calculate the $Acct$ and 
   a $\mi{username} \in \mathbb{S}$ with $\mapIDtoOwner(username) = b$.
-  \[\mi{Acct}=[\NToID(username)]ID_r=[ur]G\]
+  \[\mi{Acct}=[\NToID(username)]ID_{rp}=[ID_u]ID_{rp}=[ur]G\]
+
+  \newc
+  Here we can treat $Acct$ a \emph{permanent} identifier 
+  determined by $ID_u$ and $ID_{rp}$. 
+  $ID_{rp} = [r]G$ is a generator on $\mathbb{E}$ of order $n$, 
+  as $\mathbb{E}$ is a finite cyclic group. 
+  Therefore, given a user with $ID_u$ owned by browser $b$, $Acct$ is a \emph{unique} point on 
+  $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} 
+  associated with $ID_u=u$.
+  That's why we can say a browser $b$ owns an $Acct$.
+  \oldc
   
   We now define the similar security properties as the definition 52 in SPRESSO. 
   
@@ -984,13 +995,13 @@ The set $E^0$ contains only the trigger events.
   
     \item \label{lemma:item:form}The service token request for $Acct$, $m$ in (2), is an HTTPS message of the following form:
       \[ \mathsf{enc}_\mathsf{a}(\langle \hreq{ 
-        nonce=n_\text{req}, 
-        method=\mPost,
-        xhost=d_r, 
-        path=\str{/authorize}, 
-        parameters=x, 
-        headers=h,
-        xbody=b}, k\rangle, \pub(\mapTLSKey(d_r))) \]
+            nonce=n_\text{req}, 
+            method=\mPost,
+            xhost=d_r,
+            path=\str{/authorize}, 
+            parameters=x, 
+            headers=h,
+            xbody=b}, k\rangle, \pub(\mapTLSKey(d_r))) \]  
       for $d_r \in \mapDomain(r)$, some terms $x$, $h$, $n_\text{req}$, and a dictionary $b$ such that 
       \[ b[\str{IDToken}] \equiv \myangle{\mi{PID_{rp}, \mi{PID_u}, ver}} \]
       with 
@@ -1023,10 +1034,10 @@ The set $E^0$ contains only the trigger events.
     (with respect to Property A)} if for every run $\rho$ of 
     $\uppressoauthwebsystem$, every state $(S^j, E^j, N^j)$ in 
     $\rho$, every $r\in \fAP{RP}$ that is honest in $S^j$, 
-    every RP service token of the form $\myangle{nonce, Acct}$ 
+    every RP service token of the form $\myangle{n, Acct}$ 
     recorded in $S^j(r).\str{serviceTokens}$ and derivable 
     from the attackers knowledge in $S^j$ (i.e., 
-    $\myangle{nonce, Acct} \in 
+    $\myangle{n, Acct} \in 
     d_{\emptyset}(S^j(\fAP{attacker}))$), it follows that the 
     browser $b$ owning $Acct$ is fully corrupted in $S^j$ 
     (i.e., the value of $\mi{isCorrupted}$ is $\fullcorrupt$). 
@@ -1046,9 +1057,9 @@ The set $E^0$ contains only the trigger events.
   system $\uppressoauthwebsystem$, a run $\rho$ of 
   $\uppressoauthwebsystem$, a state $s_j = (S^j, E^j, N^j)$ 
   in $\rho$, a RP $r\in \fAP{RP}$ that is honest in $S^j$, 
-  an RP service token of the form $\myangle{nonce, Acct}$
+  an RP service token of the form $\myangle{n, Acct}$
   recorded in $S^j(r).\str{serviceTokens}$ and derivable from 
-  the attackers knowledge in $S^j$ (i.e., $Acct \in
+  the attackers knowledge in $S^j$ (i.e., $\myangle{n, Acct} \in
   d_{\emptyset}(S^j(\fAP{attacker}))$), and the browser $b$ 
   owning $Acct$ is not fully corrupted (in $S^j$).}
   
@@ -1150,14 +1161,16 @@ The set $E^0$ contains only the trigger events.
   %It can be proved that only the IdP's script $script\_idp$ owns the password of $ID_U$ can request the $IDToken$ from $I$.
   \end{proof}
 
-  We now know that only the $\mi{script\_idp}$ loaded from the IdP 
-  in an honest browser can issue a request for the IDToken. 
+  \newc
+  We now know that only the $\mi{script\_idp}$ in an honest browser 
+  loaded from the IdP can issue a request for the IDToken. 
   That is to say, the attacker cannot request for the correct IDToken 
   by himself. Therefore, next we are going to discuss whether the attacker
   can steal the IDToken stored in honest parties.
 
   Obviously, the attacker is unable to get the IDToken from IdP because IdP 
   is always honest and never leak it.
+  \oldc
   
   \begin{lemma} \label{lemma:idp-to-script-idp} %(Same as Lemma 6 in SPRESSO)
     In the browser $b$, the script $\mi{script\_idp}$ receives 
@@ -1220,20 +1233,22 @@ The set $E^0$ contains only the trigger events.
   %The proof follows the proof of Lemma 9 in SPRESSO.
   \end{proof}
   
+  \newc
   The proofs show that the IDToken is only sent to the honest 
   browser and target RP. It cannot be known to the attacker or 
   any corrupted party, as none of the listed parties leak it to 
   any corrupted party or the attacker.
+  \oldc
   
   These proofs are enough for SPRESSO system to show its 
   security, however, they are not enough for UPPRESSO. So far, 
   the proofs only guarantee that the $IDToken$ is never leaked 
   to the attacker. Obviously, the $tag$ in SPRESSO can be only 
   decrypted to a unique domain of RP. However, in UPPRESSO, this 
-  statement is not easy to see, an attacker may use a wrong 
-  $IDToken$ to retrieve the service token from an honest RP.
-  (i.e., the attacker can use an IDToken from a corrupted RP)
-  When attacker receives the $IDToken$, he may try find the $t^{adversary}$ 
+  statement is not easy to see, an attacker may misuse a wrong 
+  $IDToken$ to retrieve the service token from an honest RP, 
+  i.e., the attacker can use an IDToken from a corrupted RP. 
+  He may try find the $t^{adversary}$ 
   satisfied $IDToken.PID_{RP} \equiv [t^{adversary}]ID_{RP}^{honest}$.
   Therefore, the following Lemmas should be proved.
 
@@ -1363,39 +1378,53 @@ The set $E^0$ contains only the trigger events.
     holding that $\mi{PID_{rp}}=[t]\mi{ID_{rp}}$.
     Originally, $t$ is chosen by $\mi{script\_idp}$ at Line~\ref{line:gen-t}, Algorithm~\ref{alg:uppresso-script-idp} 
     and transmit to RP through $\mi{script\_rp}$.
+    \newc
     Similar to lemma~\ref{lemma:script-idp-to-script-rp} and lemma~\ref{lemma:script-rp-to-rp}, 
     we can prove that RP can only receive the $t$ from $\mi{script\_idp}$, so the $t$ in both parties is equal.
+    \oldc
 
     The $\mi{script\_idp}$ also receives a cert signed by the IdP from the honest RP and verify the cert at Line~\ref{alg:script-idp-verify-cert}, Algorithm~\ref{alg:uppresso-script-rp}.
     After that, $\mi{script\_idp}$ calculates $\mi{PID_{rp}}$ using $t$ and $\mi{ID_{rp}}$ from the cert.
+    \newc
     Since $t$ in both parties is equal and $\mi{ID_{rp}}$ is guaranteed by the cert's signature, 
     we can have that the $\mi{PID_{rp}}$ in $\mi{script\_idp}$ and RP is equal.
+    \oldc
 
     Then $\mi{script\_idp}$ sends a request to IdP bringing $\mi{PID_{rp}}$ for the IDToken 
     at Line~\ref{line:send-pidrp} in Algorithm~\ref{alg:uppresso-script-idp}.
     IdP adds the $\mi{PID_{rp}}$ from $\mi{script\_idp}$ into the IDToken.
+    \newc
     Therefore, we can see that 
     $\mi{IDToken}.\mi{PID_{rp}}=[t]\mi{ID_{rp}}$ meaning that it is the same as in RP.
+    \oldc
 
     The IDToken is issued at Line~\ref{line:sign-token} in Algorithm~\ref{alg:idp}.
     The IdP generates the $PID_u$ based on the $PID_{rp}$ and $ID_u$.
+    \newc
     According to lemma~\ref{lemma:b-trigger-request}, 
     the identities IdP accept and store is from the honest browser, 
-    and the honest browser can only provide its own usernames and passwords.
-    What's more, only $\mi{script\_idp}$ has the access to these accounts 
+    and the honest browser can only provide its own usernames and passwords 
+    because only $\mi{script\_idp}$ has the access to these accounts 
     according to lemma~\ref{lemma:script-idp-trigger-request}.
     Therefore, attacker cannot alter the username and password sent to IdP.
-    
     Since the username and password are owned by the honest browser and 
     $ID_u$ is mapped to the account at Line~\ref{line:get-idu} in Algorithm~\ref{alg:idp}. 
     Now we can see that the $ID_u$ used to generate IDToken must be owned by the browser 
     and $\mi{IDToken}.\mi{PID_{u}}=[\mi{ID_u}]\mi{PID_{rp}}$.
+    
 
-    In summary, for every IDToken sent by honest $b$ and IdP, there must be 
-    $\mi{IDToken}.\mi{PID_{rp}} \equiv [t]\mi{ID_{rp}} \equiv \mi{PID_{rp}}$ and 
-    $\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
-    According to lemma~\ref{user-identification}, 
-    the $Acct \equiv [t^{-1}]IDToken.PID_u$ must be owned by honest $b$.
+    %In summary, for every IDToken sent by honest $b$ and IdP, there must be 
+    %$\mi{IDToken}.\mi{PID_{rp}} \equiv [t]\mi{ID_{rp}} \equiv \mi{PID_{rp}}$ and 
+    %$\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
+    %According to lemma~\ref{user-identification}, 
+    Therefore, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
+    \oldc
+    \begin{equation}\label{equ:calc-acct}
+      \begin{split}
+      Acct=[t^{-1}]PID_u=[t^{-1}][ID_u]PID_{rp}=\\
+      [t^{-1}utr]G =[ur]G=[ID_U]ID_{RP}
+      \end{split}
+    \end{equation}
   \end{proof}
 
   \begin{lemma}\label{user-identification}
@@ -1420,14 +1449,12 @@ The set $E^0$ contains only the trigger events.
     associated with $ID_u=u$. 
     %We first prove that $PID_{U}$ \emph{uniquely} identifies one account at the designated RP and one user in the system. 
     
-    \begin{equation}
+    \begin{equation}\label{equ:PIDU}
       PID_{U} = [{ID_U}]{PID_{RP}} = [utr]G
-       \label{equ:PIDU}
     \end{equation}
   
-    \begin{equation}
+    \begin{equation}\label{equ:AccountNotChanged}
       Acct =  [t^{-1}utr \bmod n]G = [ur]G = [ID_U]ID_{RP}
-      \label{equ:AccountNotChanged}
     \end{equation}
   
     This proves that $PID_u$ in IDToken identifies an account 
