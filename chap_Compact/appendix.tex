@@ -1843,6 +1843,7 @@ The set $E^0$ contains only the trigger events.
           body $g_2 := m_2.\str{body}$ which have to be
           $g_1 \prototagequiv{\theta} g_2$ and $m_1.\str{nonce} \in H$.
         \end{enumerate}
+      %可能破坏PID_rp不可区分性的参数需要单独列出
       \item\label{eqe:pre:l} If there exists $l \in L$ such that $l$ is a
         subterm of $e_i^{(1)}$ or $e_i^{(2)}$ then we have that
         $e_i^{(1)}$ is a message from $b_1$ to $r_1$ and $e_i^{(2)}$ is a
@@ -1903,9 +1904,23 @@ The set $E^0$ contains only the trigger events.
     $t \not\in d_\emptyset(\bigcup_{i \in \{1,2\},\ A\, \in\, 
     \mathsf{Web}\, \cup \, \mathsf{Net}\, \}}S_i(A))$
     (i.e., the attacker does not know any keys for the tags 
-    contained in its view), and therefore it is easy to see 
+    contained in its view), and with Lemma~\ref{thm-idp-untraceability-new} it is easy to see 
     that the views are statically equivalent.
   \end{proof}
+
+  \newc
+  \begin{lemma}\label{thm-idp-untraceability-new}
+    Given a point on the elliptic curve denoted by $[r]G$, 
+    an adversary cannot distinguish $[tr]G$ from a random variable on $\mathbb{E}$, 
+    where $t$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
+  \end{lemma}
+  \begin{proof}
+    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+    Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
+    $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+    Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
+  \end{proof}
+  \oldc
   
   We now show that $\sigma(\uppressoprivwebsystem_1) \approx
   \sigma(\uppressoprivwebsystem_2)$ by induction over the length 
@@ -2011,7 +2026,7 @@ The set $E^0$ contains only the trigger events.
         $S_2\prime$ are $\gamma$-equivalent under $(\theta,H)$. 
         No new nonces are chosen, hence $N_1\prime=N_1=N_2=N_2\prime$.
       \item path=$\str{/loginSSO}$ 
-        In this case, the reason for equivalence holding is 
+        In this case, the reason for holding equivalence is 
         similar to the case above since the same output event 
         is produced.
       \item path=$\str{/startNegotiation}$ 
@@ -2193,7 +2208,252 @@ The set $E^0$ contains only the trigger events.
   
     \begin{description}
       %\item[DNS response]
-      %\item[HTTP response]
+      \newc
+      \item[HTTP response] In this case, it is clear that
+        the HTTP(s) response nonce is the same in both
+        messages $m_1$ and $m_2$. 
+        We can now distinguish between two cases: 
+        In both browsers, \ref{browser-http-response-normal}
+        the $\mi{reference}$ that is stored along with the HTTP 
+        nonce is a window reference (in this case, the request 
+        was a ``normal'' HTTP(S) request), 
+        or \ref{browser-http-response-xhr} this reference is a 
+        pairing of a document nonce and an XHR reference chosen 
+        by the script that sent the request, which is an XHR.
+        
+        \begin{enumerate}[I.]
+        \item\label{browser-http-response-normal} 
+          In Case~(I), we can distinguish between the following two cases:
+          \begin{enumerate}
+            \item The HTTP nonce in $m_1$ is in $H$: 
+              In this case, only Case~\ref{eqe:http-res} of Definition~\ref{def:Events} can apply. 
+              We therefore have that the expected sender in $e_i^{(1)}$ is $r_1$ and in $e_i^{(2)}$ is $r_2$. 
+              We also have that there is no Location, Set-Cookie or Strict-Transport-Security header in the response, 
+              and the responses $m_1$ and $m_2$ are both $\str{script\_rp}$ as Case~\ref{eqe:pre:rp-scripts} of Definition~\ref{def:Events} holds.
+      
+              With this, we observe that both browsers either accept and
+              successfully decrypt the messages and call the function
+              $\mathsf{PROCESSRESPONSE}$, or both browsers stop with not
+              state change and no output event (in which case the
+              $\alpha$-equivalence is given trivially). In particular we
+              note that the expected sender in both cases matches precisely
+              the sender the message has (compare Case~\ref{eqe:http-res} of
+              Definition~\ref{def:Events}).
+      
+              In $\mathsf{PROCESSRESPONSE}$, we see that no changes in the
+              browsers' cookies are performed (as no cookies are in the
+              response), the $\str{sts}$ subterm is not changed, and no
+              redirection is performed (as no Location header is present).
+      
+              Now, new documents are created in each browser. These have the
+              form
+              \[ \an{\nu_7, \mi{location}, \mi{referrer}, \mi{script},
+                \mi{scriptstate}, \an{}, \an{}, \True} \] with
+              \[ \mi{location} = \an{\cUrl, \mi{protocol}, \mi{host},
+                \mi{path}, \mi{parameters}}\ .\]
+      
+            
+              Here, $\mi{script}$, $\mi{scriptstate}$ are the same and
+              $\mi{protocol}$, $\mi{path}$, $\mi{parameters}$ are taken from
+              the requests, which means that these subterms are equal or
+              term-equivalent up to proto-tags $\theta$. 
+              The host and the referrer are the same in both states up to exchange of domains, 
+              which can be $\mi{dr}_1$ in $b_1$ and $\mi{dr}_2$ in $b_2$.
+      
+              The browser now attaches these newly created documents to its
+              window tree, and we have to check that the
+              Condition~\ref{eqs:b:w} of Definition~\ref{def:eq-of-states}
+              is satisfied.
+      
+              As we have that both incoming messages were encrypted messages
+              (see Case~\ref{eqe:pre:unencrypted-http} of
+              Definition~\ref{def:Events}) and both messages come from
+              $r_1$ and $r_2$, respectively, and therefore $\mi{script}$ is
+              either $\str{script\_rp}$ (see
+              Case~\ref{eqe:pre:rp-scripts} of
+              Definition~\ref{def:Events}) we have to check
+              Conditions~\ref{eqs:b:w:script_rp} of
+              Definition~\ref{def:Events} in particular.
+      
+              The scriptstate is initially equal and the script inputs are empty. The document's
+              referer is constructed from the referer header of the request,
+              which is equal in both cases or has the host $\mi{dr}_1$ in
+              $b_1$ and $\mi{dr}_2$ in $b_2$.
+      
+              To sum up, $\gamma$-equivalence under $(\theta, H)$ is
+              preserved. $\alpha$-equivalence is preserved as no output
+              event is generated and the exact same number of nonces are
+              chosen.
+      
+            
+            \item The HTTP nonce in $m_1$ is not in $H$: In this case we
+              have that $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$
+              (Case~\ref{eqe:prototagequiv} of
+              Definition~\ref{def:Events}), and that the HTTP nonces,
+              senders, encryption keys (if any) and original requests in the
+              pending requests of both browsers are either equal or
+              equivalent up to proto-tags $\theta$. There can be no
+              $t \in T$ as a subterm (except in tags) of the input.
+      
+              With this, we observe that both browsers either accept and
+              successfully decrypt the messages and call the function
+              $\mathsf{PROCESSRESPONSE}$, or both browsers stop with no
+              state change and no output event (in which case the
+              $\alpha$-equivalence is given trivially). In particular we
+              note that the expected sender in both cases matches precisely
+              the sender of the message (as it is equal).
+      
+              If there is a Set-Cookie header in one of the responses, a new
+              entry in the cookies of each browsers is created (which
+              obviously is term-equivalent up to $\theta$, and therefore is
+              in compliance with the requirements for $\gamma$-equivalence).
+              The same holds true for any Strict-Transport-Security headers.
+      
+              Now, if there is a Location header in $m_1$ (and therefore
+              also in $m_2$), a new request is generated and a HTTP(S) request is sent out. 
+              The new HTTP(S) request contains the method, body, and Origin
+              header of the original request (which were equivalent up to
+              proto-tags $\theta$), where the Origin header is amended by
+              the host and protocol of the original request.
+      
+              Also, we know from
+              $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$ that neither
+              event may contain a subterm $l\in L$ or $t \in T$. Hence, the
+              transferred (initial) scriptstate (or a request generated by a
+              Location header, see below) cannot contain a subterm $l \in L$
+              or $t \in T$.
+      
+              Now, assuming that the domain in the Location header was not
+              $\str{CHALLENGE}$, then the new request is term-equivalent
+              under $\theta$ between both browsers. A new HTTP(S) request is
+              generated (which conforms to Condition~\ref{eqe:prototagequiv}
+              of Definition~\ref{def:Events}). It is clear that in this case, the conditions for
+              $\gamma$-equivalence under $(\theta, H)$ are satisfied. 
+              The same number of nonces is chosen. Altogether, $\alpha$-equivalence is given.
+      
+              If, however, the domain is $\str{CHALLENGE}$ (and the browser
+              has not started a request to $\str{CHALLENGE}$ before; in this
+              case the browser would behave as above), then the domain is
+              $\mi{dr}_1$ in $b_1$ and $\mi{dr}_2$ in $b_2$. In particular,
+              in the resulting requests, the Host header is exchanged in
+              this way. For alpha equivalence to hold for the new
+              configuration, we have $H' = H \cup \{n\}$, where $n$ is the
+              nonce chosen for the HTTP(S) request. A new HTTP(S) request is
+              generated. Therefore, we have
+              $\gamma$-equivalence under $(\theta, H')$ and
+              $\beta$-equivalence under $(\theta, H', L)$. The same number
+              of nonces is chosen, and we indeed have $\alpha$-equivalence.
+      
+              If there is no Location header in $m_1$ (and therefore none in
+              $m_2$), a new document is constructed just as in the case when
+              the nonce in $m_1$ is in $H$.
+      
+              The scriptstate is initially equal, and the script inputs are
+              empty. The document's referer is constructed from the referer
+              header of the request, which is equal in both cases (up to
+              proto-tags in $\theta$).
+      
+              To sum up, $\gamma$-equivalence under $(\theta, H)$ is
+              preserved in this case as well. $\alpha$-equivalence is
+              preserved as no output event is generated and the exact same
+              number of nonces are chosen.
+          \end{enumerate}
+        \item\label{browser-http-response-xhr}
+          In Case~(II), i.e., the response is a response to an XHR, 
+          we have that $\mi{reference}$ is a tupel, say,
+          $\mi{reference} = \an{\mi{docnonce}, \mi{xhrref}}$, 
+          and we again distinguish between the two cases as above:
+          \begin{enumerate}
+            \item The HTTP nonce in $m_1$ is in $H$: In this case, only
+              Case~\ref{eqe:http-res} of Definition~\ref{def:Events}
+              can apply. We therefore have that there is no Location,
+              Set-Cookie or Strict-Transport-Security header in the
+              response, and that the responses $m_1$ and $m_2$ are equal up
+              to proto-tags in $\theta$.
+      
+              With this, we observe that both browsers either accept and
+              successfully decrypt the messages and call the function
+              $\mathsf{PROCESSRESPONSE}$, or both browsers stop with not
+              state change and no output event (in which case the
+              $\alpha$-equivalence is given trivially). In particular we
+              note that the expected sender in both cases matches precisely
+              the sender of the message (compare Case~\ref{eqe:http-res} of
+              Definition~\ref{def:Events}).
+      
+              In $\mathsf{PROCESSRESPONSE}$, we see that no changes in the
+              browsers' cookies are performed (as no cookies are in the
+              response), the $\str{sts}$ subterm is not changed, and no
+              redirection is performed (as no Location header is present).
+      
+              A new input is constructed for the document that is identified
+              by $\mi{docnonce}$. We note that such a document exists either
+              in both browsers or in none (in which, again, both browsers
+              stop with no output or state change). As the input events may
+              contain a subterm $l \in L$ (as we know from HTTP nonce in
+              $m_1$ being in $H$ that the host of this document is
+              $\mi{dr}_1$ in $b_1$ and $\mi{dr}_2$ in $b_2$), the
+              constructed scriptinput may also contain a subterm $l \in L$.
+      
+              For $j \in \{1,2\}$, we have that the $\str{scriptinput}$ term
+              for the document in $b_j$ is $\an{\tXMLHTTPRequest,
+                \mi{g_j}.\str{body}, \mi{xhrref}}$, where $g_j$ is the HTTP
+              body of $m_j$.  With $g_1 \prototagequiv{\theta} g_2$ and
+              $\mi{xhrref} \in \nonces \cup \{\bot\}$, it is easy to see
+              that the resulting $\str{scriptinput}$ term of the document is
+              term-equivalent under proto-tags $\theta$ (as it was before).
+              This satisfies $\gamma$-equivalence on the new browser state.
+      
+              No output event is generated, and no nonces are chosen.
+              Therefore we have $\alpha$-equivalence on the new
+              configuration.
+      
+            \item The HTTP nonce in $m_1$ is not in $H$: In this case we
+              have that $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$
+              (Case~\ref{eqe:prototagequiv} of
+              Definition~\ref{def:Events}), and that the HTTP nonces,
+              senders, encryption keys (if any) and original requests of both browsers are either equal or
+              equivalent up to proto-tags $\theta$.
+
+              With this, we observe that both browsers either accept and
+              successfully decrypt the messages and call the function
+              $\mathsf{PROCESSRESPONSE}$, or both browsers stop with not
+              state change and no output event (in which case the
+              $\alpha$-equivalence is given trivially). In particular we
+              note that the expected sender in both cases matches precisely
+              the sender the message has (as it is equal).
+      
+              If there is a Set-Cookie header in one of the responses, a new
+              entry in the cookies of each browsers is created (which
+              obviously is term-equivalent up to $\theta$, and therefore is
+              in compliance with the requirements for $\gamma$-equivalence).
+              The same holds true for any Strict-Transport-Security headers.
+      
+              Now, if there is a Location header in $m_1$ (and therefore
+              also in $m_2$), both browsers stop with not state change and
+              no output event (in which case the $\alpha$-equivalence is
+              given trivially), as XHR cannot be redirected in the browser.
+      
+              If there is no Location header in $m_1$ (and therefore none in
+              $m_2$), a new input is constructed for the document that is
+              identified by $\mi{docnonce}$. We note that such a document
+              exists either in both browsers or in none. For $j \in
+              \{1,2\}$, we have that the $\str{scriptinput}$ for the
+              document in $b_j$ is $\an{\tXMLHTTPRequest,
+                \mi{g_j}.\str{body}, \mi{xhrref}}$, where $g_j$ is the HTTP
+              body of $m_j$. With $e_i^{(1)} \prototagequiv{\theta}
+              e_i^{(2)}$ (which may not contain a subterm $l \in L$ or $t \in T$), it is
+              easy to see that the resulting $\str{scriptinput}$ term of the
+              document is term-equivalent under proto-tags $\theta$ (as it
+              was before). This satisfies $\gamma$-equivalence on the new
+              browser state.
+      
+              No output event is generated, and no nonces are chosen.
+              Therefore we have $\alpha$-equivalence on the new
+              configuration.
+          \end{enumerate}
+        \end{enumerate}
+      \oldc
+      
       \item[TRIGGER] We now distinguish between the possible 
         values for $\mi{cmd}_\text{switch}$.
         \begin{description}
@@ -2437,24 +2697,28 @@ The set $E^0$ contains only the trigger events.
   %lemma16纯数学表达
     \paragraph{\underline{Case $p_1$ is some attacker:}}
 
-    When $p_1$ is some attacker, the most important party we talk about here is IdP.
+    \newc
+    When $p_1$ is some attacker, the most noticeable party we talk about here is IdP.
     In UPPRESSO, there is a centralized identity provider so we think that IdP is always honest but curious.
     Therefore, when we analyze IdP's processing steps, 
     we assume that the output events from IdP follow our models' design.
     However, IdP may be curious and derive something in its states that destroys our privacy property, 
     so what we try to do is to prove that with the equivalent states and events, 
     two systems can only process another equivalent states and events.
-    
+    \oldc
+
     Here, only Case~\ref{eqe:prototagequiv} from Definition~\ref{def:Events} can apply to the input events,
     i.e., the input events are term-equivalent under proto-tags $\theta$. 
     This implies that the message was delivered to the same attacker process in both processing steps. 
     
+    \newc
     Let $A$ be that attacker process. 
     With Case~\ref{eqs:att} of Definition~\ref{def:eq-of-states} we have that $S_1(A) \prototagequiv\theta S_2(A)$.
     With Case~\ref{eqe:pre:t} of Definition~\ref{def:Events} and Case~\ref{eqs:att-not-t} of Definition~\ref{def:eq-of-states}, 
     we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain the nonce t, nor does the events $e_i^{(1)}$ and $e_i^{(2)}$.
-    Further with lemma~\ref{thm-idp-untraceability}, it follows immediately that the attacker cannot distinguish any of the tags in $\theta$ in its knowledge.
+    Hence with lemma~\ref{thm-idp-untraceability-new}, it follows immediately that the attacker cannot distinguish any of the tags in $\theta$ in its knowledge.
     Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
+    \oldc
 
     Obviously, there are no variables (from $V_\text{process}$) in the attackers' states.
     With the output term being a fixed term (with variables)
@@ -2471,17 +2735,17 @@ The set $E^0$ contains only the trigger events.
     Therefore we have $\alpha$-equivalence on the new configurations.
   \end{proof}
 
-  \begin{lemma}\label{thm-idp-untraceability}
-    Given a point on the elliptic curve denoted by $[r]G$, 
-    an adversary cannot distinguish $[tr]G$ from a random variable on $\mathbb{E}$, 
-    where $t$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
-  \end{lemma}
-  \begin{proof}
-    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
-    Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
-    $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
-    Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
-  \end{proof}
+  %\begin{lemma}\label{thm-idp-untraceability}
+  %  Given a point on the elliptic curve denoted by $[r]G$, 
+  %  an adversary cannot distinguish $[tr]G$ from a random variable on $\mathbb{E}$, 
+  %  where $t$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
+  %\end{lemma}
+  %\begin{proof}
+  %  Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+  %  Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
+  %  $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+  %  Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
+  %\end{proof}
   
   This proves Theorem~\ref{theorem:A}.\QED
   
