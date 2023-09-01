@@ -2209,7 +2209,7 @@ The set $E^0$ contains only the trigger events.
     \begin{description}
       %\item[DNS response]
       \newc
-      \item[HTTP response] In this case, it is clear that
+      \item[HTTP response]\label{proof:http-response} In this case, it is clear that
         the HTTP(s) response nonce is the same in both
         messages $m_1$ and $m_2$. 
         We can now distinguish between two cases: 
@@ -2772,29 +2772,35 @@ The set $E^0$ contains only the trigger events.
   %benign user对于rp是不可区分的
   %IDToken equivalence：由同一个user对两个RP分别产生的两个IDToken不可区分
   \begin{definition}[Challenge IdP]
-    Let $\mi{dr}$ some domain, $u$ some identity and $\mi{idp}(\mi{dr}, u)$ a DY process. 
+    Let $u$ some user identity and $\mi{idp}(u)$ a DY process. 
     We call it a \emph{challenge IdP} iff $\mi{idp}$ is defined exactly the same as a identity server with two exceptions: 
     (1) the state contains one more property, namely $\mi{challenge}$, which initially contains the term $\top$. 
     (2) The IdP's algorithm is modified by the following at line~\ref{line:uppresso-idp-set-pidu} in algorithm~\ref{alg:idp}: 
-    It is checked if the login request $m$ is addressed to the domain $\mi{dr}$ and no other message $m'$ was addressed to this domain before.(i.e., $\mi{challenge} \not\equiv \bot$)
-    Then the $PID_u$ is generated using the given $u$ and $\mi{challenge}$ is set to $\bot$ to recorded that a message was addressed to $\mi{dr}$. 
+    \newc
+    It is checked if the login request $m$ is the first message to issue $IDToken$ (i.e., $\mi{challenge} \not\equiv \bot$)
+    If so, the $PID_u$ is generated using the given $u$ (i.e., $ID_u$) and $\mi{challenge}$ is set to $\bot$. 
+    \oldc
   \end{definition}
   
   %B->b1
-  \begin{definition}[\uppresso Web System for Privacy Analysis]\label{def:uppresso-ws-priv}
+  \begin{definition}[\uppresso Web System for Privacy Analysis]\label{def:uppresso-rp-priv}
     Let $\uppressowebsystem = (\bidsystem, \scriptset, \mathsf{script}, E^0)$ be an UPPRESSO web system with 
     $\bidsystem = \mathsf{Hon} \cup \mathsf{Web} \cup \mathsf{Net}$, 
     $\mathsf{Hon} = \fAP{B} \cup \fAP{RP} \cup \fAP{IDP}$. (as described in Appendix~\ref{app:outlineuppressomodel}).
     $\fAP{RP} = \{r_1,r_2\}$, $r_1$ and $r_2$ two relying parties, 
-    Let $\fAP{attacker} = \{r_1,r_2\}$ be some web attacker.
-    Let $\mi{dr}$ be the domain of $r_2$, $u_x$ an identity owned by the browser $b$ 
-    and $u_y$ an identity only known by the IdP, then $\mi{idp}_c = \mi{idp}(\mi{dr}, u_x/u_y)$ is a challenge IdP. 
+    Let $\fAP{attacker}\in\mathsf{Web}$ be some web attacker.
+    Let $u_x$ be an identity owned by the browser $b$ 
+    and $u_y$ an identity only known to the IdP, 
+    then $\mi{idp}_c = \mi{idp}(u_{x/y})$ is a challenge IdP. 
     Let $\mathsf{Hon}' := \fAP{B} \cup \{\mi{idp}_c\}$, $\mathsf{Web}' := \mathsf{Web}$, and $\mathsf{Net}' := \emptyset$ (i.e., there is no network attacker).
     Let $\bidsystem' := \mathsf{Hon}' \cup \mathsf{Web}' \cup \mathsf{Net}'$. 
-    Let $\scriptset' := \scriptset$ and $\mathsf{script}'$ be accordingly.
-    We call $\uppressoprivwebsystem(\mi{dr}, u_x, u_y) = (\bidsystem', \scriptset', \mathsf{script}', E^0, \fAP{attacker})$ 
-    an \emph{\uppresso web system for privacy analysis} 
-    iff the domain $\mi{dr}$ the only domain assigned to $r_2$. 
+    %Let $\scriptset' := \scriptset$ and $\mathsf{script}'$ be accordingly.
+    We call $\uppressoprivwebsystem(u_{x/y}) = (\bidsystem', \scriptset, \mathsf{script}, E^0, \fAP{attacker})$ 
+    an \emph{\uppresso web system for privacy analysis}. 
+    %iff the domain $\mi{dr}$ the only domain assigned to $r_2$. 
+    \newc
+    The browser $b$ owns exactly one identity $u_x$.
+    \oldc
     All honest parties (in $\mathsf{Hon}$) are not corruptible, i.e., they ignore any $\str{CORRUPT}$ message. 
     Relying Parties are assumed to be dishonest, and hence, are subsumed by the web attackers.
   \end{definition}
@@ -2802,15 +2808,15 @@ The set $E^0$ contains only the trigger events.
   \begin{definition}[RP-Privacy]\label{def:rp-privacy}
     Let 
     \begin{align*}
-      \uppressoprivwebsystem_1 := \uppressoprivwebsystem(\mi{dr}, u_x) =
+      \uppressoprivwebsystem_1 := \uppressoprivwebsystem(u_x) =
       (\bidsystem_1, \scriptset, \mathsf{script}, E^0, \fAP{attacker}_1)&\text{ and}\\
-      \uppressoprivwebsystem_2 := \uppressoprivwebsystem(\mi{dr}, u_y) =
+      \uppressoprivwebsystem_2 := \uppressoprivwebsystem(u_y) =
       (\bidsystem_2, \scriptset, \mathsf{script}, E^0, \fAP{attacker}_2)&
     \end{align*}
     be \uppresso web systems for privacy analysis. 
     Further, we require $\fAP{attacker}_1 = \fAP{attacker}_2 =: \fAP{attacker}$ 
-    and for $idp_1 := idp(\mi{dr}, u_x)$, $idp_2 := idp(\mi{dr}, u_y)$, 
-    we require $S(idp_1) = S(idp_2)$ and $\bidsystem_1 \setminus \{idp_1\} = \bidsystem_2 \setminus \{idp_2\}$ 
+    and for $\mi{idp_1} := \mi{idp(u_x)}$, $\mi{idp_2} := \mi{idp(u_y)}$, 
+    we require $S(\mi{idp_1}) = S(\mi{idp_2})$ and $\bidsystem_1 \setminus \{idp_1\} = \bidsystem_2 \setminus \{idp_2\}$ 
     (i.e., the web systems are the same up to the parameter of the challenge idps).  
     We say that $\uppressoprivwebsystem$ is \emph{RP-private} iff $\uppressoprivwebsystem_1$ and $\uppressoprivwebsystem_2$ are indistinguishable.
   \end{definition}
@@ -2824,10 +2830,10 @@ The set $E^0$ contains only the trigger events.
   and $(S_2,E_2,N_2)$ be a configuration of $\uppressoprivwebsystem_2$.
   
   \begin{definition}[Proto-Accts]
-    We call a term of the form $[u]ID_{r_2}$ with the variable
+    We call a term of the form $[u]ID_{rp}$ with the variable
     $u$ as a placeholder for a nonce, and 
-    $ID_{r_2}\in K_\text{point}$ as the identity of 
-    relying party $r_2$ \emph{proto-acct}.
+    $ID_{rp}\in K_\text{point}$ as the identity of 
+    relying party $r_1$ or $r_2$ \emph{proto-acct}.
   \end{definition}
   
   \begin{definition}[Term Equivalence up to Proto-Accts]
@@ -2840,7 +2846,7 @@ The set $E^0$ contains only the trigger events.
     We write $t_1 \prototagequiv{\theta} t_2$.
   
     We say that two finite sets of terms $D$ and $D'$ are
-    \emph{term-equivalent under a set of proto-tags $\theta$} 
+    \emph{term-equivalent under a set of proto-accts $\theta$} 
     iff $|D| = |D'|$ and, given a lexicographic ordering of the 
     elements in $D$ of the form $(d_1,\dots,d_{|D|})$ and the 
     elements in $D'$ of the form $(d'_1,\dots,d_{|D'|})$, we 
@@ -2852,11 +2858,11 @@ The set $E^0$ contains only the trigger events.
   \begin{definition}
     Let $a$ be a proto-acct, $S_1$ and $S_2$ be states of \uppresso web systems for privacy analysis, and $l$ a nonce. 
     We call $l$ a login session token for the proto-acct $a$, written $l \in \mathsf{loginSessionTokens}(a,S_1,S_2)$ 
-    iff for any $i \in \{1,2\}$ we have that $\proj{2}{S_i(\mi{idp}).\str{sessions}[l].\mi{IDToken}} = a[ID_{u_{x/y}}/u]$.
+    iff for any $i \in \{1,2\}$ we have that $\proj{2}{S_i(\mi{idp}).\str{sessions}[l].\mi{IDToken}} = a[u_{x/y}/u]$.
   \end{definition}
   
   \begin{definition}[Equivalence of States]\label{def:rp:eq-of-states}
-    Let $\theta$ be a set of proto-tags. %and 
+    Let $\theta$ be a set of proto-accts. %and 
     %$H$ be a set of nonces. 
     %$L$ be a set of login session tokens.
     %Let $T:=\{t\mid [t]R\in \theta\}$. 
@@ -2911,7 +2917,7 @@ The set $E^0$ contains only the trigger events.
           $S_1(b_1).j.\str{scriptstate} \prototagequiv{\theta}
           S_2(b_2).j.\str{scriptstate}$, and 
         \end{enumerate}
-      \item\label{eqs:b:misc} for
+      \item\label{eqs:rp:b:misc} for
         $x \in \{\str{cookies},\str{localStorage},\str{sessionStorage},\str{sts}\}$
         we have that $S_1(b_1).x \prototagequiv{\theta} S_2(b_2).x$.
       \end{enumerate}
@@ -2919,7 +2925,7 @@ The set $E^0$ contains only the trigger events.
   \end{definition}
   
   \begin{definition}[Equivalence of Events]\label{def:rp:Events}
-    Let $\theta$ be a set of proto-tags, 
+    Let $\theta$ be a set of proto-accts, 
     $L$ be a set of login session tokens, 
     %$H$ be a set of nonces, and
     %$T:=\{t\mid [t]R\in \theta\}$. 
@@ -2939,7 +2945,10 @@ The set $E^0$ contains only the trigger events.
         message from $\mi{idp}$ to $b_1$ and $e_i^{(2)}$ is a message from
         $\mi{idp}$ to $b_2$.
       \item\label{eqe:rp:pre:t} $u_x, u_y, r_1, r_2 \not\in e_i^{(1)}, e_i^{(2)}$
-      \item\label{eqe:rp:pre:rp-scripts} If $e_i^{(1)}$ or $e_i^{(2)}$ is an
+      %Location用来重定向的，HTTP Strict-Transport-Security
+      %（通常简称为HSTS）响应标头用来通知浏览器应该只通过HTTPS访问该站点，
+      %并且以后使用HTTP 访问该站点的所有尝试都应自动重定向到HTTPS
+      \item\label{eqe:pre:idp-scripts} If $e_i^{(1)}$ or $e_i^{(2)}$ is an
         HTTP(S) response with body $g$ from a identity provider, then it does
         not contain any $\str{Location}$ or $\cSTS$ header
         and if $\proj{1}{g}$ is a string representing a script, then
@@ -2966,10 +2975,11 @@ The set $E^0$ contains only the trigger events.
     Every UPPRESSO web system for privacy analysis is RP-private.
   \end{theorem}
   
+  \newc
   Let $\mathcal{U\!W\!S}^{priv}$ be UPPRESSO web system for privacy analysis.
   To prove Theorem \ref{theorem:rp-privacy}, first we have to show that 
   the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and 
-  $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable. To show 
+  $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.\oldc To show 
   the indistinguishability of $\mathcal{U\!W\!S}^{priv}_1$ and 
   $\mathcal{U\!W\!S}^{priv}_2$, we show that they are 
   indistinguishable under all schedules $\sigma$. For this, 
@@ -2997,8 +3007,20 @@ The set $E^0$ contains only the trigger events.
     $u_x, u_y, r_1, r_2 \not\in $
     $d_\emptyset(\bigcup_{i\in\{1,2\},A\,\in\,\mathsf{Web}}S_i(A))$ 
     (i.e., the attacker does not know any keys for the accts 
-    contained in its view), and therefore it is easy to see 
-    that the views are statically equivalent.
+    contained in its view), and further with Lemma~\ref{thm-rp-unlinkability} 
+    it is easy to see that the views are statically equivalent.
+  \end{proof}
+
+  \begin{lemma}\label{thm-rp-unlinkability}
+    Given two points on the elliptic curve denoted by $[u_xr_1]G$ and $[u_yr_2]G$, 
+    an adversary cannot tell whether $u_x=u_y$, where $u_x, u_y, r_1, r_2$ is random in $\mathbb{Z}_n$, $r_1\neq r_2$ and all unknown to the adversary.
+  \end{lemma}
+  \begin{proof}
+    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+    Because $G$ is a generator of order $n$, $[r_1]G$ and $[r_2]G$ are also two generators on $\mathbb{E}$ of order $n$. 
+    $u_x$ and $u_y$ are randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+    Therefore, $[u_xr_1]G$ and $[u_yr_2]G$ are \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$ \cite{oprf-proved,voprf-proved} 
+    and the adversary cannot tell whether $u_x=u_y$ without knowing $r_1$ and $r_2$.
   \end{proof}
   
   We now show that $\sigma(\uppressoprivwebsystem_1) \approx
@@ -3024,10 +3046,10 @@ The set $E^0$ contains only the trigger events.
     $\gamma$-equivalent under $\theta$, $E_1^0 = E^0$ and 
     $E_2^0 = E^0$ are $\beta$-equivalent under $\theta$.
   
-    Let $\theta = \emptyset$. Obviously, both latter conditions 
+    Let $\theta=L=\emptyset$. Obviously, both latter conditions 
     are true. For all parties $p \in \bidsystem_1 \setminus \{idp_1\}$, 
     it is clear that $S_1^0(p) = S_2^0(p)$. Also the states 
-    $S_1^0(idp_1)$ and $S_2^0(b_2)$ are equal. Therefore, 
+    $S_1^0(idp_1)$ and $S_2^0(idp_2)$ are equal. Therefore, 
     all conditions of Definition~\ref{def:rp:eq-of-states} are 
     fulfilled. Hence, the initial configurations are 
     $\alpha$-equivalent.
@@ -3051,8 +3073,9 @@ The set $E^0$ contains only the trigger events.
     $\alpha$-equivalent.  
   \end{lemma}
   \begin{proof}
-    Let $\theta$ be a set of proto-tags for which 
-    $\alpha$-equivalence holds.
+    Let $\theta$ be a set of proto-accts and 
+    $L:=\bigcup_{a\in\theta}\text{loginSessionTokens}(a,S_1,S_2)$, 
+    for which $\alpha$-equivalence holds.
     
     To induce a processing step, the ci-th message from $E_1$ or 
     $E_2$, respectively, is selected.Following Definition 
@@ -3089,7 +3112,7 @@ The set $E^0$ contains only the trigger events.
             \myangle{HTTPResp,n,200,\myangle{},IdPScript}
           \end{aligned}
         \end{equation}
-        We can note that Condition~\ref{eqe:rp:pre:rp-scripts} of Definition \ref{def:rp:Events} holds true and the remaining conditions are trivially fulfilled.
+        We can note that Condition~\ref{eqe:pre:idp-scripts} of Definition \ref{def:rp:Events} holds true and the remaining conditions are trivially fulfilled.
         Therefore, $E_1\prime$ and $E_2\prime$ are $\beta$-equivalent under $(\theta, L)$. 
         As there are no changes to any state, we have that $S_1\prime$ and $S_2\prime$ are $\gamma$-equivalent under $\theta$. 
         No new nonces are chosen, hence $N_1\prime=N_1=N_2=N_2\prime$.
@@ -3130,8 +3153,8 @@ The set $E^0$ contains only the trigger events.
         Here, the first check is the same as $\str{/reqToken}$.
         Since $e_i^{(1)} \prototagequiv{\theta} e_i^{(2)}$, the second and third check either both pass or not.
         If IdP accepts the request, it will start to sign an IDToken.
-        There are two cases for $\theta\prime$, if the $\mi{PID_{rp}}$ is mapped to $r_2$ and $S_i(\mi{idp_i}).\str{challenge} = \True$, 
-        $\theta\prime = \theta \cup \{ [u_{x/y}]\mi{PID_{r_2}} \}$, otherwise, $\theta\prime = \theta$.
+        There are two cases for $\theta\prime$, if it is the first time for IdP to issue an $IDToken$ (i.e., $S_i(\mi{idp_i}).\str{challenge} = \True$), 
+        $\theta\prime = \theta \cup \{ [u_{x/y}]\mi{ID_{r_j}} \}$, otherwise, $\theta\prime = \theta$.
         In the first case, $S_1(\mi{idp_1}).\str{sessions} \prototagequiv{\theta\prime} S_2(\mi{idp_2}).\str{sessions}$, 
         while in the second case, the newly added sessions are equal.
         Therefore, we can see that Condition~\ref{eqs:rp:idp-sessions} of Definition~\ref{def:rp:eq-of-states} holds true for the new states, 
@@ -3145,8 +3168,9 @@ The set $E^0$ contains only the trigger events.
     \paragraph{\underline{Case $p_1 = \fAP{b_1}$}}
 
     \begin{description}
+      \item[HTTP response] We omit the proof here since it is very similar to the Case~\ref{proof:http-response} above.
       \item[TRIGGER] We now distinguish between the possible values for $\mi{cmd}_\text{switch}$.
-        \begin{description}
+        \begin{description} 
         \item[1 (trigger script):] In this case, the script in the window indexed by $\mi{cmd}_\text{window}$ is triggered. Let $j$ be a pointer to that window.
             
           We first note that such a window exists in $b_1$ iff it exists in $b_2$ and that $S_1(b_1).j.\str{script} \equiv S_2(b_2).j.\str{script}$. 
@@ -3284,7 +3308,7 @@ The set $E^0$ contains only the trigger events.
     With Case~\ref{eqe:rp:pre:t} of Definition~\ref{def:rp:Events} and Case~\ref{eqs:rp:att-unknown} of Definition~\ref{def:rp:eq-of-states}, 
     we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain $u_x, u_y, r_1, r_2$, 
     nor do the events $e_i^{(1)}$ and $e_i^{(2)}$.
-    Further with lemma~\ref{thm-rp-untraceability}, it follows immediately that the attacker cannot distinguish any of the accts in $\theta$ in its knowledge.
+    Further with lemma~\ref{thm-rp-unlinkability}, it follows immediately that the attacker cannot distinguish any of the accts in $\theta$ in its knowledge.
     Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
 
     Obviously, we can have that in the attackers state, 
@@ -3308,29 +3332,29 @@ The set $E^0$ contains only the trigger events.
     Therefore we have $\alpha$-equivalence on the new configurations.
   \end{proof}
 
-  \begin{lemma}\label{thm-rp-untraceability}
-    Given two points on the elliptic curve denoted by $[u_xr_1]G$ and $[u_yr_2]G$, 
-    an adversary cannot tell whether $u_x\equiv u_y$, where $u_x, u_y, r_1, r_2$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
-  \end{lemma}
-  \begin{proof}
-    Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
-    Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
-    $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
-    Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
-  \end{proof}
+  %\begin{lemma}\label{thm-rp-untraceability}
+  %  Given two points on the elliptic curve denoted by $[u_xr_1]G$ and $[u_yr_2]G$, 
+  %  an adversary cannot tell whether $u_x\equiv u_y$, where $u_x, u_y, r_1, r_2$ is random in $\mathbb{Z}_n$ and unknown to the adversary.
+  %\end{lemma}
+  %\begin{proof}
+  %  Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$. 
+  %  Because $G$ is a generator of order $n$, $[r]G$ is also a generator on $\mathbb{E}$ of order $n$. 
+  %  $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
+  %  Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
+  %\end{proof}
 
-  Now we have shown that the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.
+  \newc
+  Now we have shown that the UPPRESSO web system $\mathcal{U\!W\!S}^{priv}$ is RP-private (i.e., $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable).  
   However, it is not enough to prove Theorem~\ref{theorem:rp-privacy}.
-  We only have two relying-parties in out models $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$, 
-  so we need to further prove that it is still RP-private in the scenario of three or more RPs.
+  We only have two relying-parties and one user owned by honest browser $b$ in out models $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$, 
+  so we need to further prove that it is still RP-private in the scenario of more RPs and user identities.
   
   What's more, It is necessary to broaden the knowledge available to the attackers. 
-  We introduce some malicious users in our model which act as web attackers. 
+  We can introduce some malicious users in our model which act as web attackers. 
   These users login in the RPs and give their identities to the RPs.
   Therefore, colluding RPs can bind these users' login instances. 
   So what we need to prove is that even if colluding RPs and users share $PID_U$s and other information observed in all the logins, they still cannot link any login from an honest user to any other logins from any other honest users to these RPs.
 
-  \newc
   It should be pointed out that we omit the model analysis here after we add extra parties into the privacy model $\mathcal{U\!W\!S}^{priv}$ because the proof doesn't change too much.
   What really changes is that Lemma~\ref{lemma:statically-equivalent} doesn't seem obvious anymore.
   i.e., We cannot easily see that the views of RPs are statically-equivalent without RPs' knowing any keys for the accts contained in its view.
@@ -3351,7 +3375,7 @@ The set $E^0$ contains only the trigger events.
   where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G)$ for $1 \le i \le v$ and $1 \le j \le c$, and $L^m_{i,j} \in \mathbb{L}$. Any login in $\mathbb{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to one of the $c$ malicious RPs.
 
 
-  \begin{theorem}
+  \begin{theorem}\label{rp-privacy-proof}
   \emph{In \usso, given $\mathbb{L}$ and $\mathfrak{L}^m$, $c$ malicious RPs and $v$ malicious users cannot link any login from an honest user to a malicious RP to any subset of logins from honest users to any other malicious RPs.}
   \end{theorem}
 
@@ -3426,8 +3450,11 @@ The set $E^0$ contains only the trigger events.
   If in $\mathcal{G}_r$ the adversary has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption. Therefore, the adversary has no advantage in $\mathcal{G}_r$ and cannot decide whether $L'$ is initiated by some user with an identity in $\mathbf{u}_w$ or by a user in the universal user set.
   Moreover, because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
   \end{proof}
+
+  With Theorem~\ref{rp-privacy-proof}, we can have that Lemma~\ref{lemma:statically-equivalent} still holds true for the much more complicated model we state above. 
+  Therefore, we can do the similar analysis to prove that $\mathcal{U\!W\!S}^{priv}$ is still RP-private even if we add more RPs, honest users and malicious users into the system.
   
-  These prove Theorem~\ref{theorem:rp-privacy}.\QED
+  This proves Theorem~\ref{theorem:rp-privacy}.\QED
   
 \end{document}
   
