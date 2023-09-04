@@ -1531,6 +1531,21 @@ The set $E^0$ contains only the trigger events.
     We call a script $R_\text{script}$ \emph{deterministic} iff the relation 
     $R_\text{script}$ is a (partial) function.
   \end{definition}
+
+  \newc
+  \begin{definition}[Distinguished Attacker]
+    If $(\websystem, \scriptset,\mathsf{script}, E^0)$ is
+    a web system and $p$ is an attacker process in
+    $\websystem$, then we say that $(\websystem,
+    \scriptset,\mathsf{script}, E^0,p)$ is a \emph{web
+    system with a distinguished attacker process $p$}. 
+  \end{definition}
+  \oldc
+
+  The disitinguished attacker process is a web attacker and 
+  can receive all the data from other attacker processes, 
+  so when we talk about indistinguishability of a system, 
+  we will only analyze the state of the disitinguished attacker process.
   
   \begin{definition}[\uppresso Web System for Privacy Analysis]\label{def:uppresso-ws-priv}
     Let $\uppressowebsystem = (\bidsystem, \scriptset, 
@@ -1539,7 +1554,7 @@ The set $E^0$ contains only the trigger events.
     $\mathsf{Hon} = \fAP{B} \cup \fAP{RP} \cup \fAP{IDP}$.
     (as described in Appendix~\ref{app:outlineuppressomodel}).
     $\fAP{RP} = \{r_1,r_2\}$, $r_1$ and $r_2$ two (honest) relying parties,
-    Let $\fAP{attacker} \in \mathsf{Web}$ be some web attacker.
+    Let $\fAP{attacker} \in \mathsf{Web}$ be some web attacker and also a distinguished attacker.
     Let $\mi{dr}$ be a domain of $r_1$ or $r_2$ and $b(\mi{dr})$ a challenge browser. 
     Let $\mathsf{Hon}' := \{ b(\mi{dr}) \} \cup \fAP{RP}$, 
     $\mathsf{Web}' := \mathsf{Web}$, 
