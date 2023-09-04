@@ -469,10 +469,10 @@ The set $E^0$ contains only the trigger events.
       \ENDIF
       \mystate{\myss{s'.\str{loginSessions} := s'.\str{loginSessions} - body[\mi{loginSessionToken}]}}
       \mystate{\myss{\mi{IDToken} := body[\str{IDToken}]}}
-      \myif{\mi{IDToken}.\str{PID_{rp}} \not\equiv \mi{loginSessions}.\str{PID_{rp}}}
-        \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
-        \mystop{b, a, m'}\label{line:alg-rp-stop3}
-      \ENDIF
+      %\myif{\mi{IDToken}.\str{PID_{rp}} \not\equiv \mi{loginSessions}.\str{PID_{rp}}}
+      %  \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
+      %  \mystop{b, a, m'}\label{line:alg-rp-stop3}
+      %\ENDIF
       \myif{\checksigThree{\mi{IDToken}.\str{ver}}{\an{\mi{IDToken}.\str{PID_{rp}}, \mi{IDToken}.\str{PID_{u}}}}{s'.\str{IdPConfig}.\mi{pubkey}} \equiv \bot}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
         \mystop{b, a, m'}\label{line:alg-rp-stop4}
@@ -1171,6 +1171,13 @@ The set $E^0$ contains only the trigger events.
   Obviously, the attacker is unable to get the IDToken from IdP because IdP 
   is always honest and never leak it.
   \oldc
+%添加过渡
+  \newc
+  The proofs show that the IDToken is only sent to the honest 
+  browser and target RP. It cannot be known to the attacker or 
+  any corrupted party, as none of the listed parties leak it to 
+  any corrupted party or the attacker.
+  \oldc
   
   \begin{lemma} \label{lemma:idp-to-script-idp} %(Same as Lemma 6 in SPRESSO)
     In the browser $b$, the script $\mi{script\_idp}$ receives 
@@ -1232,13 +1239,6 @@ The set $E^0$ contains only the trigger events.
     which is shown in Algorithm~\ref{alg:uppresso-script-rp}.
   %The proof follows the proof of Lemma 9 in SPRESSO.
   \end{proof}
-  
-  \newc
-  The proofs show that the IDToken is only sent to the honest 
-  browser and target RP. It cannot be known to the attacker or 
-  any corrupted party, as none of the listed parties leak it to 
-  any corrupted party or the attacker.
-  \oldc
   
   These proofs are enough for SPRESSO system to show its 
   security, however, they are not enough for UPPRESSO. So far, 
@@ -1404,11 +1404,11 @@ The set $E^0$ contains only the trigger events.
     According to lemma~\ref{lemma:b-trigger-request}, 
     the identities IdP accept and store is from the honest browser, 
     and the honest browser can only provide its own usernames and passwords 
-    because only $\mi{script\_idp}$ has the access to these accounts 
+    because only $\mi{script\_idp}$ or its child window has the access to these credentials 
     according to lemma~\ref{lemma:script-idp-trigger-request}.
     Therefore, attacker cannot alter the username and password sent to IdP.
     Since the username and password are owned by the honest browser and 
-    $ID_u$ is mapped to the account at Line~\ref{line:get-idu} in Algorithm~\ref{alg:idp}. 
+    $ID_u$ is mapped to this credential at Line~\ref{line:get-idu} in Algorithm~\ref{alg:idp}. 
     Now we can see that the $ID_u$ used to generate IDToken must be owned by the browser 
     and $\mi{IDToken}.\mi{PID_{u}}=[\mi{ID_u}]\mi{PID_{rp}}$.
     
@@ -1427,6 +1427,7 @@ The set $E^0$ contains only the trigger events.
     \end{equation}
   \end{proof}
 
+%对于给定的任意一个ID_{RP}，for each ID_U in Z_n，都有Acct = [id_u]ID_RP是unique。
   \begin{lemma}\label{user-identification}
     $PID_u= [ID_u]PID_{rp}$ in IDToken uniquely identifies an 
     account at the RP designated by $PID_{rp}$ if and only if 
@@ -2050,8 +2051,8 @@ The set $E^0$ contains only the trigger events.
         either $m_1$ or $m_2$ (by the Defintion of 
         $\beta$-equivalence). We further note that there are 
         four checks at Algorithm~\ref{alg:rp} in
-        Line~\ref{line:alg-rp-stop1}, \ref{line:alg-rp-stop3}, 
-        \ref{line:alg-rp-stop3} and \ref{line:alg-rp-stop4}.
+        Line~\ref{line:alg-rp-stop1}, %\ref{line:alg-rp-stop3}, 
+        \ref{line:alg-rp-stop2} and \ref{line:alg-rp-stop4}.
         The script either emits an empty message if failed in
         these checks or accept the request and response with a 
         nonce.
@@ -2153,8 +2154,8 @@ The set $E^0$ contains only the trigger events.
         $\gamma$-equivalent under $(\theta',H)$.
       \item $\mi{path} = \str{/uploadToken}$ In this case, 
         there are four checks at Algorithm~\ref{alg:rp} in
-        Line~\ref{line:alg-rp-stop1}, \ref{line:alg-rp-stop3}, 
-        \ref{line:alg-rp-stop3} and \ref{line:alg-rp-stop4}.
+        Line~\ref{line:alg-rp-stop1}, %\ref{line:alg-rp-stop3}, 
+        \ref{line:alg-rp-stop2} and \ref{line:alg-rp-stop4}.
         
         From Condition~\ref{eqs:logsess} of 
         Definition~\ref{def:eq-of-states} we know that for 
