@@ -444,7 +444,7 @@ The set $E^0$ contains only the trigger events.
       \mystate{\myss{\mi{PID_{rp}} := [\mi{t}]\mi{ID_{rp}}}}
       \mystate{\myss{\mi{state} := \str{expectToken}}}
       \mystate{\myss{\mi{Cert_{rp}} := s'.\str{IdPConfig}.\mi{Cert_{RP}}}}
-      \mystate{\myss{s'.\str{loginSessions}[\mi{loginSessionToken}] := \an{\mi{t}, \mi{PID_{rp}}, \mi{state}}}}
+      \mystate{\myss{s'.\str{loginSessions}[\mi{loginSessionToken}] := \an{\mi{t}, \mi{PID_{rp}}, \mi{state}}}}\label{alg:rp:store-t}
      %\mystate{\myss{session[t] := t}}
      %\mystate{\myss{session[t^{-1}] := t^{-1}}}
      %\mystate{\myss{session[state] := expectToken}}
@@ -492,7 +492,7 @@ The set $E^0$ contains only the trigger events.
      %\ENDIF
      %\mystate{\myss{session[user] := Acct}}
       \mystate{\myss{\mi{nonce} := \nu_2}}
-      \mystate{\myss{s'.\str{serviceTokens} := s'.\str{serviceTokens} + ^{\myangle{}}\myangle{\mi{nonce}, \mi{Acct}}}}\label{line:add-service-token}
+      \mystate{\myss{s'.\str{serviceTokens} := s'.\str{serviceTokens} + ^{\myangle{}}\myangle{\mi{nonce}, \mi{Acct}}}}\label{line:add-service-token}\label{alg:rp:store-acct}
      %\mystate{\myss{s'.serviceTokens := s'.serviceTokens + ^{\myangle{}}\myangle{IDToken, Acct}}}
       \mystate{\myss{\mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \mi{nonce}, \True, \True, \True}}}}}
       \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{\mi{setCookie}}, \mathtt{LoginSuccess}}}{k}}}
@@ -3350,24 +3350,44 @@ The set $E^0$ contains only the trigger events.
   %\end{proof}
 
   \newc
-  Now we have shown that the UPPRESSO web system $\mathcal{U\!W\!S}^{priv}$ is RP-private (i.e., $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable).  
+  Now we have shown that the UPPRESSO web system $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.  
   However, it is not enough to prove Theorem~\ref{theorem:rp-privacy}.
   We only have two relying-parties and one user owned by honest browser $b$ in out models $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$, 
-  so we need to further prove that it is still RP-private in the scenario of more RPs and user identities.
+  so we need to further prove that they are still indistinguishable with more RPs and user identities in the web systems.
   
-  What's more, It is necessary to broaden the knowledge available to the attackers. 
-  We can introduce some malicious users in our model which act as web attackers. 
+  Moreover, It is necessary to broaden the knowledge available to the attackers. 
+  We may introduce some malicious users in our model which act as web attackers. 
   These users login in the RPs and give their identities to the RPs.
-  Therefore, colluding RPs can bind these users' login instances. 
-  So what we need to prove is that even if colluding RPs and users share $PID_U$s and other information observed in all the logins, they still cannot link any login from an honest user to any other logins from any other honest users to these RPs.
+  Therefore, colluding RPs can link these users' accounts. 
+  So what we need to prove is that even if colluding RPs and 
+  users share $PID_U$s and other information observed in all 
+  the logins, the indistinguishability of our web systems $\mathcal{U\!W\!S}^{priv}$ still hold.
+  
+  To prove this, we first prove that with this knowledge, 
+  the attackers still cannot link any login from an honest user 
+  to any other logins from any other honest users to these RPs. 
+  Therefore, we need to clarify what information colluding RPs 
+  really observed in one login (i.e., what information of logins 
+  do the attackers link among users).
 
-  It should be pointed out that we omit the model analysis here after we add extra parties into the privacy model $\mathcal{U\!W\!S}^{priv}$ because the proof doesn't change too much.
-  What really changes is that Lemma~\ref{lemma:statically-equivalent} doesn't seem obvious anymore.
-  i.e., We cannot easily see that the views of RPs are statically-equivalent without RPs' knowing any keys for the accts contained in its view.
-  However, the proof is out of formal analysis's scope, so we use provable security here.
+  Here, we can observe what is added to the state of RPs in our 
+  model analysis. We can see that $t$ and $\mi{PID_{rp}}$ are 
+  added into the states at Line~\ref{alg:rp:store-t} of 
+  Algorithm~\ref{alg:rp} and $Acct$ is added at 
+  Line~\ref{alg:rp:store-acct}. These three terms are all the 
+  information the RP can get in one login.
+  We can also note that with trapdoor $t$, $PID_{RP}$ can be 
+  easily transformed into $ID_{RP}$. Therefore, we denote the 
+  information that an RP learns from a login as a tuple $L$, 
+  where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
+
+  %It should be pointed out that we omit the model analysis here after we add extra parties into the privacy model $\mathcal{U\!W\!S}^{priv}$ because the proof doesn't change too much.
+  %What really changes is that Lemma~\ref{lemma:statically-equivalent} doesn't seem obvious anymore.
+  %i.e., We cannot easily see that the views of RPs are statically-equivalent without RPs' knowing any keys for the accts contained in its view.
+  %However, the proof is out of formal analysis's scope, so we use provable security here.
   \oldc
 
-  With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa. Therefore, we denote the information that an RP learns from a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
+  %With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa. Therefore, we denote the information that an RP learns from a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
 
   When $c$ malicious RPs collude with each other, they create a shared view of all their logins, denoted as $\mathbb{L}$.
   %some of which are initiated by honest users and denoted as $\mathbb{L}^h$, and the others by $v$ malicious users  are $\mathbb{L}^m = \mathbb{L} \setminus \mathbb{L}^h$.
@@ -3457,9 +3477,30 @@ The set $E^0$ contains only the trigger events.
   Moreover, because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
   \end{proof}
 
-  With Theorem~\ref{rp-privacy-proof}, we can have that Lemma~\ref{lemma:statically-equivalent} still holds true for the much more complicated model we state above. 
-  Therefore, we can do the similar analysis to prove that $\mathcal{U\!W\!S}^{priv}$ is still RP-private even if we add more RPs, honest users and malicious users into the system.
-  
+  \newc
+  With Theorem~\ref{rp-privacy-proof}, %we can have that Lemma~\ref{lemma:statically-equivalent} still holds true for the much more complicated model we state above. 
+  %Therefore, we can do the similar analysis to prove that $\mathcal{U\!W\!S}^{priv}$ is still RP-private even if we add more RPs, honest users and malicious users into the system.
+  we can have that even if colluding RPs and users share 
+  $PID_U$s and other information observed in all the logins, 
+  the attackers still cannot link any login from an honest user 
+  to any other logins from any other honest users to these RPs. 
+  Next we want to prove that our web systems $\mathcal{U\!W\!S}^{priv}$ 
+  with colluding RPs and users is indistinguishable. 
+
+  Here, we make our proof by contradiction.
+  Assuming that the attacker cannot link any login but can 
+  distinguish in our web systems for privacy analysis. 
+  Then the attacker tell the difference between 
+  $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$.
+  However, the only difference is that the same honest user login 
+  in the same RP in one system but different users in the other, 
+  so the attacker can actually link the login by the result of 
+  distinguishing. Therefore, there is a contradication to the 
+  assumption, where we assumed that the attacker cannot link 
+  any login. This shows $\mathcal{U\!W\!S}^{priv}$ with 
+  colluding RPs and users is indistinguishable.
+  \oldc
+
   This proves Theorem~\ref{theorem:rp-privacy}.\QED
   
 \end{document}
