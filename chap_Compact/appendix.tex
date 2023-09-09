@@ -1464,7 +1464,7 @@ The set $E^0$ contains only the trigger events.
     %$\mi{IDToken}.\mi{PID_{rp}} \equiv [t]\mi{ID_{rp}} \equiv \mi{PID_{rp}}$ and 
     %$\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
     %According to lemma~\ref{user-identification}, 
-    Therefore, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
+    Therefore, with Lemma~\ref{Acct-mapping}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
     \oldc
     \begin{equation}\label{equ:calc-acct}
       \begin{split}
@@ -3361,10 +3361,10 @@ The set $E^0$ contains only the trigger events.
   Therefore, colluding RPs can link these users' accounts. 
   So what we need to prove is that even if colluding RPs and 
   users share $PID_U$s and other information observed in all 
-  the logins, the indistinguishability of our web systems $\mathcal{U\!W\!S}^{priv}$ still hold.
+  the logins, the indistinguishability of our web systems $\mathcal{U\!W\!S}^{priv}$ still holds.
   
   To prove this, we first prove that with this knowledge, 
-  the attackers still cannot link any login from an honest user 
+  the attackers cannot link any login from an honest user 
   to any other logins from any other honest users to these RPs. 
   Therefore, we need to clarify what information colluding RPs 
   really observed in one login (i.e., what information of logins 
@@ -3489,16 +3489,16 @@ The set $E^0$ contains only the trigger events.
 
   Here, we make our proof by contradiction.
   Assuming that the attacker cannot link any login but can 
-  distinguish in our web systems for privacy analysis. 
-  Then the attacker tell the difference between 
+  distinguish in our web systems for privacy analysis, 
+  the attacker should be able to tell the difference between 
   $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$.
-  However, the only difference is that the same honest user login 
-  in the same RP in one system but different users in the other, 
-  so the attacker can actually link the login by the result of 
-  distinguishing. Therefore, there is a contradication to the 
-  assumption, where we assumed that the attacker cannot link 
-  any login. This shows $\mathcal{U\!W\!S}^{priv}$ with 
-  colluding RPs and users is indistinguishable.
+  However, the only difference between two web systems is that 
+  the same honest user login in the same RP in one system but 
+  different users in the other, so the attacker can actually 
+  link the login by the distinguishability. Therefore, there is 
+  a contradication to the assumption, where we assumed that the 
+  attacker cannot link any login. This shows $\mathcal{U\!W\!S}^{priv}$ 
+  with colluding RPs and users is indistinguishable.
   \oldc
 
   This proves Theorem~\ref{theorem:rp-privacy}.\QED
