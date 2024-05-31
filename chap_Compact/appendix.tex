@@ -342,7 +342,7 @@ In the following sections, we will formulate UPPRESSO system based on the web sy
 \section{The Formal Model of Basic Messages}
 We now provide some more details about data and message formats that are needed for the formal treatment of the web model and the analysis of UPPRESSO presented in the rest of the appendix.
 
-\subsection{Notations}
+\subsection{Data Format}
 \begin{definition}[Sequence]
 A sequence is the term of the form $t=\an{t_1, t_2, \dots, t_n}$, where the elements in the sequence are ordered. Here we define the following notations of sequence:
 \begin{itemize}
@@ -428,6 +428,24 @@ PostMessage is used in the browser for transmitting messages between scripts fro
 XMLHTTPRequest is the HTTP message transmitted  by scripts in the browser. That is, the XMLHTTPRequest is converted from the HTTP message by the browser. The XMLHTTPRequest in the form \myss{\myangle{\mathtt{XMLHTTPREQUEST}, URL, methods, Body, nonce}} can be converted into HTTP request message by the browser, and \myss{\myangle{\mathtt{XMLHTTPREQUEST}, Body, nonce}}  is converted from HTTP response message.
 \end{definition}
 
+
+\section{Model of Browser}
+A browser is the essential role (atom process) in the web system. Different from the servers, a browser follows the roughly same rules to communicate with other entities. We give the description of the browser in this  section for the further construction of UPPRESSO web system.
+
+We firstly introduce the windows and documents of the browser model.
+
+
+\begin{definition}(Window).
+A window \myss{w} is a term of the form \myss{w = \myangle{nonce, documents, opener}}, representing the  the concrete browser window in the system. The \myss{nonce} is the window reference to identify each windows. The \myss{documents} is the set of documents (defined below) including the current document and cached documents (for example, the documents can be viewed via the ``forward" and ``back" buttons in the browser). The \myss{opener} represents the window in which this window is created, for instance, while a user clicks the href in document \myss{d} and it creates a new window \myss{w}, there is \myss{w.opener \equiv d.nonce}.
+\end{definition}
+
+\begin{definition}(Document).
+A document \myss{d} is a term of the form
+
+$$\langle nonce, location, referrer, script, scriptstate, scriptinputs, subwindows, active \rangle $$
+
+where document is the HTML content in the window.  The \myss{nonce} locates the document. \myss{Location} is the URL where the document is loaded. \myss{Referrer} is same as the Referer header defined in HTTP standard. The \myss{script} is the scripting process downloaded from each servers. \myss{scriptstate} is define by the script, different in each scripts. The \myss{scriptinputs} is the message transmitted into the scripting process. The \myss{subwindows} is the set of \myss{nonce} of document's created windows. \myss{active} represents whether this document is active or not.
+\end{definition}
 
 
 
