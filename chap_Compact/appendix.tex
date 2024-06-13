@@ -1265,7 +1265,6 @@ The set $E^0$ contains only the trigger events.
     \[\mi{Acct}=[\NToID(username)]ID_{rp}=[ID_u]ID_{rp}=[ur]G\]
   \end{definition}
 
-  \newc
   \begin{lemma}\label{Acct-mapping}
     $Acct$ can be treated a \emph{permanent} identifier 
     determined by $ID_u$ and $ID_{rp}$. 
@@ -1277,7 +1276,6 @@ The set $E^0$ contains only the trigger events.
     $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} 
     associated with $ID_u=u$.
   \end{proof}
-  \oldc
   
   We now define the similar security properties as the definition 52 in SPRESSO. 
   
@@ -1550,7 +1548,6 @@ The set $E^0$ contains only the trigger events.
   %It can be proved that only the IdP's script $script\_idp$ owns the password of $ID_U$ can request the $IDToken$ from $I$.
   \end{proof}
 
-  \newc
   We now know that only the $\mi{script\_idp}$ in an honest browser 
   loaded from the IdP can issue a request for the IDToken. 
   That is to say, the attacker cannot request for the correct IDToken 
@@ -1562,7 +1559,6 @@ The set $E^0$ contains only the trigger events.
   the browser and honest RP will not leak the IDToken to the attacker. 
   To state that the browser doesn't leak the IDToken, 
   we will prove that the browser is honest after receiving the IDToken.
-  \oldc
   
   \begin{lemma} \label{lemma:idp-to-script-idp} %(Same as Lemma 6 in SPRESSO)
     In the browser $b$, the script $\mi{script\_idp}$ receives 
@@ -1629,10 +1625,10 @@ The set $E^0$ contains only the trigger events.
   security, however, they are not enough for UPPRESSO. So far, 
   the proofs only guarantee that the $IDToken$ is never leaked 
   to the attacker. Obviously, the $tag$ in SPRESSO can be only 
-  decrypted to a unique domain of RP. \newc However, in UPPRESSO, this 
+  decrypted to a unique domain of RP. However, in UPPRESSO, this 
   statement is not easy to see (i.e., an attacker may misuse a 
   incorrect $IDToken$ to retrieve the service token from an 
-  honest RP). Here, we distinct two kinds of adversarial scenarios.\oldc
+  honest RP). Here, we distinct two kinds of adversarial scenarios.
 
   \begin{enumerate}[I.]
     \item The attacker just simply replays an $IDToken$. Here, 
@@ -1809,29 +1805,22 @@ The set $E^0$ contains only the trigger events.
     holding that $\mi{PID_{rp}}=[t]\mi{ID_{rp}}$.
     Originally, $t$ is chosen by $\mi{script\_idp}$ at Line~\ref{line:gen-t}, Algorithm~\ref{alg:uppresso-script-idp} 
     and transmit to RP through $\mi{script\_rp}$.
-    \newc
     Similar to lemma~\ref{lemma:script-idp-to-script-rp} and lemma~\ref{lemma:script-rp-to-rp}, 
     we can prove that RP can only receive the $t$ from $\mi{script\_idp}$, so the $t$ in both parties is equal.
-    \oldc
 
     The $\mi{script\_idp}$ also receives a cert signed by the IdP from the honest RP and verify the cert at Line~\ref{alg:script-idp-verify-cert}, Algorithm~\ref{alg:uppresso-script-rp}.
     After that, $\mi{script\_idp}$ calculates $\mi{PID_{rp}}$ using $t$ and $\mi{ID_{rp}}$ from the cert.
-    \newc
     Since $t$ in both parties is equal and $\mi{ID_{rp}}$ is guaranteed by the cert's signature, 
     we can have that the $\mi{PID_{rp}}$ in $\mi{script\_idp}$ and RP is equal.
-    \oldc
 
     Then $\mi{script\_idp}$ sends a request to IdP bringing $\mi{PID_{rp}}$ for the IDToken 
     at Line~\ref{line:send-pidrp} in Algorithm~\ref{alg:uppresso-script-idp}.
     IdP adds the $\mi{PID_{rp}}$ from $\mi{script\_idp}$ into the IDToken.
-    \newc
     Therefore, we can see that 
     $\mi{IDToken}.\mi{PID_{rp}}=[t]\mi{ID_{rp}}$ meaning that it is the same as in RP.
-    \oldc
 
     The IDToken is issued at Line~\ref{line:sign-token} in Algorithm~\ref{alg:idp}.
     The IdP generates the $PID_u$ based on the $PID_{rp}$ and $ID_u$.
-    \newc
     According to lemma~\ref{lemma:b-trigger-request}, 
     the identities IdP accept and store is from the honest browser, 
     and the honest browser can only provide its own usernames and passwords 
@@ -1849,7 +1838,6 @@ The set $E^0$ contains only the trigger events.
     %$\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
     %According to lemma~\ref{user-identification}, 
     Therefore, with Lemma~\ref{Acct-mapping}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
-    \oldc
     \begin{equation}\label{equ:calc-acct}
       \begin{split}
       Acct=[t^{-1}]PID_u=[t^{-1}][ID_u]PID_{rp}=\\
@@ -1906,7 +1894,6 @@ The set $E^0$ contains only the trigger events.
     $R_\text{script}$ is a (partial) function.
   \end{definition}
 
-  \newc
   \begin{definition}[Distinguished Attacker]
     If $(\websystem, \scriptset,\mathsf{script}, E^0)$ is
     a web system and $p$ is an attacker process in
@@ -1914,7 +1901,6 @@ The set $E^0$ contains only the trigger events.
     \scriptset,\mathsf{script}, E^0,p)$ is a \emph{web
     system with a distinguished attacker process $p$}. 
   \end{definition}
-  \oldc
 
   The disitinguished attacker process is a web attacker and 
   can receive all the data from other attacker processes, 
@@ -2298,7 +2284,6 @@ The set $E^0$ contains only the trigger events.
     that the views are statically equivalent.
   \end{proof}
 
-  \newc
   \begin{lemma}\label{thm-idp-untraceability-new}
     Given a point on the elliptic curve denoted by $[r]G$, 
     an adversary cannot distinguish $[tr]G$ from a random variable on $\mathbb{E}$, 
@@ -2310,7 +2295,6 @@ The set $E^0$ contains only the trigger events.
     $t$ is randomly chosen in $\mathbb{Z}_n$ and always kept unknown to the adversary. 
     Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
   \end{proof}
-  \oldc
   
   We now show that $\sigma(\uppressoprivwebsystem_1) \approx
   \sigma(\uppressoprivwebsystem_2)$ by induction over the length 
@@ -2598,7 +2582,6 @@ The set $E^0$ contains only the trigger events.
   
     \begin{description}
       %\item[DNS response]
-      \newc
       \item[HTTP response]\label{proof:http-response} In this case, it is clear that
         the HTTP(s) response nonce is the same in both
         messages $m_1$ and $m_2$. 
@@ -2842,7 +2825,6 @@ The set $E^0$ contains only the trigger events.
               configuration.
           \end{enumerate}
         \end{enumerate}
-      \oldc
       
       \item[TRIGGER] We now distinguish between the possible 
         values for $\mi{cmd}_\text{switch}$.
@@ -3087,7 +3069,6 @@ The set $E^0$ contains only the trigger events.
   %lemma16纯数学表达
     \paragraph{\underline{Case $p_1$ is some attacker:}}
 
-    \newc
     When $p_1$ is some attacker, the most noticeable party we talk about here is IdP.
     In UPPRESSO, there is a centralized identity provider so we think that IdP is always honest but curious.
     Therefore, when we analyze IdP's processing steps, 
@@ -3095,20 +3076,17 @@ The set $E^0$ contains only the trigger events.
     However, IdP may be curious and derive something in its states that destroys our privacy property, 
     so what we try to do is to prove that with the equivalent states and events, 
     two systems can only process another equivalent states and events.
-    \oldc
 
     Here, only Case~\ref{eqe:prototagequiv} from Definition~\ref{def:Events} can apply to the input events,
     i.e., the input events are term-equivalent under proto-tags $\theta$. 
     This implies that the message was delivered to the same attacker process in both processing steps. 
     
-    \newc
     Let $A$ be that attacker process. 
     With Case~\ref{eqs:att} of Definition~\ref{def:eq-of-states} we have that $S_1(A) \prototagequiv\theta S_2(A)$.
     With Case~\ref{eqe:pre:t} of Definition~\ref{def:Events} and Case~\ref{eqs:att-not-t} of Definition~\ref{def:eq-of-states}, 
     we have that neither the states of A, i.e, $S_1(A)$ and $S_2(A)$ contain the nonce t, nor does the events $e_i^{(1)}$ and $e_i^{(2)}$.
     Hence with lemma~\ref{thm-idp-untraceability-new}, it follows immediately that the attacker cannot distinguish any of the tags in $\theta$ in its knowledge.
     Therefore, if two states or events are term-equivalent, the attacker process $A$ cannot distinguish between them.
-    \oldc
 
     Obviously, there are no variables (from $V_\text{process}$) in the attackers' states.
     With the output term being a fixed term (with variables)
@@ -3166,10 +3144,8 @@ The set $E^0$ contains only the trigger events.
     We call it a \emph{challenge IdP} iff $\mi{idp}$ is defined exactly the same as a identity server with two exceptions: 
     (1) the state contains one more property, namely $\mi{challenge}$, which initially contains the term $\top$. 
     (2) The IdP's algorithm is modified by the following at line~\ref{line:uppresso-idp-set-pidu} in algorithm~\ref{alg:idp}: 
-    \newc
     It is checked if the login request $m$ is the first message to issue $IDToken$ (i.e., $\mi{challenge} \not\equiv \bot$)
     If so, the $PID_u$ is generated using the given $u$ (i.e., $ID_u$) and $\mi{challenge}$ is set to $\bot$. 
-    \oldc
   \end{definition}
   
   %B->b1
@@ -3188,9 +3164,7 @@ The set $E^0$ contains only the trigger events.
     We call $\uppressoprivwebsystem(u_{x/y}) = (\bidsystem', \scriptset, \mathsf{script}, E^0, \fAP{attacker})$ 
     an \emph{\uppresso web system for privacy analysis}. 
     %iff the domain $\mi{dr}$ the only domain assigned to $r_2$. 
-    \newc
     The browser $b$ owns exactly one identity $u_x$.
-    \oldc
     All honest parties (in $\mathsf{Hon}$) are not corruptible, i.e., they ignore any $\str{CORRUPT}$ message. 
     Relying Parties are assumed to be dishonest, and hence, are subsumed by the web attackers.
   \end{definition}
@@ -3365,11 +3339,10 @@ The set $E^0$ contains only the trigger events.
     Every UPPRESSO web system for privacy analysis is RP-private.
   \end{theorem}
   
-  \newc
   Let $\mathcal{U\!W\!S}^{priv}$ be UPPRESSO web system for privacy analysis.
   To prove Theorem \ref{theorem:rp-privacy}, first we have to show that 
   the UPPRESSO web systems $\mathcal{U\!W\!S}^{priv}_1$ and 
-  $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.\oldc To show 
+  $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable. To show 
   the indistinguishability of $\mathcal{U\!W\!S}^{priv}_1$ and 
   $\mathcal{U\!W\!S}^{priv}_2$, we show that they are 
   indistinguishable under all schedules $\sigma$. For this, 
@@ -3733,7 +3706,6 @@ The set $E^0$ contains only the trigger events.
   %  Therefore, $[tr]G$ is \emph{indistinguishable} from a point $Q$ that is randomly chosen on $\mathbb{E}$.\cite{oprf-proved,voprf-proved}.
   %\end{proof}
 
-  \newc
   Now we have shown that the UPPRESSO web system $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$ are indistinguishable.  
   However, it is not enough to prove Theorem~\ref{theorem:rp-privacy}.
   We only have two relying-parties and one user owned by honest browser $b$ in out models $\mathcal{U\!W\!S}^{priv}_1$ and $\mathcal{U\!W\!S}^{priv}_2$, 
@@ -3769,7 +3741,6 @@ The set $E^0$ contains only the trigger events.
   %What really changes is that Lemma~\ref{lemma:statically-equivalent} doesn't seem obvious anymore.
   %i.e., We cannot easily see that the views of RPs are statically-equivalent without RPs' knowing any keys for the accts contained in its view.
   %However, the proof is out of formal analysis's scope, so we use provable security here.
-  \oldc
 
   %With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa. Therefore, we denote the information that an RP learns from a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
 
@@ -3861,7 +3832,6 @@ The set $E^0$ contains only the trigger events.
   Moreover, because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
   \end{proof}
 
-  \newc
   With Theorem~\ref{rp-privacy-proof}, %we can have that Lemma~\ref{lemma:statically-equivalent} still holds true for the much more complicated model we state above. 
   %Therefore, we can do the similar analysis to prove that $\mathcal{U\!W\!S}^{priv}$ is still RP-private even if we add more RPs, honest users and malicious users into the system.
   we can have that even if colluding RPs and users share 
@@ -3883,9 +3853,7 @@ The set $E^0$ contains only the trigger events.
   a contradication to the assumption, where we assumed that the 
   attacker cannot link any login. This shows $\mathcal{U\!W\!S}^{priv}$ 
   with colluding RPs and users is indistinguishable.
-  \oldc
 
   This proves Theorem~\ref{theorem:rp-privacy}.\QED
   
 \end{document}
-  

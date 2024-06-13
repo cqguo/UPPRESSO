@@ -72,10 +72,9 @@ With the help of $t$, the RP derives a \emph{unique} account from different iden
 Meanwhile, the user's accounts at different RPs are inherently different and unlinkable (see Section \ref{sec:analysis} for a detailed proof).
 
 %--- remove following the shepherd's comment
-% \newc
 % In this process, the RP needs to check if $PID_{RP} = [t]ID_{RP}$ holds after extracting $PID_{RP}$ from a received identity token. Otherwise, a malicious user with $ID_{U'} = u'$ could randomly select $t'$ and $u$, and set $PID_{RP}$ as $[t'u'^{-1}][u]ID_{RP}$. Then, the malicious user requests a token from the IdP, in which $PID_{U'} = [ID_{U'}]PID_{RP}=[u'][t'u'^{-1}][u]ID_{RP} = [t'u]ID_{RP}$.
 % If the RP does not check the received $PID_{RP}$, it would use the received $PID_{U'}$ to calculate an account as $Acct = [t'^{-1}]PID_{U'}=[u]ID_{RP}$, which is the account of a potential victim user with $ID_{U} = u$.
-% The malicious user could repeat the above attacks with random $u \in \mathbb{Z}_n$ until the account of some victim user is calculated by the RP. {\newc If it does not derive an existing account of some honest user, the RP will treat the adversary as a newly-registered user without any alerts.}
+% The malicious user could repeat the above attacks with random $u \in \mathbb{Z}_n$ until the account of some victim user is calculated by the RP. {If it does not derive an existing account of some honest user, the RP will treat the adversary as a newly-registered user without any alerts.}
 
 % Similarly, if the RP selects $t$ and calculates $PID_{RP}$, the user needs to check whether the received $PID_{RP}$ equals $[t]ID_{RP}$ before requesting an identity token.
 % Otherwise, malicious users could impersonate a victim user at some honest RP by colluding with another malicious RP.
@@ -83,7 +82,6 @@ Meanwhile, the user's accounts at different RPs are inherently different and unl
 % If the victim does not check the received $PID_{RP}$, she would request from the IdP an identity token that binds $PID_U$ and the manipulated $PID_{RP}$ and present the token to the malicious RP.
 % This token would allow the malicious user to log into the honest RP under the victim user's account.
 
-\oldc
 A user's identity $u$ is kept secret from RPs. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link them.
 Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
 %The IdP never discloses $r$ to RPs.
@@ -272,9 +270,7 @@ The RP receives the identity token and authorizes the user to log in.
 The IdP script forwards the identity token to the RP script,
     which then sends it to the RP through $Enpt_{RP}$.
 \item[4.2] The RP verifies the digital signature and the validity period of the token 
-%\newc
 %Then, the RP extracts $PID_{RP}$ from the token, checks if it equals $[t]ID_{RP}$,
-%\oldc
 and calculates $Acct = [t^{-1}]{PID_U}$.
 
 \item [4.3] The RP authorizes the user to log in as $Acct$.

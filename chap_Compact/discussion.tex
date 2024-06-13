@@ -8,8 +8,9 @@ While these accounts can be derived from an RP's domain and the user's secret \c
  they still cause inconvenience to users.
 For example, in web applications, the users need to install a browser extension to handle the long-term secret.
 If it is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
-Note that if the accounts are not masked by the user secret,
- the colluding IdP and RPs can eventually find a way to link them.
+If the accounts are not masked by the user secret,
+ the colluding IdP and RPs can eventually find a way to link them;
+ on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
 Unlike these approaches, \usso\ is not designed to prevent such collusive attacks,
  because a user is authenticated only \emph{once} in the login flow.
 In \usso\ the user's identity at the IdP is obliviously transformed into accounts at RPs,
