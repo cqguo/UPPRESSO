@@ -3,7 +3,8 @@
 
 We design identity-transformation algorithms %  $\mathcal{F}_{PID_{RP}}$, $\mathcal{F}_{PID_{U}}$ and $\mathcal{F}_{Acct}$,
 on an elliptic curve $\mathbb{E}$.
-Table \ref{tbl:notations-protocol} lists the notations. The subscript $j$ and/or superscript $i$ may be omitted if there is no ambiguity.
+Table \ref{tbl:notations-protocol} lists the notations.
+%The subscript $j$ and/or superscript $i$ may be omitted if there is no ambiguity.
 
 
 \begin{table}[tb]
@@ -30,18 +31,18 @@ Table \ref{tbl:notations-protocol} lists the notations. The subscript $j$ and/or
 \end{table}
 
 The IdP assigns a unique random integer $u$ to a user (i.e., $ID_U = u$),
- while randomly selecting $ID_{RP} = [r]G$ for the RP if it is a unique point on $\mathbb{E}$.
-Here, $G$ is a point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
+ randomly selects unique $ID_{RP} = [r]G$ for a registered RP. % if it is a point on $\mathbb{E}$.
+Here, $G$ is a base point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
 
 
-\noindent {\bf $\boldsymbol{ID_{\boldsymbol{RP}}}$-$\boldsymbol{PID_{\boldsymbol{RP}}}$ Transformation.} A user selects a random number $t \in [1, n)$ as the trapdoor and calculates $PID_{RP}$.
+\noindent {\bf $\boldsymbol{ID_{\boldsymbol{RP}}}$-$\boldsymbol{PID_{\boldsymbol{RP}}}$ Transformation.} In each login, the user selects a random number $t \in [1, n)$ as the trapdoor to calculate $PID_{RP}$.
 \begin{equation}
 PID_{RP} = \mathcal{F}_{PID_{RP}}(ID_{RP}) = [t]{ID_{RP}} = [tr]G
 \label{equ:PIDRP}
 \end{equation}
 
 
-In each login, the user selects $t$ and shares it with the RP to negotiate $PID_{RP}$. 
+%In each login, the user selects $t$ and shares it with the RP to negotiate $PID_{RP}$. 
 %--removed due to double-check discussion
 %It makes no difference if the RP selects $t$ randomly and sends it to the user, as long as both of them calculate $PID_{RP}$ \emph{independently} and check if the received $PID_{RP}$ is equal to the calculated one.
 
@@ -55,7 +56,8 @@ PID_{U} = \mathcal{F}_{PID_U}(ID_U, PID_{RP}) =
 
 
 \noindent {\bf $\boldsymbol{PID_U}$-$\boldsymbol{Acct}$ Transformation.}
-The trapdoor $t$ is sent to the target RP, which checks whether $PID_{RP}$ included in identity tokens equals $[t]ID_{RP}$. After verifying a token that binds $PID_U$ and $PID_{RP}$, it calculates $Acct$ as follows.
+The trapdoor $t$ is sent to the target RP. %which checks whether $PID_{RP}$ included in identity tokens equals $[t]ID_{RP}$.
+After verifying a token that binds $PID_U$ and $PID_{RP}$, it calculates $Acct$ as follows.
 \begin{equation}
 Acct = \mathcal{F}_{Acct}(PID_{U})
    = [t^{-1} \bmod n]PID_{U}
@@ -71,6 +73,20 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 With the help of $t$, the RP derives a \emph{unique} account from different identity tokens for the same user in her different logins. It is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
 Meanwhile, the user's accounts at different RPs are inherently different and unlinkable (see Section \ref{sec:analysis} for a detailed proof).
 
+A user's identity $u$ is kept secret from adversaries. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link them.
+Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
+%The IdP never discloses $r$ to RPs.
+Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j = [r]Acct_{j'}$ holds.
+%enumerate the user's accounts by calculating  and link them.
+
+The RP does not need to check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
+Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
+ a colluding user cannot solve and send $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
+ due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is unknown,
+    to manipulate the calculated account.
+Thus, an unmatched token results in a non-existing account, and the RP will treat it as a newly-registered user.
+%However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
+ 
 %--- remove following the shepherd's comment
 % In this process, the RP needs to check if $PID_{RP} = [t]ID_{RP}$ holds after extracting $PID_{RP}$ from a received identity token. Otherwise, a malicious user with $ID_{U'} = u'$ could randomly select $t'$ and $u$, and set $PID_{RP}$ as $[t'u'^{-1}][u]ID_{RP}$. Then, the malicious user requests a token from the IdP, in which $PID_{U'} = [ID_{U'}]PID_{RP}=[u'][t'u'^{-1}][u]ID_{RP} = [t'u]ID_{RP}$.
 % If the RP does not check the received $PID_{RP}$, it would use the received $PID_{U'}$ to calculate an account as $Acct = [t'^{-1}]PID_{U'}=[u]ID_{RP}$, which is the account of a potential victim user with $ID_{U} = u$.
@@ -82,25 +98,20 @@ Meanwhile, the user's accounts at different RPs are inherently different and unl
 % If the victim does not check the received $PID_{RP}$, she would request from the IdP an identity token that binds $PID_U$ and the manipulated $PID_{RP}$ and present the token to the malicious RP.
 % This token would allow the malicious user to log into the honest RP under the victim user's account.
 
-A user's identity $u$ is kept secret from RPs. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link them.
-Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
-%The IdP never discloses $r$ to RPs.
-Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j = [r]Acct_{j'}$ holds.
-%enumerate the user's accounts by calculating  and link them.
 
 
 \subsection{The Design Specifics for Web Applications}
 \label{sec:web-design}
 
-The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
+%The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
 
 In commonly-used SSO protocols \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier},
-an IdP needs to know the visited RP to ensure the confidentiality of identity tokens. For instance, in OIDC services, an RP's endpoint to receive tokens is stored as the \verb+redirect_uri+ parameter at the IdP.
-The IdP employs HTTP 302 redirection to send identity tokens to the RP, by setting this parameter as the target URL in the HTTP responses to a user's identity-token request \cite{OpenIDConnect}, so the user agent forwards it to the designated RP.
+an IdP needs to know the visited RP to ensure confidentiality of identity tokens. For instance, in OIDC services for web applications, an RP's endpoint to receive tokens is stored as the \verb+redirect_uri+ parameter at the IdP.
+The IdP employs HTTP 302 redirection to send identity tokens to the RP, by setting this parameter as the target URL in the HTTP responses to a user's identity-token request \cite{OpenIDConnect}, so the user agent (i.e., browser) forwards it to the designated RP.
 However, in \usso, the IdP does not know about the visited RPs, requiring a user agent by itself to calculate $PID_{RP}$ and send identity tokens to the RP's endpoint.
 %In UPPRESSO, the IdP is not aware of visited RPs, so user agents (or browsers) are responsible for forwarding the identity token to the intended RP and computing $PID_{RP}$. On the contrary, in commonly-used SSO protocols \cite{OpenIDConnect,rfc6749,SAML,SAMLIdentifier}, the IdP requires this information to ensure the \emph{confidentiality} of identity tokens. For instance, in OIDC services, an RP's endpoint URL is set as the \verb+redirect_uri+ parameter \cite{OpenIDConnect} during registration to receive tokens. When transmitting identity tokens to an RP, the IdP employs HTTP 302 redirection. This endpoint is the target URL in HTTP responses, allowing the browser to forward it to the designated RP.
 
-\usso\ supports commercial-off-the-shelf (COTS) browsers to work as the user agent and implements the user-agent functions using web scripts in browsers. The scripts are responsible for communications with the origin web servers,
+\usso\ supports commercial-off-the-shelf (COTS) browsers to work as the user agent and implements the user-agent functions using web scripts in browsers. Two scripts are responsible for communications with the origin web servers,
  and downloaded from the IdP and the visited RP, respectively. It is worth noting that a script downloaded from an honest entity is considered \emph{honest}.
 
 The IdP script is necessary because the RP script could leak its origin to the IdP web server due to the automatic inclusion of an HTTP \verb+referer+ header in all HTTP requests it sends.
@@ -112,19 +123,19 @@ Thus, on receiving an identity-token request, the IdP web server checks the \ver
 
 The RP script is responsible for preparing $ID_{RP}$ and $Enpt_{RP}$ for the IdP script, through an RP certificate issued by the IdP. %It binds the RP's identity and endpoint. %(i.e., $ID_{RP}$ and $Enpt_{RP}$).
 In each login, the RP script sends the certificate to the IdP script, which then verifies it and extracts $ID_{RP}$ and $Enpt_{RP}$.
-The same as in widely-adopted SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}, in \usso\ a user does not need to configure anything locally as the IdP's public key is already set in the IdP script.
+Like in widely-adopted SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}, in \usso\ a user does not need to configure anything locally for the IdP's public key is already set in the IdP script.
 
 After receiving an identity token from the IdP, the IdP script needs to ensure the RP script will forward the token to $Enpt_{RP}$ %, which is bound with $ID_{RP}$
 specified in the RP certificate.
-As the communication between the scripts occurs within the COTS browser using the \verb+postMessage+ HTML5 API, %To avoid the honest user sending the identity token to an adversary,
+As the communication between the scripts occurs within COTS browsers using the \verb+postMessage+ HTML5 API, %To avoid the honest user sending the identity token to an adversary,
 we use the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} to restrict the recipient. %(i.e., the RP script).
- When the IdP script sends messages, the recipient's origin is set as a parameter, such as \verb+postMessage(tk, 'https://RP.com')+, which includes the protocol (e.g., \verb+https+), the domain (e.g., \verb+RP.com+), and a port if applicable.
-Only the script downloaded from this targetOrigin is considered a legitimate recipient.
+ When the IdP script sends messages, the recipient's origin is set as a parameter, such as \verb+postMessage(tk, 'https://RP.com')+, which includes the protocol (i.e., \verb+https+), the domain (i.e., \verb+RP.com+), and a port if applicable.
+Only the script downloaded from this targetOrigin is considered as a legitimate recipient.
 
 %The \emph{RP certificates} deals with the problem of mapping an identity proof with its targeting RP.
 %That is, the IdP script derives the RP's $ID_{RP}$ and origin from the RP certificate, while the $PID_{RP}$ is generated with this $ID_{RP}$. Thus, the IdP script always knows the targeting RP of identity proof, therefore, the \verb+postMessage+ mechanism can guarantee that the identity proof would not be sent to the adversary.
 
-As discussed in Section \ref{subsec:overview}, a user needs to calculate $PID_{RP} = [t]ID_{RP}$ based on $ID_{RP}$ extracted from the RP certificate. Thus, this function should be implemented by an \emph{honest} script that does not leak $t$ to the IdP, from which it could calculate $ID_{RP} = [t^{-1}\bmod n]PID_{RP}$. In \usso, we consider the IdP script honest; otherwise, it could directly leak the RP's domain to the IdP.
+As discussed in Section \ref{subsec:overview}, a user needs to calculate $PID_{RP} = [t]ID_{RP}$ based on $ID_{RP}$ extracted from the RP certificate. Thus, this function should be implemented by an \emph{honest} script that does not leak $t$ to the IdP, from which it could calculate $ID_{RP} = [t^{-1}\bmod n]PID_{RP}$. In \usso, we consider the IdP script honest; otherwise, it could straightforwardly leak the RP's domain to the IdP.
 To mitigate this risk, we can implement the user agent with trusted browser extensions, which need to be installed by users before visiting RPs.
 
 \begin{figure*}[htb]
@@ -165,7 +176,7 @@ It sends a registration request, including the endpoint to receive identity toke
 \item
 The IdP randomly selects a \emph{unique} point on $\mathbb{E}$,
         and assigns it to $ID_{RP}$.
-Thus, $ID_{RP} = [r]G$ but $r$ is known to \emph{nobody} due to the elliptic curve discrete logarithm problem (ECDLP).
+Thus, $ID_{RP} = [r]G$ but $r$ is known to \emph{nobody} due to the ECDLP.
 %random number $r \in [1,n)$ until $ID_{RP} = [r]G$ is unique.
  %   but $r$ is kept unknown to the RP.
 It then signs $Cert_{RP} = [ID_{RP}, Enpt_{RP}, *]_{SK}$,
@@ -180,8 +191,8 @@ The RP verifies $Cert_{RP}$ using $PK$, and accepts $ID_{RP}$ and $Cert_{RP}$ if
 Each user registers once at the IdP. She sets up her unique username and the corresponding credential.
 The IdP will then assign
 a unique random identity $ID_U = u \in [1, n)$ to the user.
-$ID_U$ is known only to the IdP internally.
-%This is similar to the steps in existing SSO systems.
+Note that $ID_U$ is known only to the IdP \emph{internally},
+like in existing SSO systems.
 
 
 \vspace{1.5mm}
@@ -192,7 +203,7 @@ involves four steps: script downloading, RP identity transformation, identity-to
 
 \vspace{0.85mm}
 \noindent 1. {\em Script Downloading.}
-The browser downloads scripts from the visited RP and the IdP.
+The browser downloads scripts from the visited RP and the IdP as below.
 \vspace{-\topsep}
 \begin{itemize}
 \setlength{\topsep}{0pt}
@@ -226,16 +237,13 @@ The user and the RP negotiate $PID_{RP} = [t]{ID_{RP}}$.
 %To acknowledge the negotiation of $PID_{RP}$, The RP
 replies with $Cert_{RP}$ and the scope of the requested user attributes. The reply is then transmitted through the RP script to the IdP script.  % through \verb+postMessage+.
 \item[2.3] The IdP script verifies $Cert_{RP}$, extracts $ID_{RP}$ and $Enpt_{RP}$ from $Cert_{RP}$, and calculates $PID_{RP}=[t]{ID_{RP}}$.
-%It then creates a random endpoint $PEnpt_{U}$ for this login,
- %   to receive identity tokens from the IdP.
-    % as the RP endpoint required by IdP.我们已经修改了协议， IdP并不require什么
 
 \end{itemize}
 
 
 %\vspace{1mm}
 \noindent 3. {\em Identity-Token Generation.}
-The IdP calculates $PID_U = [ID_U]{PID_{RP}}$ and signs an identity token. % The processes are as follows.
+The IdP calculates $PID_U = [ID_U]{PID_{RP}}$ and signs an identity token  as follows. % The processes are as follows.
 \vspace{-\topsep}
 \begin{itemize}
 \setlength{\topsep}{0pt}
@@ -269,7 +277,7 @@ The RP receives the identity token and authorizes the user to log in.
 \item [4.1]
 The IdP script forwards the identity token to the RP script,
     which then sends it to the RP through $Enpt_{RP}$.
-\item[4.2] The RP verifies the digital signature and the validity period of the token 
+\item[4.2] The RP verifies the signature and the validity period of the token 
 %Then, the RP extracts $PID_{RP}$ from the token, checks if it equals $[t]ID_{RP}$,
 and calculates $Acct = [t^{-1}]{PID_U}$.
 
@@ -280,7 +288,7 @@ and calculates $Acct = [t^{-1}]{PID_U}$.
 
 If any verification fails, this flow will be terminated immediately.
 For example, the user halts it when receiving an invalid $Cert_{RP}$.
-The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token in Step 4.2 if the digital signature is invalid. 
+The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token in Step 4.2 if the signature is invalid. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。
 %or the enclosed $PID_{RP}$ is not equal to $[t]ID_{RP}$.
@@ -288,7 +296,7 @@ The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$
 % 分析结论是：
 % 现有的简化协议（RP不比较$PID_{RP}$是否相等），则：
 % 当u不泄露，u的security和privacy都没有问题；
-% 当u泄露，u的security和privacy都没有问题。
+% 当u泄露，u的security和privacy都有问题。
 %
 % 改进协议（RP比较$PID_{RP}$是否相等），则：
 % 当u不泄露，u的security和privacy都没有问题；
@@ -301,11 +309,12 @@ The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$
 Both \usso\ and OIDC work with COTS browsers. %Among the four steps of the login flow
 In \usso, the \emph{script downloading} step prepares the user agent, which assists the communications with the IdP and RP servers. \usso\ employs web scripts to hide the RP's endpoint from the IdP, while securely forwarding identity tokens to the RP through $Enpt_{RP}$ extracted from the signed RP certificate.
 % that protects the identity token from being sent to adversaries. 这句话与Compatibility无关
-Therefore, the IdP does not set \verb+redirect_uri+ in the HTTP responses, which is different from OIDC where HTTP redirections are used to implement these communications. Most operations in the \emph{RP identity transformation} step take place within browsers. The RP only receives $t$ to generate an RP pseudo-identity and responds with $Cert_{RP}$,
+Thus, the IdP does not set \verb+redirect_uri+ in the HTTP responses, which is different from OIDC where HTTP redirections are used to implement these communications. Most operations in the \emph{RP identity transformation} step take place within browsers,
+except that the RP receives $t$ and responds with $Cert_{RP}$,
 %The calculation of $PID_{RP}$ is viewed as the operation to prepare an RP identity in OIDC,
-which is viewed as a supplementary message to users.
+which can be viewed as a supplementary message to users.
 %The operations in the $PID_{RP}$ registration are almost identical to those in the RP Dynamic Registration of OIDC \cite{DynamicRegistration}, except that in OIDC the IdP assigns the RP's identity  while in UPPRESSO this (pseudo-)identity is generated by the registered entity. Besides, the $PID_{RP}$ registration has a validity period.
-Consequently, compared to the original OIDC protocol, \usso\ simplifies the IdP's operations in these two steps, while allowing RPs to customize their ``dynamic'' pseudo-identities.
+Consequently, compared to the original OIDC protocol, \usso\ simplifies the IdP's operations in these two steps, while allowing ``dynamic'' RP pseudo-identities.
 
 The operations of \emph{identity-token generation} and \emph{$Acct$ calculation} in \usso\ are \emph{identical} to those in OIDC,
  because (\emph{a}) the calculation of $PID_U$ in \usso\ can be viewed as a method to generate PPIDs in OIDC and (\emph{b}) the calculation of $Acct$ can be viewed as a mapping from the user identity in tokens to an account at the RP.
