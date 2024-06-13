@@ -94,6 +94,8 @@ Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ 
 \subsection{The Design Specifics for Web Applications}
 \label{sec:web-design}
 
+The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
+
 In commonly-used SSO protocols \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier},
 an IdP needs to know the visited RP to ensure the confidentiality of identity tokens. For instance, in OIDC services, an RP's endpoint to receive tokens is stored as the \verb+redirect_uri+ parameter at the IdP.
 The IdP employs HTTP 302 redirection to send identity tokens to the RP, by setting this parameter as the target URL in the HTTP responses to a user's identity-token request \cite{OpenIDConnect}, so the user agent forwards it to the designated RP.
