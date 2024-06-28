@@ -1820,56 +1820,11 @@ For the further proof of security of UPPRESSO, we now define the \emph{UPPRESSO 
    \textbf{{B}} If the request corresponding to $\an{n,\mi{Acct}}$ was sent by  some $b\in \fAP{B}$ which is honest in $S^j$, then $b$ owns $Acct$.
   \end{definition}
 
-<<<<<<< Updated upstream
-  \begin{lemma}\label{Acct-mapping}
-    $Acct$ can be treated a \emph{permanent} identifier 
-    determined by $ID_u$ and $ID_{rp}$. 
-  \end{lemma}
-  \begin{proof}
-    $ID_{rp} = [r]G$ is a generator on $\mathbb{E}$ of order $n$, 
-    as $\mathbb{E}$ is a finite cyclic group. 
-    Therefore, given a user with $ID_u$ owned by browser $b$, $Acct$ is a \emph{unique} point on 
-    $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} 
-    associated with $ID_u=u$.
-  \end{proof}
-  
-  We now define the similar security properties as the definition 52 in SPRESSO. 
-  
-  \begin{definition}\label{def:uppresso-security-property} 
-    Let $\uppressoauthwebsystem$ be an \uppresso web system for authentication analysis. 
-    We say that \emph{$\uppressoauthwebsystem$ is secure} if for every run $\rho$ of
-    $\uppressoauthwebsystem$, every state $(S^j, E^j, N^j)$ in $\rho$,
-    every $r\in \fAP{RP}$ that is honest in $S^j$, every RP service token of the form 
-    $\myangle{nonce, Acct}$ recorded in $S^j(r).\str{serviceTokens}$, the following two conditions are
-    satisfied:
-  
-    \textbf{(A)} If $\myangle{nonce, Acct}$ is derivable from the attackers knowledge
-    in $S^j$ (i.e., $\myangle{nonce, Acct} \in d_{\emptyset}(S^j(\fAP{attacker}))$),
-    then it follows that the browser $b$ owning $Acct$ is fully corrupted
-    in $S^j$ (i.e., the value of $\mi{isCorrupted}$ is $\fullcorrupt$).
-  
-    \textbf{(B)} If the request corresponding to $\myangle{nonce, Acct}$ was sent by
-    some $b\in \fAP{B}$ which is honest in $S^j$, then $b$ owns $Acct$.
-  \end{definition}
-  
-  %First note that the RP service token should be defined as $\langle IDToken$, $Acct \rangle$ 
-  %which is $\langle n$, $i \rangle$ in SPRESSO. That is,  
-  
-  %let  $\mathcal{U\!W\!S}^{auth}$ be an UPPRESSO web system for authentication analysis. We say that $\mathcal{U\!W\!S}^{auth}$ is secure if for every run $\rho$ of $\mathcal{U\!W\!S}^{auth}$, every state ($S^j$, $E^j$, $N^j$) in $\rho$, every $r \in$ $\mathtt{RP}$ that is honest, every RP service token of the form $\langle IDToken$, $Acct \rangle$ recorded in $S^j$($r$).$\mathtt{serviceTokens}$, the following two conditions are satisfied:
-  
-  %(A) If $\langle IDToken$, $Acct \rangle$ is derivable from the attackers knowledge in $S^j$ (i.e., $\langle IDToken$, $Acct \rangle \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), then it follows that the browser b owning $Acct$ is fully corrupted in $S^j$ (i.e., the value of $isCorrupted$ is $\mathtt{FULLCORRUPT}$) or $\mathtt{governor}$($Acct$) is not an honest IdP (in $S^j$).
-  
-  %(B) If the request corresponding to $\langle IDToken$, $Acct \rangle$ was sent by some $b \in \mathtt{B}$ which is honest in $S^j$, then b owns the $ID_U$ which satisfies $Acct=[ID_U]S^j(r).ID_{RP}$.
-  
-  \begin{theorem}\label{thm:authentication}
-    Let $\uppressoauthwebsystem$ be an \uppresso web system as
-    defined above. Then $\uppressoauthwebsystem$ is secure
-    w.r.t.~authentication.
-=======
+
   To guarantee the secure of UPPRESSO, we will prove the following theorem:
   \begin{theorem}\label{theorem:authentication}
   Let $\mi{\uppressoauthwebsystem}$ be an UPPRESSO web system for authentication analysis. The $\mi{\uppressoauthwebsystem}$ is secure w.r.t. authentication.
->>>>>>> Stashed changes
+
   \end{theorem}
   In other words, the authentication properties (A) and (B) are fulfilled for every UPPRESSO web system.
   
@@ -2169,7 +2124,6 @@ Hence, the probability of solving the ECDLP using $\mathcal{D}^*_c$ is formulate
 
 If the probability of finding $t$ and $t'$ satisfying $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is non-negligible, the adversary would have advantages  in $\mathcal{G}_c$ and ${\rm Pr}_s$ is non-negligible regardless of the security parameter $\lambda$.
 Thus, we would find that ${\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\}$ also becomes non-negligible even when $\lambda$ is sufficiently large, because $m$ is a finite integer and $m \ll 2^\lambda$.
-\oldc
 This violates the ECDLP assumption. Therefore, the probability of finding $t$ and $t'$ that satisfy $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is negligible. 
 	
 	
@@ -2189,20 +2143,7 @@ This violates the ECDLP assumption. Therefore, the probability of finding $t$ an
   Above all, the lemma is proved.
   \end{proof}
 
-<<<<<<< Updated upstream
-  We now know that only the $\mi{script\_idp}$ in an honest browser 
-  loaded from the IdP can issue a request for the IDToken. 
-  That is to say, the attacker cannot request for the correct IDToken 
-  by himself. Therefore, next we are going to discuss whether the attacker
-  can steal the IDToken stored in honest parties.
 
-  Obviously, the attacker is unable to get the IDToken from IdP because IdP 
-  is always honest and never leak it. Therefore, we need to prove that both 
-  the browser and honest RP will not leak the IDToken to the attacker. 
-  To state that the browser doesn't leak the IDToken, 
-  we will prove that the browser is honest after receiving the IDToken.
-=======
->>>>>>> Stashed changes
   
   \begin{lemma} \label{lemma:idp-to-script-idp} %(Same as Lemma 6 in SPRESSO)
     In the browser $b$, the script $\mi{script\_idp}$ receives the response to the request $\mi{m_{auth}}$ (and no other script), and at this point, the browser is still honest.
@@ -2252,80 +2193,7 @@ This violates the ECDLP assumption. Therefore, the probability of finding $t$ an
   %The proof follows the proof of Lemma 9 in SPRESSO.
   \end{proof}
   
-<<<<<<< Updated upstream
-  These proofs are enough for SPRESSO system to show its 
-  security, however, they are not enough for UPPRESSO. So far, 
-  the proofs only guarantee that the $IDToken$ is never leaked 
-  to the attacker. Obviously, the $tag$ in SPRESSO can be only 
-  decrypted to a unique domain of RP. However, in UPPRESSO, this 
-  statement is not easy to see (i.e., an attacker may misuse a 
-  incorrect $IDToken$ to retrieve the service token from an 
-  honest RP). Here, we distinct two kinds of adversarial scenarios.
 
-  \begin{enumerate}[I.]
-    \item The attacker just simply replays an $IDToken$. Here, 
-      we assume the $IDToken$ is from a corrupted browser with 
-      $IDToken.\mi{PID_{RP}}$ designating the honest RP from 
-      which the attacker want to retrieve the service token.
-
-      We can easily note that the $t'$ used for this new login 
-      is not equal with the $t$ for the $IDToken$'s generating.
-      Therefore, the designated RP would calculate an 
-      account as $[t'^{-1}]PID_u = [t'^{-1}ut]ID_{rp}$.
-      Because a user's identity is randomly selected by the IdP 
-      in $\mathbb{Z}_n$ and known only to the user (and the honest 
-      IdP), the probability that $t'^{-1}ut$ happens to be the 
-      identity of another user is negligible, when $n$ is 
-      sufficiently large. As a result, $[t'^{-1}]PID_u$ is likely 
-      not to identify any known account at the RP and therefore 
-      would be treated as a new account by the RP.
-
-      Obviously we can have that no matter what kind of 
-      incorrect $IDToken$, the same proof as above can be applied.
-      Even if the attacker can get an $IDToken$ from an honest 
-      browser with $IDToken.\mi{PID_{RP}}$ designating the 
-      honest RP, when the attacker start a new login session, 
-      the $t$ in this login will be changed and, hence, the 
-      attacker can not retrieve the service token for a user 
-      owned by the honest browser.
-
-    \item The attacker not only replays an $IDToken$, but also 
-      change the $t$ in the login session which can be done by 
-      control a corrupted browser to alter the $\str{script_{rp}}$ 
-      loaded from the honest RP. Here, 
-      we assume the $IDToken$ is from a corrupted RP with 
-      $IDToken.\mi{PID_{U}}$ designating a user from the honest 
-      browser whom the attacker want to log in as.
-
-      In this case, the attacker may try to find the 
-      $t^{adversary}$ satisfying $IDToken.PID_{RP} \equiv 
-      [t^{adversary}]ID_{RP}^{honest}$.
-      However, according to Lemma \ref{lemma-rp}, given 
-      $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ 
-      designates another RP with $ID_{RP'}$ is \emph{negligible}. 
-      This means that $IDToken.\mi{PID_{RP}}$ cannot be 
-      associated with any other RPs in the system. 
-      That is to say, the $t^{adversary}$ is not derivable from 
-      the attackers knowledge in $S^j$ (i.e., $t^{adversary} \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), 
-      which satisfies that $IDToken.PID_{RP} \equiv [t^{adversary}]ID_{RP}^{honest}$.
-      This can also be applied to any other kind of incorrect $IDToken$.
-  \end{enumerate}
-
-  %\begin{lemma}
-  %  The $t^{adversary}$ is not derivable from the attackers knowledge in $S^j$ (i.e., $t^{adversary} \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), which satisfies that $IDToken.PID_{RP} \equiv [t^{adversary}]ID_{RP}^{honest}$.
-  %\end{lemma}
-  %\begin{proof}
-  %  In UPPRESSO, $PID_{RP}=[t]ID_{RP}$ is generated by a user based on the target RP's identity $ID_{RP}$ and a user-selected random number $t \in [1,n)$.
-    %The target RP with $ID_{RP}$ receives $t$, and it will also calculate $PID_{RP}=[t]ID_{RP}$ to match $PID_{RP}$ extracted from a token received.
-    %It is computationally easy for any party who knows $ID_{RP}$ and $t$ to validate the $PID_{RP}$ in an identity token. A valid
-  %  Thus, $PID_{RP}$ always specifies an RP, i.e., %$PID_{RP}$ sent by a user in her identity-token request is calculated as $PID_{RP} = [t]ID_{RP}$, where $ID_{RP}$ is the target RP's identity and $t$ is a random number selected by the user and shared with this RP.
-  %  designates the target RP that knows $t$. 
-  %  Moreover, according to Lemma \ref{lemma-rp}, given $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ designates another RP with $ID_{RP'}$ is \emph{negligible}. %This means that $PID_{RP}$ cannot be associated with any other RPs in the system.
-  %  Therefore, $PID_{RP}$ designates only the target RP with $ID_{RP}$ in the system, 
-  %  so attacker cannot find a number $t^{adversary}$\hfill
-  %\end{proof}
-=======
->>>>>>> Stashed changes
   
   With Lemmas~\ref{lemma:idp-to-script-idp}--\ref{lemma:script-rp-to-rp} we see that the $\mi{IDToken}$, once it was signed by $i$, was transferred only to $r$, the browser $b$. It cannot be known to the attacker or any corrupted party, as none of the listed parties leak it to any corrupted party or the attacker.
 
@@ -2393,29 +2261,18 @@ every $\uppressoauthwebsystem$ is secure in the sense of Property~A.
     and transmit to RP through $\mi{script\_rp}$.
     Similar to lemma~\ref{lemma:script-idp-to-script-rp} and lemma~\ref{lemma:script-rp-to-rp}, 
     we can prove that RP can only receive the $t$ from $\mi{script\_idp}$, so the $t$ in both parties is equal.
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
     The $\mi{script\_idp}$ also receives a cert signed by the IdP from the honest RP and verify the cert at Line~\ref{alg:script-idp-verify-cert}, Algorithm~\ref{alg:uppresso-script-rp}.
     After that, $\mi{script\_idp}$ calculates $\mi{PID_{rp}}$ using $t$ and $\mi{ID_{rp}}$ from the cert.
     Since $t$ in both parties is equal and $\mi{ID_{rp}}$ is guaranteed by the cert's signature, 
     we can have that the $\mi{PID_{rp}}$ in $\mi{script\_idp}$ and RP is equal.
-<<<<<<< Updated upstream
 
-=======
-    
->>>>>>> Stashed changes
     Then $\mi{script\_idp}$ sends a request to IdP bringing $\mi{PID_{rp}}$ for the IDToken 
     at Line~\ref{line:send-pidrp} in Algorithm~\ref{alg:uppresso-script-idp}.
     IdP adds the $\mi{PID_{rp}}$ from $\mi{script\_idp}$ into the IDToken.
     Therefore, we can see that 
-<<<<<<< Updated upstream
-    $\mi{IDToken}.\mi{PID_{rp}}=[t]\mi{ID_{rp}}$ meaning that it is the same as in RP.
-=======
     $\mi{IDToken}.\mi{PID_{rp}} \equiv \mathsf{multiply}(t, \mi{ID_{rp}})$ meaning that it is the same as in RP.
->>>>>>> Stashed changes
+
 
     The IDToken is issued at Line~\ref{line:sign-token} in Algorithm~\ref{alg:idp}.
     The IdP generates the $PID_u$ based on the $PID_{rp}$ and $ID_u$.
@@ -2435,11 +2292,7 @@ every $\uppressoauthwebsystem$ is secure in the sense of Property~A.
     %$\mi{IDToken}.\mi{PID_{rp}} \equiv [t]\mi{ID_{rp}} \equiv \mi{PID_{rp}}$ and 
     %$\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
     %According to lemma~\ref{user-identification}, 
-<<<<<<< Updated upstream
-    Therefore, with Lemma~\ref{Acct-mapping}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
-=======
     Therefore, with Lemma~\ref{lemma:b-trigger-request}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
->>>>>>> Stashed changes
     \begin{equation}\label{equ:calc-acct}
     \begin{split}
       Acct& \equiv \mathsf{multiply}(t^{-1}, PID_u) \equiv \mathsf{multiply}(t^{-1}, \mathsf{multiply}(ID_u, PID_{rp})) \\
