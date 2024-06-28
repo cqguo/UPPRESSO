@@ -31,7 +31,7 @@ Table \ref{tbl:notations-protocol} lists the notations.
 \end{table}
 
 The IdP assigns a unique random integer $u$ to a user (i.e., $ID_U = u$),
- randomly selects unique $ID_{RP} = [r]G$ for a registered RP. % if it is a point on $\mathbb{E}$.
+ and randomly selects unique $ID_{RP} = [r]G$ for a registered RP. % if it is a point on $\mathbb{E}$.
 Here, $G$ is a base point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
 
 
@@ -71,7 +71,7 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 
 
 With the help of $t$, the RP derives a \emph{unique} account from different identity tokens for the same user in her different logins. It is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
-Meanwhile, the user's accounts at different RPs are inherently different and unlinkable (see Section \ref{sec:analysis} for a detailed proof).
+Meanwhile, the user's accounts at different RPs are inherently different and unlinkable (see Section \ref{sec:analysis} for detailed proofs).
 
 A user's identity $u$ is kept secret from adversaries. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link them.
 Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
@@ -82,7 +82,8 @@ Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ 
 The RP does not need to check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
 Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
  a colluding user cannot solve and send $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
- due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is unknown,
+ due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,\footnote{If $u$ is known to the adversaries, privacy against RP-based identity linkage is broken,
+    but \usso\ still provides secure SSO services if the (honest) RP accepts only an identity token with matching $PID_{RP}$.}
     to manipulate the calculated account.
 Thus, an unmatched token results in a non-existing account, and the RP will treat it as a newly-registered user.
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .

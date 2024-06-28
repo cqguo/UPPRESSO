@@ -70,7 +70,7 @@ Before proving Properties {\bf A} and {\bf B}, we first show that a network atta
 
 To prove Property {\bf A}, we show that the attacker cannot obtain any useful information from any login of an honest user to an honest RP, which would allow him to impersonate an honest user at some honest RP. In particular, he cannot know the identity-token request (and its $PID_{RP}$) according to Property {\bf C1} nor a valid identity token of the honest user if they are not initiated by a corrupted user or intended for a corrupted RP, according to Property {\bf C1}.  
 
-Meanwhile, we prove that Property {\bf A} is still fulfilled in the following two adversarial scenarios. First, consider a malicious user initiating a login to an honest RP. He selects a random $t$ to share with this RP and then manipulates $PID_{RP}$ to be $[t']ID_{RP}$ instead of $[t]ID_{RP}$ when requesting for an identity token. We prove in Theorem \ref{thm-user-id} that, by showing the identity token with a manipulated $PID_{RP}$ to this honest RP, the malicious user cannot be recognized under the account of any existing honest user at this RP (i.e., {\em User Identification}). Secondly, we consider a malicious $RP$ sharing with a malicious user $U$ the identity token $TK$ that it received from an honest user $U'$. With $TK$, if the malicious $RP$ is able to find $t'$ satisfying $[t']ID_{RP'}=[t]ID_{RP}$ for any honest $RP'$, it could share $TK$ and $t'$ with the malicious user, enabling him to log into $RP'$ on behalf of $U$. We prove in Lemma \ref{lemma-rp} and Theorem \ref{thm-rp-designation} that a malicious RP receiving $t$ and $[t]ID_{RP}$ for $U$'s login cannot find such $t'$, since $PID_{RP}$ in $TK$ is uniquely associated with $t$ and the login to the designated RP (i.e., {\em RP Designation}).
+Meanwhile, we prove that Property {\bf A} is still fulfilled in the following two adversarial scenarios. First, consider a malicious user initiating a login to an honest RP. He selects a random $t$ to share with this RP and then manipulates $PID_{RP}$ to be $[t']ID_{RP}$ instead of $[t]ID_{RP}$ when requesting for an identity token. We prove in Theorem \ref{thm-user-id} that, by showing the identity token with a manipulated $PID_{RP}$ to this honest RP, the malicious user cannot be recognized under the account of any existing honest user at this RP (i.e., {\em User Identification}). Secondly, we consider a malicious $RP$ sharing with a malicious user $U$ the identity token $TK$ that it received from an honest user $U'$. With $TK$, if the malicious $RP$ is able to find $t'$ satisfying $[t']ID_{RP'}=[t]ID_{RP}$ for any honest $RP'$, it could share $TK$ and $t'$ with the malicious user, enabling him to log into $RP'$ on behalf of $U$. We prove in Lemma \ref{lemma-rp-main} and Theorem \ref{thm-rp-designation} that a malicious RP receiving $t$ and $[t]ID_{RP}$ for $U$'s login cannot find such $t'$, since $PID_{RP}$ in $TK$ is uniquely associated with $t$ and the login to the designated RP (i.e., {\em RP Designation}).
 
 %a network attacker cannot alter: (1) communications between an honest user and an honest RP through restricted \verb+postMessage+ messages between the honest IdP script and RP script (within the user's browser) and obtain or manipulate the secret element $t$;  
 
@@ -129,14 +129,14 @@ Next, we prove that \usso\ provides the ``RP Designation'' and ``User Identifica
 %It is computationally easy for any party who knows $ID_{RP}$ and $t$ to validate the $PID_{RP}$ in an identity token. A valid
 Thus, $PID_{RP}$ always specifies an RP, i.e., %$PID_{RP}$ sent by a user in her identity-token request is calculated as $PID_{RP} = [t]ID_{RP}$, where $ID_{RP}$ is the target RP's identity and $t$ is a random number selected by the user and shared with this RP.
 designates the target RP that knows $t$. 
-Moreover, according to Lemma \ref{lemma-rp}, given $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ designates another RP with $ID_{RP'}$ is \emph{negligible}. %This means that $PID_{RP}$ cannot be associated with any other RPs in the system.
+Moreover, according to Lemma \ref{lemma-rp-main}, given $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ designates another RP with $ID_{RP'}$ is \emph{negligible}. %This means that $PID_{RP}$ cannot be associated with any other RPs in the system.
 Therefore, $PID_{RP}$ designates only the target RP with $ID_{RP}$ in the system.  \hfill $\square$
 
 
 \begin{lemma}
 \emph{Given any two RPs in a finite set of RPs in \usso,
  the probability that an adversary finds different numbers $t$ and $t' \in [1,n)$ satisfying $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is negligible, where $ID_{RP_j}=[r]G$, $ID_{RP_{j'}}=[r']G$, $r$ and $r'$ are different numbers unknown to the adversary, and $G$ is a generator on $\mathbb{E}$ of order $n$.}
-\label{lemma-rp}
+\label{lemma-rp-main}
 \end{lemma}
 
 
@@ -217,15 +217,15 @@ Secondly, the attacker presents $TK$ to $RP'$ in the system, where $ID_{RP'} = [
 \subsection{Privacy against IdP-based Login Tracing}
 \label{subsec:IdP-privacy}
 
-As depicted in Section \ref{subsec:threatmodel}, the IdP would attempt to infer the RP's identity visited by a user. Since the IdP is considered \emph{honest-but-curious}, it only collects information from the login requests to infer the visited RPs' identities but does not tamper with the authentication process or deviate from the SSO protocol.
-The curious IdP does not collude with others.
+As depicted in Section \ref{subsec:threatmodel}, the IdP would attempt to infer the RP's identity visited by a user. Since the IdP is considered \emph{honest-but-curious}, it only collects information from the login requests to infer the visited RPs' identities, but does not %tamper with the authentication process or
+ deviate from the protocol or collude with others.
 
-To show \usso\ preventing such \emph{IdP-based login tracing}, we first prove that in $\mathcal{UWS}^{Auth}$, the IdP cannot obtain any information related to the target RP in each login (e.g., $ID_{RP}$, $t$, RP's $EndPoint$) except its \emph{ephemeral} pseudo-identity $PID_{RP}$ (with Property {\bf C1}). Then, we prove in Theorem \ref{thm-idp-untraceability} that with these $PID_{RP}$s in the identity token requests from the users, the IdP cannot (\emph{a}) associate multiple logins to the same RP, or (\emph{b}) distinguish a login to one RP from other logins to another RP, because $PID_{RP}$ is \emph{indistinguishable} from any random variables to the IdP. So, \usso\ prevents \emph{an honest-but-curious IdP} from tracing a user's login activities.
+To show \usso\ preventing such \emph{IdP-based login tracing}, we first prove that in $\mathcal{UWS}^{Auth}$, the IdP cannot obtain any information related to the target RP in each login (e.g., $ID_{RP}$, $t$, RP's $EndPoint$) except its \emph{ephemeral} pseudo-identity $PID_{RP}$ (with Property {\bf C1}). Then, we prove in Theorem \ref{thm-idp-untraceability-main} that with these $PID_{RP}$s in the identity token requests from the users, the IdP cannot (\emph{a}) associate multiple logins to the same RP, or (\emph{b}) distinguish a login to one RP from other logins to another RP, because $PID_{RP}$ is \emph{indistinguishable} from any random variables to the IdP. So, \usso\ prevents \emph{an honest-but-curious IdP} from tracing a user's login activities.
 
-\begin{lemma}
+\begin{thm}
 \textsc{(IdP Untraceability)} \emph{In \usso, the IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$.}
-\label{lemma-idp-untraceability}
-\end{lemma}
+\label{thm-idp-untraceability-main}
+\end{thm}
 
 \noindent\textbf{\textsc{Proof.}}
 Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$.

@@ -8,9 +8,9 @@ While these accounts can be derived from an RP's domain and the user's secret \c
  they still cause inconvenience to users.
 For example, in web applications, the users need to install a browser extension to handle the long-term secret.
 If it is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
-If the accounts are not masked by the user secret,
+If the relationship of these accounts is not masked by the user secret or another trusted server \cite{miso},
  the colluding IdP and RPs can eventually find a way to link them;
- on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
+% on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
 Unlike these approaches, \usso\ is not designed to prevent such collusive attacks,
  because a user is authenticated only \emph{once} in the login flow.
 In \usso\ the user's identity at the IdP is obliviously transformed into accounts at RPs,
@@ -45,18 +45,6 @@ As a result, the user is required to perform special operations to migrate her a
 It is worth noting that the user operations cannot be eliminated in the migration from an RP to the updated one;
 otherwise, it implies two colluding RPs could link a user's accounts across these RPs.
 
-%\vspace{0.75mm}
-\noindent \textbf{Quantum resistance.}
-The current designs of \usso\ do not achieve quantum resistance.
-In the future, we will investigate alternative algorithms for quantum-secure services.
-We plan to adopt a quantum-resistant public-key algorithm for the IdP to sign identity tokens and RP certificates.
-Moreover, we will study existing quantum-resistant ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf}
- to investigate if they support RP designation (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions).
-As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
-
-%To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.
-%to find out whether they can work for the quantum-secure identity transformations in \usso.
-
 
 %\vspace{0.75mm}
 \noindent \textbf{Applicability of identity transformations.}
@@ -69,11 +57,11 @@ These algorithms follow the common model of popular SSO protocols and do not dep
 When the IdP script forwards identity tokens to the RP script, the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} is used to restrict the recipient of the tokens, to ensure that the tokens will be sent to the intended $Enpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
 The RP script's origin must accurately match the targetOrigin to receive the tokens.
 
-The targetOrigin mechanism does not check the URL path in $Enpt_{RP}$, but it introduces {\em no additional} risk.
+The targetOrigin mechanism does not check the whole URL path in $Enpt_{RP}$, but it introduces {\em no additional} risk.
 %This assumes only one RP runs on a domain.
 Consider two RPs in the same domain but receiving tokens through two different endpoints,
  e.g., \verb+https://RP.com/honest/tk+ and \verb+https://RP.com/malicious/tk+.
-The IdP script cannot distinguish them.
+This mechanism cannot distinguish them.
 %
 % Following the same-origin policy (SOP) \cite{sop} for browser access control, the IdP script sends tokens to both endpoints using \verb+postMessage+.
 %
@@ -86,7 +74,7 @@ Because a COTS browser controls access to web resources with the same-origin pol
 %  such as stealing cookies using the script \verb+window.open('https://RP.com/honest').document.cookie+,
 %  even if it restricts that only HTTP requests to specific paths carry its cookies.
 %
- So, this risk is due to the SOP model but not the \usso\ protocol.
+ So, this risk is caused by the SOP model but not our designs.
 
 %\vspace{0.75mm}
 \noindent \textbf{Support for the authorization code flow.} In OIDC authorization code flow \cite{OpenIDConnect}, the IdP does not directly provide identity tokens.
@@ -95,6 +83,18 @@ Instead, it sends an authorization code to the RP, which uses this code to reque
 The IdP script can forward an authorization code to the RP script, and then to the RP. %that binds $PID_U$ and $PID_{RP}$.
 An authorization code only serves as an index to retrieve identity tokens from the IdP and does not reveal any more information about the authenticated user.
 After receiving an authorization code, an RP uses it along with a secret credential issued by the IdP during the initial registration \cite{OpenIDConnect} to retrieve identity tokens from the IdP. However, to protect the RP identities from the IdP, privacy-preserving tokens (e.g., ring or group signatures \cite{ring-sig,chaum1991group} and TrustToken \cite{trusttoken}) and anonymous networks (e.g., Tor \cite{tor}) need to be adopted for RPs in the retrieval of identity tokens.
+
+%\vspace{0.75mm}
+\noindent \textbf{Quantum resistance.}
+The current designs of \usso\ do not achieve quantum resistance.
+In the future, we will investigate alternative algorithms for quantum-secure services.
+We plan to adopt a quantum-resistant public-key algorithm for the IdP to sign identity tokens and RP certificates.
+Moreover, we will study existing quantum-resistant ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf}
+ to investigate if they support RP designation (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions).
+As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
+
+%To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.
+%to find out whether they can work for the quantum-secure identity transformations in \usso.
 
 
 

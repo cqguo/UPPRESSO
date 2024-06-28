@@ -43,8 +43,9 @@ The identity token issued by the IdP then binds only $PID_U$ and $PID_{RP}$, ins
 
 
 \usso\ prevents %two privacy risks,
- IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO solutions address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, FirefoxAccount} or an extra trusted server is introduced in system \cite{miso}.
-Meanwhile, \usso\ works compatibly with widely-used SSO protocols \cite{OpenIDConnect, rfc6749, SAML, NIST2017draft}, ensuring that all of the desirable features of SSO services are supported, and then offers a comprehensive privacy-preserving SSO solution.
+ both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO solutions address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, FirefoxAccount} or an extra trusted server is introduced \cite{miso}.
+Meanwhile, \usso\ works compatibly with widely-used SSO protocols \cite{OpenIDConnect, rfc6749, SAML, NIST2017draft}, ensuring that all the desirable features of SSO services are supported.
+% and then offers a comprehensive privacy-preserving SSO solution.
 In contrast, privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix} supports some but not all of these features.
 %
 %Compared with existing SSO protocols, \usso\ is among the first to prevent both types of privacy threats. Compared with existing privacy-preserving identity federation schemes, \usso\ supports all the desired SSO features while providing sufficient privacy protections.

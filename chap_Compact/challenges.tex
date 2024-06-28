@@ -19,8 +19,8 @@ An honest RP verifies the RP's identity in the identity token before accepting i
 \subsection{Identity Transformation}
 \label{subsec:solutions}
 
-We aim to develop a privacy-preserving SSO system that ensures security properties while preventing both IdP-based login tracing and RP-based identity linkage.
-In \usso, these requirements are satisfied through \emph{transformed identities} in the identity tokens. Table \ref{tbl:notations-dilemma} lists the notations used,
+\usso\ implements privacy-preserving SSO that ensures security properties while preventing both IdP-based login tracing and RP-based identity linkage.
+These requirements are satisfied through \emph{transformed identities} in the identity tokens. Table \ref{tbl:notations-dilemma} lists the notations,
 and the subscript $j$ and/or the superscript $i$ may be ignored if it does not cause ambiguity.
 
 \begin{table}[b]
@@ -40,8 +40,8 @@ and the subscript $j$ and/or the superscript $i$ may be ignored if it does not c
 \end{table}
 
 In an SSO login flow, a user initiates the process by negotiating an \emph{ephemeral} pseudo-identity $PID_{RP}$  with the target RP and sending an identity-token request that encloses $PID_{RP}$ to the IdP.
-After successfully authenticating the user as $ID_U$, the IdP calculates an \emph{ephemeral} $PID_U$ based on $ID_U$ and $PID_{RP}$ and issues an identity token that binds $PID_U$ and $PID_{RP}$. Upon receiving a token with a matching $PID_{RP}$, the RP calculates the user's \emph{permanent} $Acct$ and authorizes the token holder to log in.
-The relationships among the permanent and ephemeral (pseudo-)identities are depicted in Figure \ref{fig:IDCorrelation}, where the \emph{red} and \emph{green} blocks represent \emph{permanent} and \emph{ephemeral} (pseudo-)identities, respectively, and the labeled arrows denote the transformations of (pseudo-)identities.
+After successfully authenticating the user as $ID_U$, the IdP calculates an \emph{ephemeral} $PID_U$ based on $ID_U$ and $PID_{RP}$ and issues an identity token that binds $PID_U$ and $PID_{RP}$. Upon receiving a valid token, the RP calculates the user's \emph{permanent} $Acct$ and authorizes the token holder to log in.
+The relationships among the permanent and ephemeral (pseudo-)identities are depicted in Figure \ref{fig:IDCorrelation}, where the labeled arrows denote the transformations of (pseudo-)identities, and the \emph{red} and \emph{green} blocks represent \emph{permanent} and \emph{ephemeral} ones, respectively.
 
 \begin{figure}[tb]
   \centering
