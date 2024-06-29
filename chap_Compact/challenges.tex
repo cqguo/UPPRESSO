@@ -10,7 +10,7 @@ We discuss the security requirements of privacy-preserving SSO and present the i
 Non-anonymous SSO services \cite{OpenIDConnect,rfc6749,SAML,SAMLIdentifier,NIST2017draft} are designed to allow a \emph{legitimate} user to log into an \emph{honest} RP with her account at this RP, %correlating multiple logins,
 by presenting \emph{identity tokens} issued by a \emph{trusted} IdP.
 To achieve this goal, the trusted IdP issues an identity token that specifies the RP being accessed (i.e., \emph{RP designation}) and the authenticated user's identity or pseudo-identity (i.e., \emph{user identification}).
-An honest RP verifies the RP's identity in the identity token before accepting it and authorizes the token holder to log in as the specified user. This prevents malicious RPs from replaying any received tokens to gain unauthorized access to other honest RPs as victim users.
+An honest RP checks the RP's identity in the identity token before accepting it and authorizes the token holder to log in as the specified user. This prevents malicious RPs from replaying any received tokens to gain unauthorized access to other honest RPs as victim users.
 \emph{Confidentiality} and \emph{integrity} of identity tokens are also necessary to prevent eavesdropping and tampering. Identity tokens are forwarded to the target RPs by the authenticated user, so they are usually signed by the trusted IdP and transmitted over HTTPS \cite{OpenIDConnect, rfc6749, SAML}.
 
 %The requirements for secure SSO services, i.e., RP designation, user identification, integrity, and confidentiality of identity tokens, have been extensively studied \cite{ArmandoCCCT08, SPRESSO, FettKS14, FettKS16, FettKS17}.
@@ -41,7 +41,7 @@ and the subscript $j$ and/or the superscript $i$ may be ignored if it does not c
 
 In an SSO login flow, a user initiates the process by negotiating an \emph{ephemeral} pseudo-identity $PID_{RP}$  with the target RP and sending an identity-token request that encloses $PID_{RP}$ to the IdP.
 After successfully authenticating the user as $ID_U$, the IdP calculates an \emph{ephemeral} $PID_U$ based on $ID_U$ and $PID_{RP}$ and issues an identity token that binds $PID_U$ and $PID_{RP}$. Upon receiving a valid token, the RP calculates the user's \emph{permanent} $Acct$ and authorizes the token holder to log in.
-The relationships among the permanent and ephemeral (pseudo-)identities are depicted in Figure \ref{fig:IDCorrelation}, where the labeled arrows denote the transformations of (pseudo-)identities, and the \emph{red} and \emph{green} blocks represent \emph{permanent} and \emph{ephemeral} ones, respectively.
+The relationships among the (pseudo-)identities are depicted in Figure \ref{fig:IDCorrelation}, where the labeled arrows denote the transformations of (pseudo-)identities, and the \emph{red} and \emph{green} blocks represent \emph{permanent} and \emph{ephemeral} ones, respectively.
 
 \begin{figure}[tb]
   \centering

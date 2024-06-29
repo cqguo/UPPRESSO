@@ -1,7 +1,7 @@
 \subsection{Anonymous Tokens and OPRF-based Applications}
 \label{sec:related}
 
-PrivacyPass and TrustToken \cite{privacypass,trusttoken} adopted the oblivious pseudo-random function (OPRF) protocol \cite{oprf-proved,voprf-proved,oprf-bitcoin-wallet} to generate anonymous tokens with which authorized users could access resources anonymously.
+PrivacyPass and TrustToken \cite{privacypass,trusttoken} adopted the oblivious pseudo-random function (OPRF) protocol \cite{oprf-proved,voprf-proved} to generate anonymous tokens with which authorized users could access resources anonymously.
 A user generates a random number $e_i$ to blind an unsigned token $T_i$ into $[e_i]T_i$. After authenticating the user, a token server signs $[e_i]T_i$ with its private key $k$ and returns $[k e_i]T_i$ to the user, who converts it into an anonymous token  ($T_i, [k]T_i$) using $e_i$ (see \cite{privacypass,trusttoken,oprf-proved} for details). In this process, the server obliviously calculates a pseudo-random output (i.e., anonymous token).
 RPs do not identify each user if we use these tokens in an SSO service, because these tokens are completely indistinguishable.
 
@@ -14,8 +14,8 @@ To provide privacy-preserving SSO services, \usso\ works among three parties, un
 So it has to leverage this cryptographic technique in different ways. %, unlike the completely anonymous service in PrivacyPass/TrustToken.
 %This also requires extending the two-party OPRF protocol to work for three parties in SSO services.
 First, \usso\ securely shares the user-selected random number $t_i$ with the target RP,
-enabling it to independently derive the user's unique account, i.e., $Acct = [t_i^{-1}]PID_{U}$. This account is ``obliviously'' determined by the IdP when it calculates the user's pseudo-identity based on the ``blinded'' input (i.e., the RP's pseudo-identity). Second, $u$ and $ID_{RP}$, which roughly correspond to $k$ and $T_i$ in PrivacyPass/TrustToken, are designed as the \emph{permanent identities} of the user and the RP, respectively, to establish the relationships between identities obliviously.
-This is different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as the server's \emph{secret key}.
+enabling it to independently derive the user's unique account, i.e., $Acct = [t_i^{-1}]PID_{U}$. This account is ``obliviously'' determined by the IdP when it calculates the user's pseudo-identity based on the ``blinded'' input (i.e., the RP's pseudo-identity). Second, $u$ and $ID_{RP}$, which roughly correspond to $k$ and $T_i$ in PrivacyPass/TrustToken, are designed as the permanent identities of the user and the RP, respectively, to establish the relationships between identities obliviously.
+This is different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as the server's secret key.
 The integration of SSO (pseudo-)identities  and OPRF variables requires a deep understanding of both SSO and OPRF protocols.
 Finally, \usso\ leverages randomness of OPRF to provide \emph{RP unlinkability}, and this property is not utilized in PrivacyPass/TrustToken.
 It ensures colluding RPs cannot link any two logins across RPs, %i.e., ($ID_{RP}, t, [u]ID_{RP}$) and ($ID_{RP'}, t', [u']ID_{RP'}$),
@@ -23,13 +23,14 @@ even by sharing their knowledge about pseudo-identities and permanent accounts.
 This property offers desirable indistinguishability of \emph{different users} logging into colluding RPs.
 It corresponds to the indistinguishability of \emph{different keys} for signing anonymous tokens, not considered in PrivacyPass/TrustToken. % but they intentionally distinguish different keys by configuring a unique public key for each user to verify the signed tokens.
 
-Although \usso\ mathematically employs the same technique in its identity transformations as the OPRF protocol \cite{oprf-proved,voprf-proved}, we prove more properties of these algorithms to ensure security and privacy. % in Theorems 4, 6, and 7.
+Although \usso\ mathematically employs the same technique in its identity transformations as the OPRF protocol \cite{oprf-proved,voprf-proved}, we need more properties of these algorithms to ensure security and privacy. % in Theorems 4, 6, and 7.
 \usso\ essentially depends on the \emph{obliviousness} property to ensure IdP untraceability, %prevent the IdP from learning any information about $ID_{RP}$ when receiving a token request for $[t_i]ID_{RP}$,
 the \emph{deterministicness} property of \emph{pseudo-random} functions to enable the RP to derive a permanent account for any $t$, and the \emph{randomness} property to provide RP unlinkability. %when user identities (i.e., the key secret $k$ of pseudo-random functions) are unknown.
-Last but not least, \usso\ requires an extra property for SSO services, called \emph{RP designation}.
-It is satisfied \emph{only if} no collision exists in RPs' pseudo-identities (see Lemma \ref{lemma-rp-main}), which correspond to the blinded inputs of the evaluated pseudo-random function \cite{oprf-proved,voprf-proved}.
-This property %, i.e., \emph{collision-freeness of blinded inputs},
-is not explicitly required in other OPRF-based solutions and therefore may not be supported by all OPRF protocols. That is, an OPRF protocol is not always ready to implement identity transformations in \usso, unless no collision exists in the blinded inputs.
+In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} actually depend on only the properties of obliviousness and deterministicness.
+%Last but not least, \usso\ requires an extra property for SSO services, called \emph{RP designation}.
+%It is satisfied \emph{only if} no collision exists in RPs' pseudo-identities (see Lemma \ref{lemma-rp-main}), which correspond to the blinded inputs of the evaluated pseudo-random function \cite{oprf-proved,voprf-proved}.
+%This property %, i.e., \emph{collision-freeness of blinded inputs},
+%is not explicitly required in other OPRF-based solutions and therefore may not be supported by all OPRF protocols. That is, an OPRF protocol is not always ready to implement identity transformations in \usso, unless no collision exists in the blinded inputs.
 
 \begin{comment}
 PrivacyPass and TrustToken \cite{privacypass,trusttoken}
@@ -75,30 +76,26 @@ is not explicitly required in other OPRF-based solutions and therefore may not b
 \noindent\textbf{Formal analysis of SSO protocols.}
 A formal analysis on SAML-based SSO \cite{ArmandoCCCT08} found some system does not bind RP identities correctly in the identity tokens.
 Fett et al. \cite{FettKS16, FettKS17} formally analyzed OIDC and OAuth 2.0 using a Dolev-Yao style model \cite{FettKS14} and reported the 307 redirection and IdP mix-up attacks.
-In this paper, we also developed a Dolev-Yao style model for \usso, to prove its security and privacy.
+We also developed a Dolev-Yao style model for \usso, to prove its security and privacy.
 
 
 %Cryptographic primitives are used for protecting user privacy.
 \noindent\textbf{Cryptographic primitives for sign-on privacy.}
-Distributed key generation and zero-knowledge proofs are used to generate ring-signature private keys as untraceable pseudonyms \cite{crypto-book} or prove users' statements about their credentials without revealing the credential contents \cite{zklaim}.
+Distributed key generation and ZKPs are used to generate ring-signature private keys as untraceable pseudonyms \cite{crypto-book} or prove users' statements about their credentials without revealing the credential contents \cite{zklaim}.
 One-time key-share tokens \cite{tandem} are generated in two-party threshold cryptography systems to protect users' key-usage patterns.
 PESTO \cite{pesto} combines distributed partially-oblivious pseudo-random functions (dpOPRFs) and distributed signatures in proactively-secure SSO services, and signs a commitment of an identity token (but not the token itself) for better user privacy.
 introduces attribute authorities in an SSO system,
 Ab-dSSO \cite{AttriB-SSO} enforces attribute-based policies,
      by utilizing an MPC scheme between the distributed IdP servers and attribute authorities.
 
-A user's authentication secrets are split between a browser extension and the Larch log server \cite{larch},
- so every authentication is recorded, while sign-on privacy is protected against log servers
-    by utilizing threshold signatures and zero-knowledge arguments \cite{ZKBoo}.
+A user's authentication secrets are split between a browser extension and Larch log servers \cite{larch},
+ so that every sign-on is recorded, while sign-on privacy is protected against log servers
+    by utilizing threshold signatures and ZKPs \cite{ZKBoo}.
 
 
-Need more reading
-\cite{letsauth, save-flow}
+%identity federation \cite{PrivSSO}
 
-identity federation
-\cite{PrivSSO}
-
-\cite{DPP-SSO}
+%\cite{DPP-SSO}
 
 
 
