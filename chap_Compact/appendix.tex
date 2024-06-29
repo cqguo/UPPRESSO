@@ -8,10 +8,23 @@
 \newcommand{\myif}[1]{\IF{\myss{{{}#1}}}}
 \newcommand{\myelse}[1]{\ELSIF{\myss{{{}#1}}}}
 
-\newcommand{\aaa}[1]{\STATE \textbf{if} #1 \textbf{then} \begin{ALC@g}}
-\newcommand{\bbb}[1]{\end{ALC@g} \STATE \textbf{else if} #1 \textbf{then} \begin{ALC@g}}
-\newcommand{\ccc}{\end{ALC@g} \STATE \textbf{else} \textbf{then} \begin{ALC@g}}
-\newcommand{\ddd}{\end{ALC@g} \STATE \textbf{endif}}
+
+\newcommand{\State}{\STATE}
+\newcommand{\If}{\IF}
+\newcommand{\Else}{\ELSE}
+\newcommand{\EndIf}{\ENDIF}
+\newcommand{\Switch}{\SWITCH}
+\newcommand{\EndSwitch}{\ENDSWITCH}
+\newcommand{\Case}{\CASE}
+\newcommand{\EndCase}{\ENDCASE}
+\newcommand{\Return}{\RETURN}
+\newcommand{\For}{\FOR}
+\newcommand{\EndFor}{\ENDFOR}
+\newcommand{\ElsIf}{\ELSIF}
+
+\newcommand{\Append}[2]{\STATE \textbf{let} #2 := #2 + $^{\an{}}$ #1}
+\newcommand{\LetNDST}[4]{\LetND{#1}{#2} \textbf{such that} #3 \textbf{if possible; otherwise} #4}
+
 
 \newcommand{\SWITCH}[1]{\STATE \textbf{switch} #1\ \textbf{do} \begin{ALC@g}}
 \newcommand{\ENDSWITCH}{\end{ALC@g}\STATE \textbf{end switch}}
@@ -21,6 +34,11 @@
 \newcommand{\DEFAULT}{\STATE \textbf{default:} \begin{ALC@g}}
 \newcommand{\ENDDEFAULT}{\end{ALC@g}}
 \newcommand{\DEFAULTLINE}[1]{\STATE \textbf{default:} }
+\newcommand{\Function}[1]{\STATE \textbf{function} \myss{{{}#1}}}
+\newcommand{\EndFunction}{\STATE \textbf{end function}}
+
+\newcommand{\Let}[2]{\STATE \textbf{let} #1 := #2 }
+\newcommand{\LetND}[2]{\STATE \textbf{let} #1 $\leftarrow$ #2 }
 
 \setcounter{section}{0}
 \renewcommand{\thesection}{\Alph{section}}
@@ -327,6 +345,7 @@ For example, $a\in d_{\{\}}(\{\enc{\an{a,b,c}}{\pub(k)}, k\})$.
 
 
 \subsection{Web Systems Model}
+\label{app:websystemmodel}
 
 
 The architecture of the web and its applications are represented through an model known as a web system. This system encompasses a set of DY processes, which may be infinite in number, to depict various components such as web browsers, servers, and potential adversaries capable of compromising these elements.
@@ -430,13 +449,18 @@ XMLHTTPRequest is the HTTP message transmitted  by scripts in the browser. That 
 
 
 \section{Model of Browser}
+\label{app:browser}
 A browser is the essential role (atom process) in the web system. Different from the servers, a browser follows the roughly same rules to communicate with other entities. We give the description of the browser in this  section for the further construction of UPPRESSO web system.
 
 We firstly introduce the windows and documents of the browser model.
 
 
 \begin{definition}(Window).
-A window \myss{w} is a term of the form \myss{w = \myangle{nonce, documents, opener}}, representing the  the concrete browser window in the system. The \myss{nonce} is the window reference to identify each windows. The \myss{documents} is the set of documents (defined below) including the current document and cached documents (for example, the documents can be viewed via the ``forward" and ``back" buttons in the browser). The \myss{opener} represents the window in which this window is created, for instance, while a user clicks the href in document \myss{d} and it creates a new window \myss{w}, there is \myss{w.opener \equiv d.nonce}.
+A window \myss{w} is a term of the form \myss{w = \myangle{nonce, documents, opener}}, representing the the concrete browser window in the system. The \myss{nonce} is the window reference to identify each windows, where $\mi{nonce} \in \nonces$. 
+The \myss{documents} is defined below.
+The \myss{opener} represents the window in which this window is created ($\mi{opener} \in \nonces \cup \{\bot\}$), for instance, while a user clicks the href in document \myss{d} and it creates a new window \myss{w}, there is \myss{w.opener \equiv d.nonce}. We write $\comp{w}{activedocument}$ to denote
+    the active document inside window $w$ if it exists and
+    $\an{}$ else.
 \end{definition}
 
 \begin{definition}(Document).
@@ -444,29 +468,652 @@ A document \myss{d} is a term of the form
 
 $$\langle nonce, location, referrer, script, scriptstate, scriptinputs, subwindows, active \rangle $$
 
-where document is the HTML content in the window.  The \myss{nonce} locates the document. \myss{Location} is the URL where the document is loaded. \myss{Referrer} is same as the Referer header defined in HTTP standard. The \myss{script} is the scripting process downloaded from each servers. \myss{scriptstate} is define by the script, different in each scripts. The \myss{scriptinputs} is the message transmitted into the scripting process. The \myss{subwindows} is the set of \myss{nonce} of document's created windows. \myss{active} represents whether this document is active or not.
+where document is the HTML content in the window.  
+The \myss{nonce} locates the document, where $\mi{nonce} \in \nonces$. 
+\myss{Location} is the URL where the document is loaded, where $\mi{location} \in \urls$. 
+\myss{Referrer} is same as the Referer header defined in HTTP standard, where $\mi{referrer} \in \urls \cup \{\bot\}$. 
+The \myss{script} is the scripting process downloaded from each servers, where $\mi{script} \in \terms$. 
+\myss{scriptstate} is define by the script, different in each scripts, where $\mi{scriptstate} \in \terms$. 
+The \myss{scriptinputs} is the message transmitted into the scripting process, where $\mi{scriptinputs} \in \terms$. 
+The \myss{subwindows} is the set of document's created windows, where $\mi{subwindows} \subsetPairing \windows$. 
+\myss{active} represents whether this document is active or not, where $\mi{active} \in \{\True, \bot\}$.
+We write $\documents$ for the set of all documents.
+we denote the origin of the document $d.\str{origin} := \an{d.\str{location}.\str{host}, d.\str{location}.\str{protocol}}$.
 \end{definition}
+
+A browser atomic process is of the form $b = (I^b, Z^b, R^b, s_0^b)$.
+Now we can define the set of states of the web browser.
+\begin{definition}
+The
+  \emph{set of states $Z^b$ of a web browser atomic process}
+  $p$ consists of the terms of the form
+  \begin{align*} \langle\mi{windows}, \mi{ids},
+    \mi{secrets}, \mi{cookies}, \mi{localStorage},
+    \mi{sessionStorage}, \mi{keyMapping}, \mi{sts},
+    \mi{pendingRequests}, \mi{isCorrupted}\rangle
+  \end{align*} where
+  \begin{itemize}
+  \item $\mi{windows} \subsetPairing \windows$,
+  \item $\mi{ids} \subsetPairing \terms$,
+  \item $\mi{secrets} \in \dict{\origins}{\nonces}$,
+  \item $\mi{cookies}$ is a dictionary over $\dns$ and
+    dictionaries of $\cookies$,
+  \item $\mi{localStorage} \in \dict{\origins}{\terms}$,
+  \item $\mi{sessionStorage} \in \dict{\mi{OR}}{\terms}$ for $\mi{OR} := \left\{\an{o,r}
+    \middle|\, o \in \origins,\, r \in \nonces\right\}$,
+  \item $\mi{keyMapping} \in \dict{\dns}{\terms}$,
+  \item $\mi{sts} \subsetPairing \dns$,
+  \item $\mi{pendingRequests} \in$ $\terms$,
+  \item and $\mi{isCorrupted} \in \{\bot, \fullcorrupt,$ $
+    \closecorrupt\}$.
+  \end{itemize} 
+\end{definition}
+
+
+\begin{definition} For two window terms $w$ and $w'$ we
+  write $w \windowChildOf w'$ if \\
+  \[w \inPairing \comp{\comp{w'}{activedocument}}{subwindows}\text{\ .}\]
+We write
+  $\windowChildOfX$ for the transitive closure.
+\end{definition}
+
+In the following description of the web browser relation
+$R^p$ we will use the helper functions
+$\mathsf{Subwindows}$, $\mathsf{Docs}$, $\mathsf{Clean}$,
+$\mathsf{CookieMerge}$ and $\mathsf{AddCookie}$. 
+
+Given a browser state $s$, $\mathsf{Subwindows}(s)$ denotes
+the set of all pointers to windows in
+the window list $\comp{s}{windows}$, their active
+documents, and (recursively) the subwindows of these
+documents. We exclude subwindows of inactive documents and
+their subwindows. With $\mathsf{Docs}(s)$ we denote the set
+of pointers to all active documents in the set of windows
+referenced by $\mathsf{Subwindows}(s)$.
+\begin{definition} 
+  For a browser state $s$ we denote by
+  $\mathsf{Subwindows}(s)$ the minimal set of
+  pointers that satisfies the
+  following conditions: (1) For all windows $w \inPairing
+  \comp{s}{windows}$ there is a $\ptr{p} \in
+  \mathsf{Subwindows}(s)$ such that $\compn{s}{\ptr{p}} =
+  w$. (2) For all $\ptr{p} \in \mathsf{Subwindows}(s)$, the
+  active document $d$ of the window $\compn{s}{\ptr{p}}$
+  and every subwindow $w$ of $d$ there is a pointer
+  $\ptr{p'} \in \mathsf{Subwindows}(s)$ such that
+  $\compn{s}{\ptr{p'}} = w$.
+
+  Given a browser state $s$, the set $\mathsf{Docs}(s)$ of
+  pointers to active documents is the minimal set such that
+  for every $\ptr{p} \in \mathsf{Subwindows}(s)$, there is
+  a pointer $\ptr{p'} \in \mathsf{Docs}(s)$ with
+  $\compn{s}{\ptr{p'}} =
+  \comp{\compn{s}{\ptr{p}}}{activedocument}$.
+\end{definition}
+
+By $\mathsf{Subwindows}^+(s)$ and $\mathsf{Docs}^+(s)$ we
+denote the respective sets that also include the inactive
+documents and their subwindows.
+
+The function $\mathsf{Clean}$ will be used to determine
+which information about windows and documents the script
+running in the document $d$ has access to.
+\begin{definition} Let $s$ be a browser state and $d$ a
+  document.  By $\mathsf{Clean}(s, d)$ we denote the term
+  that equals $\comp{s}{windows}$ but with all inactive
+  documents removed (including their subwindows etc.) and
+  all subterms that represent non-same-origin documents
+  w.r.t.~$d$ replaced by a limited document $d'$ with the
+  same nonce and the same subwindow list. Note that
+  non-same-origin documents on all levels are replaced by
+  their corresponding limited document.
+\end{definition}
+
+The function $\mathsf{CookieMerge}$ merges two sequences of
+cookies together: When used in the browser,
+$\mi{oldcookies}$ is the sequence of existing cookies for
+some origin, $\mi{newcookies}$ is a sequence of new cookies
+that was output by some script. The sequences are merged
+into a set of cookies using an algorithm that is based on
+the \emph{Storage Mechanism} algorithm described in
+RFC6265.
+\begin{definition} \label{def:cookiemerge} For a sequence
+  of cookies (with pairwise different names)
+  $\mi{oldcookies}$ and a sequence of cookies
+  $\mi{newcookies}$, the set
+  $\mathsf{CookieMerge}(\mi{oldcookies}, \mi{newcookies})$
+  is defined by the following algorithm: From
+  $\mi{newcookies}$ remove all cookies $c$ that have
+  $c.\str{content}.\str{httpOnly} \equiv \True$. For any
+  $c$, $c' \inPairing \mi{newcookies}$, $\comp{c}{name}
+  \equiv \comp{c'}{name}$, remove the cookie that appears
+  left of the other in $\mi{newcookies}$. Let $m$ be the
+  set of cookies that have a name that either appears in
+  $\mi{oldcookies}$ or in $\mi{newcookies}$, but not in
+  both. For all pairs of cookies $(c_\text{old},
+  c_\text{new})$ with $c_\text{old} \inPairing
+  \mi{oldcookies}$, $c_\text{new} \inPairing
+  \mi{newcookies}$, $\comp{c_\text{old}}{name} \equiv
+  \comp{c_\text{new}}{name}$, add $c_\text{new}$ to $m$ if
+  $\comp{\comp{c_\text{old}}{content}}{httpOnly} \equiv
+  \bot$ and add $c_\text{old}$ to $m$ otherwise. The result
+  of $\mathsf{CookieMerge}(\mi{oldcookies},
+  \mi{newcookies})$ is $m$.
+\end{definition}
+
+The function $\mathsf{AddCookie}$ adds a cookie $c$
+received in an HTTP response to the sequence of cookies
+contained in the sequence $\mi{oldcookies}$. It is again
+based on the algorithm described in RFC6265 but simplified
+for the use in the browser model.
+\begin{definition} \label{def:addcookie} For a sequence of cookies (with pairwise different
+  names) $\mi{oldcookies}$ and a cookie $c$, the sequence
+  $\mathsf{AddCookie}(\mi{oldcookies}, c)$ is defined by the
+  following algorithm: Let $m := \mi{oldcookies}$. Remove
+  any $c'$ from $m$ that has $\comp{c}{name} \equiv
+  \comp{c'}{name}$. Append $c$ to $m$ and return $m$.
+\end{definition}
+
+The function $\mathsf{NavigableWindows}$ returns a set of
+windows that a document is allowed to navigate. We closely
+follow \cite{html5}, Section~5.1.4 for this definition.
+\begin{definition} The set $\mathsf{NavigableWindows}(\ptr{w}, s')$
+  is the set $\ptr{W} \subseteq
+  \mathsf{Subwindows}(s')$ of pointers to windows that the
+  active document in $\ptr{w}$ is allowed to navigate. The
+  set $\ptr{W}$ is defined to be the minimal set such that
+  for every $\ptr{w'}
+  \in \mathsf{Subwindows}(s')$ the following is true: %
+\begin{itemize}
+\item If
+  $\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{origin}
+  \equiv
+  \comp{\comp{\compn{s'}{\ptr{w}}}{activedocument}}{origin}$
+  (i.e., the active documents in $\ptr{w}$ and $\ptr{w'}$ are
+  same-origin), then $\ptr{w'} \in \ptr{W}$, and
+\item If ${\compn{s'}{\ptr{w}} \childof
+    \compn{s'}{\ptr{w'}}}$ $\wedge$ $\nexists\, \ptr{w}''
+  \in \mathsf{Subwindows}(s')$ with $\compn{s'}{\ptr{w}'}
+  \childof \compn{s'}{\ptr{w}''}$ ($\ptr{w'}$ is a
+  top-level window and $\ptr{w}$ is an ancestor window of
+  $\ptr{w'}$), then $\ptr{w'} \in \ptr{W}$, and
+\item If $\exists\, \ptr{p} \in \mathsf{Subwindows}(s')$
+  such that $\compn{s'}{\ptr{w}'} \windowChildOfX
+  \compn{s'}{\ptr{p}}$ \\$\wedge$
+  $\comp{\comp{\compn{s'}{\ptr{p}}}{activedocument}}{origin}
+  =
+  \comp{\comp{\compn{s'}{\ptr{w}}}{activedocument}}{origin}$
+  ($\ptr{w'}$ is not a top-level window but there is an
+  ancestor window $\ptr{p}$ of $\ptr{w'}$ with an active
+  document that has the same origin as the active document
+  in $\ptr{w}$), then $\ptr{w'} \in \ptr{W}$, and
+\item If $\exists\, \ptr{p} \in \mathsf{Subwindows}(s')$ such
+  that $\comp{\compn{s'}{\ptr{w'}}}{opener} =
+  \comp{\compn{s'}{\ptr{p}}}{nonce}$ $\wedge$ $\ptr{p} \in
+  \ptr{W}$ ($\ptr{w'}$ is a top-level window---it has an
+  opener---and $\ptr{w}$ is allowed to navigate the opener
+  window of $\ptr{w'}$, $\ptr{p}$), then $\ptr{w'} \in
+  \ptr{W}$. 
+\end{itemize}
+\end{definition}
+
+Then we will describe the relation $R^b$ of the standard browser atomic process.  
+We define the (($\an{a, f, m}, s$), ($M, s'$)) $\in R^b$, where ($\an{a, f, m}, s$) is the input of the non-deterministic algorithm presented below, and ($M, s'$) is the output.
+
+In several places throughout the algorithms presented next we use placeholders to generate "fresh" nonces as described in our communication model. Figure~\ref{fig:browser-placeholder-list} shows a list of all placeholders used.
+
+
+\begin{figure}[htb]
+  \centering
+  \begin{tabular}{|@{\hspace{1ex}}l@{\hspace{1ex}}|@{\hspace{1ex}}l@{\hspace{1ex}}|}\hline 
+    \hfill Placeholder\hfill  &  Usage  \\\hline\hline
+    $\nu_1$ & Algorithm~\ref{alg:browsermain}, new window nonces  \\\hline
+    $\nu_2$ & Algorithm~\ref{alg:browsermain}, new HTTP request nonce   \\\hline
+    $\nu_3$ & Algorithm~\ref{alg:browsermain}, lookup key for pending HTTP requests entry  \\\hline
+    $\nu_4$ & Algorithm~\ref{alg:runscript}, new HTTP request nonce (multiple lines)  \\\hline
+    $\nu_5$ & Algorithm~\ref{alg:runscript}, new subwindow nonce  \\\hline
+    $\nu_6$ & Algorithm~\ref{alg:processresponse}, new HTTP request nonce  \\\hline
+    $\nu_7$ & Algorithm~\ref{alg:processresponse}, new document nonce   \\\hline
+    $\nu_8$ & Algorithm~\ref{alg:getnavigablewindow}, new window nonce  \\\hline
+    $\nu_{9}, \dots$ & Algorithm~\ref{alg:runscript}, replacement for placeholders in scripting process output   \\\hline
+  \end{tabular}
+  \caption{List of placeholders used in browser algorithms.}
+  \label{fig:browser-placeholder-list}
+\end{figure}
+
+Before we define the algorithm of the browser, we give the following definitions of the function used in the algorithm.
+
+\begin{definition}($\mathsf{GETNAVIGABLEWINDOW}$)
+This function is called by the browser to determine the window that is actually navigated when a script  provides a window reference for navigation. If window is the string $\wBlank$, a new window is created and a pointer to that window is returned. The function is described below.
+\end{definition}
+
+\captionof{algorithm}{\label{alg:getnavigablewindow}
+  Determine window for navigation.}
+\begin{algorithmic}[1]
+  \Function{\mathsf{GETNAVIGABLEWINDOW}(\ptr{w}, \mi{window}, \mi{noreferrer}, s')}
+    \myif{\mi{window} \equiv \wBlank} 
+      \myif{\mi{noreferrer} \equiv \bot}
+        \mystate{\myss{w' :=\an{\nu_9, \an{}, \comp{\compn{s'}{\ptr{w}}}{nonce} }}}
+      \ELSE
+        \mystate{\myss{w' := \an{\nu_9, \an{}, \bot}}}
+      \ENDIF
+      \Append{$w'$}{$\comp{s'}{windows}$} \textbf{and} let
+      $\ptr{w}'$ be a pointer to this new element in $s'$
+      \RETURN{$\ptr{w}'$}
+    \ENDIF
+    \mystate{$\ptr{w}' \leftarrow \mathsf{NavigableWindows}(\ptr{w},
+      s')$} \textbf{such that} $\comp{\compn{s'}{\ptr{w}'}}{nonce} \equiv
+      \mi{window}$ \textbf{if possible; otherwise return} $\ptr{w}$ 
+    \RETURN{$\ptr{w'}$}
+  \EndFunction
+\end{algorithmic} \setlength{\parindent}{1em}
+
+\begin{definition}($\mathsf{GETWINDOW}$)
+This function takes a window reference as input
+and checks whether the active documents in both windows are
+same-origin. Finally it takes a pointer to the same-origin window as output. he function is described below.
+\end{definition}
+
+\captionof{algorithm}{\label{alg:getwindow} Determine same-origin window.}
+\begin{algorithmic}[1]
+  \Function{\mathsf{GETWINDOW}({\ptr{w}, \mi{window}, s')}}
+    \mystate{$\ptr{w}' \leftarrow \mathsf{Subwindows}(s')$} \textbf{such that} $\comp{\compn{s'}{\ptr{w}'}}{nonce} \equiv \mi{window}$ \textbf{if possible; other return} $\ptr{w}$
+    \IF{
+      $\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{origin}
+      \equiv
+      \comp{\comp{\compn{s'}{\ptr{w}}}{activedocument}}{origin}$
+    }
+      \RETURN{$\ptr{w}'$}
+    \ENDIF
+    \RETURN{$\ptr{w}$}
+  \EndFunction
+\end{algorithmic} \setlength{\parindent}{1em}
+
+
+
+
+\begin{definition}($\mathsf{CANCELNAV}$)
+The function is used to stop any pending requests for a specific window.  It removes any requests with the given window reference $n$.
+\end{definition}
+
+\captionof{algorithm}{\label{alg:cancelnav} Cancel pending requests for given window.}
+\begin{algorithmic}[1]
+  \Function{\mathsf{CANCELNAV}(n, s')}
+    \State \textbf{remove all} $\an{n, \mi{req}, \mi{key}, \mi{f}}$ \textbf{ from } $\comp{s'}{pendingRequests}$ \textbf{for any} $\mi{req}$, $\mi{key}$, $\mi{f}$
+    \Return{$s'$}
+  \EndFunction
+\end{algorithmic} \setlength{\parindent}{1em}
+
+
+
+
+\begin{definition}($\mathsf{RUNSCRIPT}$)
+The function $\mathsf{RUNSCRIPT}$ performs a script execution step of the script in the document $\compn{s'}{\ptr{d}}$ (which is part of the window $\compn{s'}{\ptr{w}}$). A new script and document state is chosen according to the relation defined by the script and the new script and document state is saved. Afterwards, the $\mi{command}$ that the script issued is interpreted. 
+\end{definition}
+
+
+\captionof{algorithm}{\label{alg:runscript} Execute a script.}
+\begin{algorithmic}[1]
+  \Function{\mathsf{RUNSCRIPT}(\ptr{w}, \ptr{d}, s')}
+    \Let{$\mi{tree}$}{$\mathsf{Clean}(s', \compn{s'}{\ptr{d}})$} \label{line:clean-tree}
+
+    \Let{$\mi{cookies}$}{$\langle\{\an{\comp{c}{name}, \comp{\comp{c}{content}}{value}} | c \inPairing \comp{s'}{cookies}\left[  \comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{host}  \right]$
+     \breakalgohook{1} $\wedge\,\comp{\comp{c}{content}}{httpOnly} = \bot$ \breakalgohook{1} $\wedge\,\left(\comp{\comp{c}{content}}{secure} \implies \left(\comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{protocol} \equiv \https\right)\right) \}\rangle$} \label{line:assemble-cookies-for-script}
+    \LetND{$\mi{tlw}$}{$\comp{s'}{windows}$ \textbf{such that} $\mi{tlw}$ is the top-level window containing $\ptr{d}$} 
+    \Let{$\mi{sessionStorage}$}{$\comp{s'}{sessionStorage}\left[\an{\comp{\compn{s'}{\ptr{d}}}{origin}, \comp{\mi{tlw}}{nonce}}\right]$} %
+    \Let{$\mi{localStorage}$}{$\comp{s'}{localStorage}\left[\comp{\compn{s'}{\ptr{d}}}{origin}\right]$}
+    \Let{$\mi{secret}$}{$\comp{s'}{secrets}\left[\comp{\compn{s'}{\ptr{d}}}{origin}\right]$} \label{line:browser-secrets}
+    \LetND{$R$}{$\mathsf{script}^{-1}(\comp{\compn{s'}{\ptr{d}}}{script})$} %
+    \Let{$\mi{in}$}{$\langle\mi{tree}$, $\comp{\compn{s'}{\ptr{d}}}{nonce}, \comp{\compn{s'}{\ptr{d}}}{scriptstate}$, $\comp{\compn{s'}{\ptr{d}}}{scriptinputs}$, $\mi{cookies}$,  $\mi{localStorage}$, $\mi{sessionStorage}$, $\comp{s'}{ids}$, $\mi{secret}\rangle$}\label{line:browser-scriptinputs}
+    \LetND{$\mi{state}'$}{$\terms(V)$, \breakalgohook{1}
+      $\mi{cookies}' \gets \mathsf{Cookies}^\nu$, \breakalgohook{1}
+      $\mi{localStorage}' \gets \terms(V)$,\breakalgohook{1}
+      $\mi{sessionStorage}' \gets \terms(V)$,\breakalgohook{1}
+      $\mi{command} \gets \terms(V)$, \breakalgohook{1} 
+      $\mi{out}^\lambda := \an{\mi{state}', \mi{cookies}', \mi{localStorage}',$ $\mi{sessionStorage}', \mi{command}}$
+      \breakalgohook{1} \textbf{such that} $(\mi{in}, \mi{out}^\lambda) \in R$}  \label{line:trigger-script} 
+    \Let{$\mi{out}$}{$\mi{out}^\lambda[\nu_{10}/\lambda_1, \nu_{11}/\lambda_2, \dots]$}
+
+    \Let{$\comp{s'}{cookies}\left[\comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{host}\right]$}{$\langle\mathsf{CookieMerge}(\comp{s'}{cookies}\left[\comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{host}\right]$, $\mi{cookies}')\rangle$} \label{line:cookiemerge}
+    \Let{$\comp{s'}{localStorage}\left[\comp{\compn{s'}{\ptr{d}}}{origin}\right]$}{$\mi{localStorage}'$}
+    \Let{$\comp{s'}{sessionStorage}\left[\an{\comp{\compn{s'}{\ptr{d}}}{origin}, \comp{\mi{tlw}}{nonce}}\right]$}{$\mi{sessionStorage}'$}
+    \Let{$\comp{\compn{s'}{\ptr{d}}}{scriptstate}$}{$state'$}
+    \SWITCH{$\mi{command}$}
+      \CASE{$\an{\tHref, \mi{url},
+          \mi{hrefwindow}, \mi{noreferrer}}$} 
+      \Let{$\ptr{w}'$}{$\mathsf{GETNAVIGABLEWINDOW}$($\ptr{w}$,
+        $\mi{hrefwindow}$, $\mi{noreferrer}$, $s'$)} 
+      \Let{$\mi{req}$}{$\hreq{ nonce=\nu_4, 
+          method=\mGet, host=\comp{\mi{url}}{host},
+          path=\comp{\mi{url}}{path},
+          headers=\an{},
+          parameters=\comp{\mi{url}}{parameters}, body=\an{}
+        }$}
+      \IF{$\mi{noreferrer} \equiv \bot$}
+        \Let{$\mi{referrer}$}{$\comp{\compn{s'}{\ptr{d}}}{location}$}
+      \ELSE
+        \Let{$\mi{referrer}$}{$\bot$}
+      \ENDIF
+      \Let{$s'$}{$\mathsf{CANCELNAV}(\comp{\compn{s'}{\ptr{w}'}}{nonce}, s')$}
+      \STATE \textsf{SEND}($\comp{\compn{s'}{\ptr{w}'}}{nonce}$, $\mi{req}$, $\comp{\mi{url}}{protocol}$, $\bot$, $\mi{referrer}$, $s'$) \label{line:send-href}
+      \ENDCASE
+      \CASE{$\an{\tIframe, \mi{url}, \mi{window}}$}
+        \Let{$\ptr{w}'$}{$\mathsf{GETWINDOW}(\ptr{w}, \mi{window}, s')$}
+        \Let{$\mi{req}$}{$\hreq{
+            nonce=\nu_4,
+            method=\mGet,
+            host=\comp{\mi{url}}{host},
+            path=\comp{\mi{url}}{path},
+            headers=\an{},
+            parameters=\comp{\mi{url}}{parameters},
+            body=\an{}
+          }$}
+        \Let{$\mi{referrer}$}{$s'.\ptr{w}'.\str{activedocument}.\str{location}$}
+        \Let{$w'$}{$\an{\nu_5, \an{}, \bot}$}
+        \Let{$\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{subwindows}$}{ $\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{subwindows} \plusPairing w'$}
+        \STATE \textsf{SEND}($\nu_5$, $\mi{req}$, $\comp{\mi{url}}{protocol}$, $\bot$, $\mi{referrer}$, $s'$) \label{line:send-iframe}
+      \ENDCASE
+      \CASE{$\an{\tForm, \mi{url}, \mi{method}, \mi{data}, \mi{hrefwindow}}$}
+        \IF{$\mi{method} \not\in \{\mGet, \mPost\}$} 
+          \STATE \textbf{stop} $\an{}$, $s'$
+        \ENDIF
+        \Let{$\ptr{w}'$}{$\mathsf{GETNAVIGABLEWINDOW}$($\ptr{w}$, $\mi{hrefwindow}$, $\bot$, $s'$)}
+        \IF{$\mi{method} = \mGet$}
+          \Let{$\mi{body}$}{$\an{}$}
+          \Let{$\mi{parameters}$}{$\mi{data}$}
+          \Let{$\mi{origin}$}{$\bot$}
+        \ELSE
+          \Let{$\mi{body}$}{$\mi{data}$}
+          \Let{$\mi{parameters}$}{$\comp{\mi{url}}{parameters}$}
+          \Let{$\mi{origin}$}{$\comp{\compn{s'}{\ptr{d}}}{origin}$}
+        \ENDIF
+        \Let{$\mi{req}$}{$\hreq{
+            nonce=\nu_4,
+            method=\mi{method},
+            host=\comp{\mi{url}}{host},
+            path=\comp{\mi{url}}{path},
+            headers=\an{},
+            parameters=\mi{parameters},
+            xbody=\mi{body}
+          }$}
+        \Let{$\mi{referrer}$}{$\comp{\compn{s'}{\ptr{d}}}{location}$}
+        \Let{$s'$}{$\mathsf{CANCELNAV}(\comp{\compn{s'}{\ptr{w}'}}{nonce}, s')$}
+        \STATE \textsf{SEND}($\comp{\compn{s'}{\ptr{w}'}}{nonce}$, $\mi{req}$, $\comp{\mi{url}}{protocol}$, $\mi{origin}$, $\mi{referrer}$, $s'$) \label{line:send-form}
+      \ENDCASE
+      \CASE{$\an{\tSetScript, \mi{window}, \mi{script}}$}
+        \Let{$\ptr{w}'$}{$\mathsf{GETWINDOW}(\ptr{w}, \mi{window}, s')$}
+        \Let{$\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{script}$}{$\mi{script}$}
+        \STATE \textbf{stop} $\an{}$, $s'$
+      \ENDCASE
+      \CASE{$\an{\tSetScriptState, \mi{window}, \mi{scriptstate}}$}
+        \Let{$\ptr{w}'$}{$\mathsf{GETWINDOW}(\ptr{w}, \mi{window}, s')$}
+        \Let{$\comp{\comp{\compn{s'}{\ptr{w}'}}{activedocument}}{scriptstate}$}{$\mi{scriptstate}$}
+        \STATE \textbf{stop} $\an{}$, $s'$
+      \ENDCASE
+      \CASE{$\an{\tXMLHTTPRequest, \mi{url}, \mi{method}, \mi{data}, \mi{xhrreference}}$}
+        \IF{$\mi{method} \in \{\mConnect, \mTrace, \mTrack\} \wedge \mi{xhrreference} \not\in \{\nonces, \bot\}$} 
+          \STATE \textbf{stop} $\an{}$, $s'$
+        \ENDIF
+        \IF{$\comp{\mi{url}}{host} \not\equiv \comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{host}$  $\vee$ $\comp{\mi{url}}{protocol} \not\equiv \comp{\comp{\compn{s'}{\ptr{d}}}{origin}}{protocol}$} 
+          \STATE \textbf{stop} $\an{}$, $s'$
+        \ENDIF
+        \IF{$\mi{method} \in \{\mGet, \mHead\}$}
+          \Let{$\mi{data}$}{$\an{}$}
+          \Let{$\mi{origin}$}{$\bot$}
+        \ELSE
+          \Let{$\mi{origin}$}{$\comp{\compn{s'}{\ptr{d}}}{origin}$}
+        \ENDIF
+        \Let{$\mi{req}$}{$\hreq{
+            nonce=\nu_4,
+            method=\mi{method},
+            host=\comp{\mi{url}}{host},
+            path=\comp{\mi{url}}{path},
+            headers={},
+            parameters=\comp{\mi{url}}{parameters},
+            xbody=\mi{data}
+          }$}
+        \Let{$\mi{referrer}$}{$\comp{\compn{s'}{\ptr{d}}}{location}$}
+        \STATE \textsf{SEND}($\an{\comp{\compn{s'}{\ptr{d}}}{nonce}, \mi{xhrreference}}$, $\mi{req}$, $\comp{\mi{url}}{protocol}$, $\mi{origin}$, $\mi{referrer}$, $s'$)\label{line:send-xhr}
+      \ENDCASE
+      \CASE{$\an{\tBack, \mi{window}}$} 
+      \Let{$\ptr{w}'$}{$\mathsf{GETNAVIGABLEWINDOW}$($\ptr{w}$,
+        $\mi{window}$, $\bot$, $s'$)} 
+        \IF{$\exists\, \ptr{j} \in
+        \mathbb{N}, \ptr{j} > 1$ \textbf{such that}
+        $\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{active}
+        \equiv \True$} %
+      \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{active}$}{$\bot$}
+      \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{(\ptr{j}-1)}}{active}$}{$\True$}
+      \Let{$s'$}{$\mathsf{CANCELNAV}(\comp{\compn{s'}{\ptr{w}'}}{nonce},
+        s')$}
+        \EndIf
+        \State \textbf{stop} $\an{}$, $s'$
+      \EndCase
+      \Case{$\an{\tForward, \mi{window}}$}
+        \Let{$\ptr{w}'$}{$\mathsf{GETNAVIGABLEWINDOW}$($\ptr{w}$, $\mi{window}$, $\bot$, $s'$)}
+        \If{$\exists\, \ptr{j} \in \mathbb{N} $ \textbf{such that} $\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{active} \equiv \True$  $\wedge$  $\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{(\ptr{j}+1)} \in \mathsf{Documents}$} %
+          \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{active}$}{$\bot$}
+          \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{(\ptr{j}+1)}}{active}$}{$\True$}
+          \Let{$s'$}{$\mathsf{CANCELNAV}(\comp{\compn{s'}{\ptr{w}'}}{nonce}, s')$}
+        \EndIf
+        \State \textbf{stop} $\an{}$, $s'$
+      \EndCase
+      \Case{$\an{\tClose, \mi{window}}$}
+        \Let{$\ptr{w}'$}{$\mathsf{GETNAVIGABLEWINDOW}$($\ptr{w}$, $\mi{window}$, $\bot$, $s'$)}
+        \State \textbf{remove} $\compn{s'}{\ptr{w'}}$ from the sequence containing it 
+        \State \textbf{stop} $\an{}$, $s'$
+      \EndCase
+
+      \Case{$\an{\tPostMessage, \mi{window}, \mi{message}, \mi{origin}}$}
+        \LetND{$\ptr{w}'$}{$\mathsf{Subwindows}(s')$ \textbf{such that} $\comp{\compn{s'}{\ptr{w}'}}{nonce} \equiv \mi{window}$} %
+        \If{$\exists \ptr{j} \in \mathbb{N}$ \textbf{such that} $\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{active} \equiv \True$ \breakalgohook{3} $\wedge  (\mi{origin} \not\equiv \bot \implies \comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{origin} \equiv \mi{origin})$}    \label{line:append-pm-to-scriptinputs-condition} %
+        \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{scriptinputs}$\breakalgohook{4}}{ $\comp{\compn{\comp{\compn{s'}{\ptr{w'}}}{documents}}{\ptr{j}}}{scriptinputs}$ \breakalgohook{4} $\plusPairing$
+         $\an{\tPostMessage, \comp{\compn{s'}{\ptr{w}}}{nonce}, \comp{\compn{s'}{\ptr{d}}}{origin}, \mi{message}}$} \label{line:append-pm-to-scriptinputs}
+        \EndIf
+        \State \textbf{stop} $\an{}$, $s'$
+      \EndCase
+      \Case{else}
+        \State \textbf{stop} $\an{}$, $s'$
+      \EndCase
+    \EndSwitch
+  \EndFunction
+\end{algorithmic} \setlength{\parindent}{1em}
+
+
+
+\begin{definition}($\mathsf{PROCESSRESPONSE}$)
+This function is used to process the HTTP response received by the browser, which is related with the HTTP request sent earlier. The function is described as follows. 
+\end{definition}
+
+\captionof{algorithm}{\label{alg:processresponse} Process an HTTP response.}
+\begin{algorithmic}[1]
+\Function{\mathsf{PROCESSRESPONSE}(\mi{response}, \mi{reference}, \mi{request}, \mi{protocol}, s')}
+  \If{$\mathtt{Set{\mhyphen}Cookie} \in
+    \comp{\mi{response}}{headers}$}
+    \For{\textbf{each} $c \inPairing \comp{\mi{response}}{headers}\left[\mathtt{Set{\mhyphen}Cookie}\right]$, $c \in \mathsf{Cookies}$}
+      \Let{$\comp{s'}{cookies}\left[\comp{\comp{\mi{request}}{url}}{host}\right]$}{$\mathsf{AddCookie}(\comp{s'}{cookies}\left[\comp{\comp{\mi{request}}{url}}{host}\right], c)$} \label{line:set-cookie}
+    \EndFor
+  \EndIf  
+  \If{$\mathtt{Strict{\mhyphen}Transport{\mhyphen}Security} \in \comp{\mi{response}}{headers}$ $\wedge$ $\mi{protocol} \equiv \https$}
+    \Append{$\comp{\mi{request}}{host}$}{$\comp{s'}{sts}$}
+  \EndIf
+  \If{$\str{Referer} \in \comp{request}{headers}$}
+    \Let{$\mi{referrer}$}{$\comp{request}{headers}[\str{Referer}]$}
+  \Else
+    \Let{$\mi{referrer}$}{$\bot$}
+  \EndIf
+
+  \If{$\mathtt{Location} \in \comp{\mi{response}}{headers} \wedge \comp{\mi{response}}{status} \in \{303, 307\}$} \label{line:location-header} 
+    \Let{$\mi{url}$}{$\comp{\mi{response}}{headers}\left[\mathtt{Location}\right]$}
+    \Let{$\mi{method}'$}{$\comp{\mi{request}}{method}$} 
+    \Let{$\mi{body}'$}{$\comp{\mi{request}}{body}$} 
+    \If{$\str{Origin} \in \comp{request}{headers}$}
+      \Let{$\mi{origin}$}{$\an{\comp{request}{headers}[\str{Origin}], \an{\comp{request}{host}, \mi{protocol}}}$}
+    \Else
+      \Let{$\mi{origin}$}{$\bot$}
+    \EndIf
+    \If{$\comp{\mi{response}}{status} \equiv 303 \wedge \comp{\mi{request}}{method} \not\in \{\mGet, \mHead\}$}
+      \Let {$\mi{method}'$}{$\mGet$}
+      \Let{$\mi{body}'$}{$\an{}$}
+    \EndIf
+    \If{$\nexists\, \ptr{w} \in \mathsf{Subwindows}(s')$ \textbf{such that} $\comp{\compn{s'}{\ptr{w}}}{nonce} \equiv \mi{reference}$} 
+      \State \textbf{stop} $\an{}$, $s$
+    \EndIf
+    \Let{$\mi{req}$}{$\hreq{
+            nonce=\nu_6,
+            method=\mi{method'},
+            host=\comp{\mi{url}}{host},
+            path=\comp{\mi{url}}{path},
+            headers=\an{},
+            parameters=\comp{\mi{url}}{parameters},
+            xbody=\mi{body}'
+          }$}
+    \State \textsf{SEND}($\mi{reference}$, $\mi{req}$, $\comp{\mi{url}}{protocol}$, $\mi{origin}$, $\mi{referrer}$, $s'$)\label{line:send-redirect}
+  \EndIf
+
+  \If{$\exists\, \ptr{w} \in \mathsf{Subwindows}(s')$ \textbf{such that} $\comp{\compn{s'}{\ptr{w}}}{nonce} \equiv \mi{reference}$} 
+    \Let{$\mi{location}$}{$\an{\cUrl, \mi{protocol}, \comp{\mi{request}}{host}, \comp{\mi{request}}{path}, \comp{\mi{request}}{parameters}}$}
+    \If{$\mi{response}.\str{body} \not\sim \an{*,*}$}
+      \State \textbf{stop} $\{\}$, $s'$
+    \EndIf
+    \Let{$\mi{script}$}{$\proj{1}{\comp{\mi{response}}{body}}$}
+    \Let{$\mi{scriptstate}$}{$\proj{2}{\comp{\mi{response}}{body}}$}
+    \Let{$d$}{$\an{\nu_7, \mi{location}, \mi{referrer}, \mi{script}, \mi{scriptstate}, \an{}, \an{}, \True}$} \label{line:take-script} \label{line:set-origin-of-document}
+    \If{$\comp{\compn{s'}{\ptr{w}}}{documents} \equiv \an{}$}
+      \Let{$\comp{\compn{s'}{\ptr{w}}}{documents}$}{$\an{d}$}
+    \Else
+      \LetND{$\ptr{i}$}{$\mathbb{N}$ \textbf{such that} $\comp{\compn{\comp{\compn{s'}{\ptr{w}}}{documents}}{\ptr{i}}}{active} \equiv \True$} %
+      \Let{$\comp{\compn{\comp{\compn{s'}{\ptr{w}}}{documents}}{\ptr{i}}}{active}$}{$\bot$}
+      \State \textbf{remove} $\compn{\comp{\compn{s'}{\ptr{w}}}{documents}}{(\ptr{i}+1)}$ and all following documents  from $\comp{\compn{s'}{\ptr{w}}}{documents}$
+      \Append{$d$}{$\comp{\compn{s'}{\ptr{w}}}{documents}$}
+    \EndIf
+    \State \textbf{stop} $\{\}$, $s'$
+  \ElsIf{$\exists\, \ptr{w} \in \mathsf{Subwindows}(s')$, $\ptr{d}$ \textbf{such that} $\comp{\compn{s'}{\ptr{d}}}{nonce} \equiv \proj{1}{\mi{reference}} $ \breakalgohook{1}  $\wedge$  $\compn{s'}{\ptr{d}} = \comp{\compn{s'}{\ptr{w}}}{activedocument}$} \label{line:process-xhr-response} 
+    \Append{$\an{\tXMLHTTPRequest, \comp{\mi{response}}{body}, \proj{2}{\mi{reference}}}$}{$\comp{\compn{s'}{\ptr{d}}}{scriptinputs}$}
+%
+  \EndIf
+\EndFunction
+\end{algorithmic} \setlength{\parindent}{1em}
+
+
+
+Now we can give the non-deterministic algorithm of the browser atomic process.
+
+\captionof{algorithm}{\label{alg:browsermain} Main Algorithm}
+\begin{algorithmic}[1]
+%
+\REQUIRE \myss{\myangle{a, b, m}, s}
+  \Let{$s'$}{$s$}
+
+  \If{$\comp{s}{isCorrupted} \not\equiv \bot$}
+    \Let{$\comp{s'}{pendingRequests}$}{$\an{m, \comp{s}{pendingRequests}}$} 
+    \LetND{$m'$}{$d_{V}(s')$} %
+    \LetND{$a'$}{$\addresses$} %
+    \State \textbf{stop} $\an{\an{a',a,m'}}$, $s'$
+  \EndIf
+  \If{$m \equiv \trigger$} 
+    \LetND{$\mi{switch}$}{$\{1,2,3\}$} \label{line:browser-switch} %
+    \If{$\mi{switch} \equiv 1$} 
+      \LetNDST{$\ptr{w}$}{$\mathsf{Subwindows}(s')$}{$\comp{\compn{s'}{\ptr{w}}}{documents} \neq \an{}$}{\textbf{stop} $\an{}$, $s'$} \label{line:browser-trigger-window}%
+      \Let{$\ptr{d}$}{$\ptr{w} \plusPairing \str{activedocument}$}
+      \State \textsf{RUNSCRIPT}($\ptr{w}$, $\ptr{d}$, $s'$)
+    \ElsIf{$\mi{switch} \equiv 2$} 
+      \Let{$w'$}{$\an{\nu_1, \an{}, \bot}$}
+      \Append{$w'$}{$\comp{s'}{windows}$}
+      \LetND{$\mi{protocol}$}{$\{\http, \https\}$} \label{line:browser-choose-url} %
+      \LetND{$\mi{host}$}{$\dns$} %
+      \LetND{$\mi{path}$}{$\mathbb{S}$} %
+      \LetND{$\mi{parameters}$}{$\dict{\mathbb{S}}{\mathbb{S}}$} %
+      \Let{$\mi{req}$}{$\hreq{
+          nonce=\nu_2,
+          method=\mGet,
+          host=\mi{host},
+          path=\mi{path},
+          headers=\an{},
+          parameters=\mi{parameters},
+          body=\an{}
+        }$}
+      \Let{ $\mi{cookies}$}{$\langle\{\an{\comp{c}{name}, \comp{\comp{c}{content}}{value}} | c\inPairing \comp{s'}{cookies}\left[\comp{\mi{req}}{host}\right]$} \label{line:assemble-cookies-for-request} \breakalgohook{1} $\wedge \left(\comp{\comp{c}{content}}{secure} \implies \left(\mi{protocol} = \https\right)\right) \}\rangle$ \label{line:cookie-rules-http}
+    \Let{$\comp{\mi{req}}{headers}[\str{Cookie}]$}{$\mi{cookies}$}
+    \If{$\mi{protocol} \equiv \https$}
+        \Append{$\langle\mi{\nu_1}$, $\mi{req}$, $\nu_3$, $host\rangle$}{$\comp{s'}{pendingRequests}$} \label{line:add-to-pendingrequests-https}
+        \Let{$\mi{req}$}{$\enc{\an{\mi{req},\nu_3}}{\comp{s'}{keyMapping}\left[\comp{\mi{req}}{host}\right]}$} \label{line:select-enc-key}
+      \Else
+        \Append{$\langle\mi{\nu_1}$, $\mi{req}$, $\bot$, $host\rangle$}{$\comp{s'}{pendingRequests}$}         
+	\EndIf        
+     \mystop{host, a, req}
+     
+    \ElsIf{$\mi{switch} \equiv 3$} 
+      \LetNDST{$\ptr{w}$}{$\mathsf{Subwindows}(s')$}{$\comp{\compn{s'}{\ptr{w}}}{documents} \neq \an{}$}{\textbf{stop} $\an{}$, $s'$} \label{line:browser-reload-window}%
+      \Let{$\mi{url}$}{$s'.\ptr{w}.\str{activedocument}.\str{location}$}
+      \Let{$\mi{req}$}{$\hreq{ nonce=\nu_2, 
+          method=\mGet, host=\comp{\mi{url}}{host},
+          path=\comp{\mi{url}}{path},
+          headers=\an{},
+          parameters=\comp{\mi{url}}{parameters}, body=\an{}
+        }$}
+      \Let{$\mi{referrer}$}{$s'.\ptr{w}.\str{activedocument}.\str{referrer}$}
+      \Let{$s'$}{$\mathsf{CANCELNAV}(\comp{\compn{s'}{\ptr{w}}}{nonce}, s')$}
+      \Let{ $\mi{cookies}$}{$\langle\{\an{\comp{c}{name}, \comp{\comp{c}{content}}{value}} | c\inPairing \comp{s'}{cookies}\left[\comp{\mi{req}}{host}\right]$} \label{line:assemble-cookies-for-request} \breakalgohook{1} $\wedge \left(\comp{\comp{c}{content}}{secure} \implies \left(\mi{protocol} = \https\right)\right) \}\rangle$ \label{line:cookie-rules-http}
+    \Let{$\comp{\mi{req}}{headers}[\str{Cookie}]$}{$\mi{cookies}$}
+	\Let{$\comp{\mi{req}}{headers}[\str{Referer}]$}{$\mi{referrer}$}
+	\If{$\mi{protocol} \equiv \https$}
+        \Append{$\langle\mi{\comp{\compn{s'}{\ptr{w}}}{nonce}}$, $\mi{req}$, $\nu_3$, $host\rangle$}{$\comp{s'}{pendingRequests}$} \label{line:add-to-pendingrequests-https}
+        \Let{$\mi{req}$}{$\enc{\an{\mi{req},\nu_3}}{\comp{s'}{keyMapping}\left[\comp{\mi{req}}{host}\right]}$} \label{line:select-enc-key}
+      \Else
+        \Append{$\langle\mi{\comp{\compn{s'}{\ptr{w}}}{nonce}}$, $\mi{req}$, $\bot$, $host\rangle$}{$\comp{s'}{pendingRequests}$} \label{line:add-to-pendingrequests}
+      \EndIf
+      \mystop{host, a, req}
+    \EndIf
+  \ElsIf{$m \equiv \fullcorrupt$} 
+    \Let{$\comp{s'}{isCorrupted}$}{$\fullcorrupt$}
+    \State \textbf{stop} $\an{}$, $s'$
+  \ElsIf{$m \equiv \closecorrupt$} 
+    \Let{$\comp{s'}{secrets}$}{$\an{}$}  
+    \Let{$\comp{s'}{windows}$}{$\an{}$}
+    \Let{$\comp{s'}{pendingRequests}$}{$\an{}$}
+    \Let{$\comp{s'}{sessionStorage}$}{$\an{}$}
+    \State \textbf{let} $\comp{s'}{cookies} \subsetPairing \cookies$ \textbf{such that}  $(c \inPairing \comp{s'}{cookies}) {\iff} (c \inPairing \comp{s}{cookies} \wedge \comp{\comp{c}{content}}{session} \equiv \bot$)
+    %
+    \Let{$\comp{s'}{isCorrupted}$}{$\closecorrupt$}
+%
+    \State \textbf{stop} $\an{}$, $s'$
+  \ElsIf{$\exists\, \an{\mi{reference}, \mi{request}, \mi{key}, f}$
+      $\inPairing \comp{s'}{pendingRequests}$ \breakalgohook{0}
+      \textbf{such that} $\proj{1}{\decs{m}{\mi{key}}} \equiv \cHttpResp$ } %
+    \Let{$m'$}{$\decs{m}{\mi{key}}$}
+    \If{$\comp{m'}{nonce} \not\equiv \comp{\mi{request}}{nonce}$}
+      \State \textbf{stop} $\an{}$, $s$
+    \EndIf
+    \State \textbf{remove} $\an{\mi{reference}, \mi{request}, \mi{key}, f}$ \textbf{from} $\comp{s'}{pendingRequests}$
+    \State \textsf{PROCESSRESPONSE}($m'$, $\mi{reference}$, $\mi{request}$, $\https$, $s'$)
+  %
+  \ElsIf{$\proj{1}{m} \equiv \cHttpResp$ $\wedge$ $\exists\, \an{\mi{reference}, \mi{request}, \bot, f}$ $\inPairing \comp{s'}{pendingRequests}$ \textbf{such that} $\comp{m'}{nonce} \equiv \comp{\mi{request}}{key}$ } %
+    \State \textbf{remove} $\an{\mi{reference}, \mi{request}, \bot, f}$ \textbf{from} $\comp{s'}{pendingRequests}$
+    \State \textsf{PROCESSRESPONSE}($m$, $\mi{reference}$, $\mi{request}$, $\http$, $s'$)
+  
+  \EndIf
+  \State \textbf{stop} $\an{}$, $s$
+
+%
+\end{algorithmic} \setlength{\parindent}{1em}
 
 
 
 \section{Formal Model of UPPRESSO Web System}
 \label{app:model-uppresso}
 We here present the full details of our formal model of UPPRESSO. For our analysis regarding our authentication and privacy properties below, we will further restrict this generic model to suit the setting of respective analysis.\par
-We model UPPRESSO as a web system. We call a web system $\uppressowebsystem=(\bidsystem, \scriptset, \mathsf{script}, E^0)$ an UPPRESSO web system if it is of the form described in what follows.
+
+UPPRESSO is modelled as the web system (defined in Appendix~\ref{app:websystemmodel}). 
+A web system UPPRESSO $\uppressowebsystem=(\bidsystem, \scriptset, \mathsf{script}, E^0)$ is of the form described as follows.
 
 \subsection{Outline}\label{app:outlineuppressomodel}
-The system $\bidsystem=\mathsf{Hon}\cup \mathsf{Web} \cup \mathsf{Net}$ consists of 
-web attacker processes (in $\mathsf{Web}$), network attacker processes (in $\mathsf{Net}$), 
-a finite set $\fAP{B}$ of web browsers, 
-a finite set $\fAP{RP}$ of web servers for the relying parties, 
-a finite set $\fAP{IDP}$ of web servers containing only one identity provider 
-with $\mathsf{Hon} := \fAP{B} \cup \fAP{RP} \cup \fAP{IDP}$. 
-More details on the processes in $\mathpzc{W}$ are provided below. 
-%
+The $\bidsystem=\mathsf{Hon}\cup \mathsf{Web} \cup \mathsf{Net}$ consists of 
+a finite set of honest processes in $\mathsf{Hon}$ (a finite set of browsers in $\mathsf{B}$, a finite set of relying party servers in $\mathsf{RP}$ and the IdP server $\mathsf{idp}$, where $\mathsf{Hon} := \fAP{B} \cup \fAP{RP} \cup \fAP{idp}$), a finite attacker processes in  $\mathsf{Web}$, and a finite set of network attacker processes in $\mathsf{Net}$.
 Figure~\ref{fig:scripts-in-w} shows the set of scripts $\scriptset$ 
 and their respectice string representations that are defined by the 
 mapping $\mathsf{script}$. 
-%
+The scripts are defined in detail in Appendix~\ref{app:uppresso-scripts}
 The set $E^0$ contains only the trigger events.
 
 \begin{figure}[htb]
@@ -485,45 +1132,28 @@ The set $E^0$ contains only the trigger events.
   
   This outlines $\uppressowebsystem$. We will define the DY processes in 
   $\uppressowebsystem$ and their addresses, domain names, and secrets in more detail. 
-  The scripts are defined in detail in Appendix~\ref{app:uppresso-scripts}
+  
   
   \subsection{Addresses and Domain Names}
-  The set $\addresses$ contains for every web attacker in $\fAP{Web}$, 
-  every network attacker in $\fAP{Net}$, 
-  every relying party in $\fAP{RP}$, 
-  the only one identity provider in $\fAP{IDP}$, 
-  and every browser in $\fAP{B}$ a finite set of addresses each. 
-  By $\mapAddresstoAP$ we denote the corresponding
-  assignment from a process to its address. 
-  The set $\dns$ contains a finite set of domains for 
-  every relying party in $\fAP{RP}$, 
-  the only one identity provider in $\fAP{IDP}$, 
-  every web attacker in $\fAP{Web}$, and 
-  every network attacker in $\fAP{Net}$. 
-  Browsers (in $\fAP{B})$ do not have a domain.
+  The set $\addresses$ contains the IP addresses of every entity in $\bidsystem$. The set $\dns$ contains a finite set of domains for identity provider, every relying party in $\fAP{RP}$ , every web attacker in $\fAP{Web}$, and every network attacker in $\fAP{Net}$.
+  
   
   By $\mapAddresstoAP$ and $\mapDomain$ we denote the assignments from
   atomic processes to sets of $\addresses$ and $\dns$, respectively.
   
-  %需不需要为椭圆曲线的点单独设立一个集合？
+  %为ID_U设置单独的合集,因为只有ID_U是对IdP之外的成员未知。
   \subsection{Keys and Secrets} 
-  The set $\nonces$ of nonces is partitioned into four sets, 
-  an infinite sequence $N$, 
-  an infinite set $K_\text{SSL}$, 
-  an infinite set $K_\text{sign}$, 
-  an infinite set $K_\text{id}$, 
-  an infinite set $K_\text{point}$, 
-  and a finite set $\RPSecrets$. 
-  We thus have
+  The set $\nonces$ of nonces is partitioned into four sets as follows.
   \begin{align*}
   \def\hereMaxHeightPhantom{\vphantom{K_{\text{p}}^\bidsystem}}
   \nonces = 
   \underbrace{N\hereMaxHeightPhantom}_{\text{infinite sequence}} 
   \dot\cup \underbrace{K_{\text{SSL}}\hereMaxHeightPhantom}_{\text{finite}} 
   \dot\cup \underbrace{K_{\text{sign}}\hereMaxHeightPhantom}_{\text{finite}}
-  \dot\cup \underbrace{K_{\text{point}}\hereMaxHeightPhantom}_{\text{finite}}  
+  \dot\cup \underbrace{ID_U\hereMaxHeightPhantom}_{\text{finite}}  
   \dot\cup \underbrace{\RPSecrets\hereMaxHeightPhantom}_{\text{finite}}\ .
   \end{align*}
+  
   The set $N$ contains the nonces that are available for each DY process
   in $\bidsystem$ (it can be used to create a run of $\bidsystem$). 
   
@@ -531,13 +1161,9 @@ The set $E^0$ contains only the trigger events.
   encryption. Let $\mapTLSKey\colon \dns \to K_\text{SSL}$ be an injective
   mapping that assigns a (different) private key to every domain.
   
-  The set $K_\text{sign}$ contains the keys that will be used by IdPs
-  for signing IDToken. Let $\mapSignKey\colon \fAP{IdPs} \to K_\text{sign}$
-  be an injective mapping that assigns a (different) private key to every identity
-  provider.
+  The set $K_\text{sign}$ contains all the valid keys that will be used by IdP for signing IDToken. 
   
-  The set $K_\text{point}$ contains all valid points on the curve. 
-  The set $K_\text{point}$ will be used to generate identities of $\fAP{B}$ and $\fAP{RP}$.
+  The set $\mathsf{ID_U}$ contains all valid user ID maintained by IdP. 
   
   The set $\RPSecrets$ is the set of passwords (secrets) 
   the browsers share with the identity providers. 
@@ -549,63 +1175,30 @@ The set $E^0$ contains only the trigger events.
   %def2.用户的account：<<acct1, rp1-domain>, <acct2, rp2-domain>, <acct3, rp3-domain>, ...>
   %def3.RP的id表示，<id, rp-commonname, idp-domain>
   
-  %直接使用password
+  %直接使用password,这部分只是用来说明用户identity，不涉及RP，只需要定义几个用户identity转换的function即可
   \subsection{Identities}\label{app:uppresso-identities}
-  There are many different types of identities in UPPRESSO. 
-  The first is browsers' identities at the IdP. Browsers share
-  a $username\in\mathbb{S}$ with IdP to identify an user 
-  uniquely, and not like SPRESSO, UPPRESSO doesn't need a 
-  domain to identify the IdP.
-  
-  By $\NToS:\mathbb{S} \to \RPSecrets$ we denote the bijective 
-  mapping that assigns secrets to all usernames. 
-  
-  Let $\mapPLItoOwner: \RPSecrets \to \fAP{B}$ denote the 
+	The browser is authenticated by the IdP with a $username$, here we define the finite set of usernames $\mathsf{Username}$, that contains all the username in the system.
+	Now we give the following functions that used by IdP to authenticates  browser and retrieves the related $ID_U$.
+	\begin{itemize}
+	\item By $\NToS:\mathsf{Username} \to \RPSecrets$ we denote the mapping that assigns secrets to all usernames.
+	\item $\mapPLItoOwner: \RPSecrets \to \fAP{B}$ denotes the 
   mapping that assigns to each secret a browser that 
-  \emph{owns} this secret. Now, we define the mapping 
-  $\mapIDtoOwner: \mathbb{S} \to \fAP{B}$, $username \mapsto
-  \mapPLItoOwner(\NToS(username))$, which assigns to each 
-  identity the browser that owns this identity (we say that the 
-  identity belongs to the browser).
+  \emph{owns} this secret,
+  	\item $\mapIDtoOwner: \mathsf{Username} \to \fAP{B}$ denotes the mapping that assigns usernames to all browsers.
+  	\item $\mathsf{IDUOfUsername}: \mathsf{Username} \to \mathsf{ID_U}$ denotes the mapping the assigns usernames to the user's unique ID maintained by IdP. 
+	\end{itemize}		
+	
   
-  Besides, the browsers' identities also have IDs 
-  $\mi{ID_u}:=u\in[1,n)$ which is only known to the IdP. By $\NToID:\mathbb{S} \to N$ we denote 
-  the bijective mapping that assigns IDs to all usernames. 
+ 
   
-  The second type of identities is relying parties' identities 
-  at the IdP, which are IDs 
-  $\mi{ID_{rp}}:=[r]G \in K_{\text{point}}$ in which $r\in[1,n)$ 
-  is unknown to any party.
-  
-  The third type of identities is browsers' identities at the
-  Relying Parties which is called $\mi{Acct} := [\mi{ID_u}]
-  \mi{ID_{rp}} = [ur]G \in K_{\text{point}}$. 
-  
-  \subsection{Tags, Identity Tokens and Service Tokens}\label{app:identity-assertions}
-  
-  \begin{definition}\label{def:tag}
-    A \emph{tag} is a term of the form $\mi{PID_{rp}}=[t]ID_{rp}=[tr]G$ for a nonce 
-    (here used as a asymmetric key) $t$.
-  \end{definition}
-  \begin{definition}
-    An \emph{identity Tokens (IDToken)} is a term of the form 
-    $\an{PID_{rp}, PID_u, ver}$ for a tag $PID_{rp}$, an encrypted identity 
-    $PID_u=[u]PID_{rp}=[utr]G$ and a signature $ver=\sig{\an{PID_{rp},PID_u}}{k}$ 
-    for a nonce $k\in K_{\text{sign}}$.
-  \end{definition}
-  %使用<n,i>来定义 service token;Acct or pidu?
-  \begin{definition}
-    A \emph{service token} is a term of the form 
-    $\myangle{\mi{nonce}, \mi{Acct}}$ with 
-    $\mi{Acct} = [t^{-1}]PID_u=[t^{-1}][utr]G=[ur]G$ 
-    for a nonce $t$.
-  \end{definition}
+ 
   
   %是否足够描述semi-honest的状态？
   %\subsection{Curiosity}
   %同样，也会有人给idp发送命令，让他进入curiosity状态
   %进入curiosity状态之后，就可以开始把历史上所有的信息，开始用来推导各种事情。
   %或者IdP始终honest-but-curious的状态，在安全性证明时不考虑curious的状态。
+  %IdP 不存在corruption状态，而且始终处于Curiosity状态，不用说明
   
   \subsection{Corruption}
   RPs can become corrupted: If they receive the message
@@ -614,11 +1207,16 @@ The set $E^0$ contains only the trigger events.
   their state and collected input messages, just like the attacker
   process. We say that an RP is \emph{honest} if the according
   part of their state ($s.\str{corrupt}$) is $\bot$, and that they are
-  corrupted otherwise. IdP is always honest-but-curious and never corrupted.
+  corrupted otherwise. 
   
-  We are now ready to define the processes in $\websystem$ as well as
-  the scripts in $\scriptset$ in more detail. 
   
+  \subsection{TLS Key Mapping}\label{app:common-data-structures}
+  Before we define the atomic DY processes in more detail, we first
+  define the common data structure that holds the mapping of domain
+  names to public TLS keys: For an atomic DY process $p$ we define
+  \[\mi{tlskeys}^p = \an{\left\{\an{d, \mapTLSKey(d)} \mid d \in \mapDomain(p)\right\}}.\]
+ 
+\begin{comment} 
   \subsection{Processes in $\bidsystem$ (Overview)}
   
   We first provide an overview of the processes in $\bidsystem$. All
@@ -663,12 +1261,8 @@ The set $E^0$ contains only the trigger events.
   %\subsubsection{DNS.} Each $\mi{dns} \in \fAP{DNS}$ is a DNS server.
   %Their state contains the allocation of domain names to IP addresses.
   
-  \subsection{TLS Key Mapping}\label{app:common-data-structures}
-  Before we define the atomic DY processes in more detail, we first
-  define the common data structure that holds the mapping of domain
-  names to public TLS keys: For an atomic DY process $p$ we define
-  \[\mi{tlskeys}^p = \an{\left\{\an{d, \mapTLSKey(d)} \mid d \in \mapDomain(p)\right\}}.\]
-  %ssl改成tls
+\end{comment}
+
   
   \subsection{Web Attackers}\label{app:webattackers-uppresso}
   Each $\mi{wa} \in \fAP{Web}$ is a web attacker. 
@@ -706,25 +1300,11 @@ The set $E^0$ contains only the trigger events.
   %be the set of all domains that $b$ owns identities for.
   Then, the initial state $s_0^b$ is defined as follows: the key mapping
   maps every domain to its public (tls) key, according to the mapping
-  $\mapTLSKey$; the DNS address is $\mapAddresstoAP(p)$ with $p \in \bidsystem$;
+  $\mapTLSKey$;
   $\mi{ids}$ is $\an{U^b}$; $\mi{sts}$ is empty.
   
   \subsection{Relying Parties} \label{app:relying-parties-uppresso}
-  
-  A relying party $r \in \fAP{RP}$ is a web server modeled as an atomic
-  DY process $(I^r, Z^r, R^r, s^r_0)$ with the addresses $I^r :=
-  \mapAddresstoAP(r)$. Its initial state $s^r_0$ contains its domains,
-  the private keys associated with its domains.
-  The full state additionally contains the sets of service tokens and login 
-  session identifiers the RP has issued. RP only accepts HTTPS requests.
-  
-  RP manages two kinds of sessions: The \emph{login sessions}, which are
-  only used during the login phase of a user, and the \emph{service
-    sessions} (we call the session identifier of a service session a
-  \emph{service token}). Service sessions allow a user to use RP's
-  services. The ultimate goal of a login flow is to establish such a
-  service session.
-  
+   
   In a typical flow with one client, $r$ will first receive an HTTP GET
   request for the path $\str{/script}$. In this case, $r$ returns the script
   $\str{script\_rp}$ (see below).
@@ -755,12 +1335,7 @@ The set $E^0$ contains only the trigger events.
   \mapAddresstoAP(r)$. Next, we define the set $Z^r$ of states of
   $r$ and the initial state $s^r_0$ of $r$.
   
-  %和tag是否一致？
-  \begin{definition}
-    A \emph{login session record} is a term of the form 
-    $\an{\mi{t}, \mi{PID_{rp}}}$ with 
-    $\mi{t}\in N, \mi{PID_{rp}}\in K_{\text{point}}$.
-  \end{definition}
+
   
   \begin{sloppypar}
     \begin{definition}\label{def:relying-parties}
@@ -774,14 +1349,13 @@ The set $E^0$ contains only the trigger events.
       $\mi{rp}\rangle$ where 
       $\mi{keyMapping} \in \dict{\mathbb{S}}{\nonces}$,
       $\mi{tlskeys}=\mi{tlskeys}^r$,
-      $\mi{serviceTokens} \in \dict{\nonces}{K_{\text{point}}}$,
+      $\mi{serviceTokens} \in \dict{\nonces}{\nonces}$,
       $\mi{loginSessions} \in \dict{\nonces}{\terms}$ 
       is a dictionary of login session records,
-      $\mi{corrupt} \in \terms$,
-      $\mi{IdPConfig} \in \terms$ 
+      $\mi{corrupt} \in \an{\bot,\top}$,
+      $\mi{IdPConfig} \in \dict{\terms}{\terms}$ 
       is the configuration retrieved from IdP server,
-      $\mi{rp} \in K_{\text{point}}$ is the identity of the RP, 
-      see details in Appendix~\ref{app:uppresso-identities}.
+      $\mi{rp} \in \nonces$ is the identity of the RP.
   
       The \emph{initial state $s^r_0$ of $r$} is a state of 
       $r$ with $s^r_0.\str{serviceTokens} = 
@@ -812,7 +1386,7 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{n, method, path, parameters, headers, body} \textbf{such that} \breakalgohook{0}
       \myss{\myangle{\mathtt{HTTPReq},n,method,path,parameters,headers,body} \equiv m_{dec}}\breakalgohook{0}
       \textbf{if possible; otherwise stop} \myss{\myangle{}, s'}}
-    \myif{path \equiv /script}\label{line:rp-script}
+    \myif{path \equiv /script}\label{line:rp-http-form}
       \mystate{\myss{m':=\encs{\myangle{\mathtt{HTTPResp},n,200, \myangle{}, \str{script\_rp}}}{k}}}
       \mystop{b, a, m'}
     \myelse{path \equiv /loginSSO}\label{line:rp-loginSSO}
@@ -835,68 +1409,50 @@ The set $E^0$ contains only the trigger events.
       \mystate{\myss{\mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \mi{loginSessionToken}, \True, \True, \True}}}}}
       \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{\mi{setCookie}}, \myangle{\mathtt{Cert_{RP}}, \mi{Cert_{rp}}}}}{k}}}
       \mystop{b, a, m'}
-    \myelse{path \equiv /uploadToken}\label{line:rp-uploadToken}
+    \myelse{path \equiv /uploadToken \wedge method \equiv \str{POST}}\label{line:rp-uploadToken}
       \mystate{\myss{\mi{cookie} := headers[\str{Cookie}]}}
       \myif{\mi{headers}[\str{Origin}] \not\equiv \an{\mi{inDomain}, \https} \vee \mi{cookie}[\str{sessionid}] \equiv \myangle{}}
         \mystop{}\label{line:alg-rp-stop1}
       \ENDIF
-      \mystate{\myss{\mi{loginSessions} := s'.\str{loginSessions}[\mi{cookie}[\str{sessionid}]]}}
+      \mystate{\myss{\mi{loginSession} := s'.\str{loginSessions}[\mi{cookie}[\str{sessionid}]]}}
       %\mystate{\myss{cookie := headers[Cookie]}}
       %\myif{\mi{loginSessions} \equiv \an{}}
       %  \mystop{}
       %\ENDIF
       %\mystate{\myss{session := s'.SessionList[cookie]}}
       %\myif{session[state] \not\equiv expectToken}
-      \myif{\mi{loginSessions}.\str{state} \not\equiv expectToken}
+      \myif{\mi{loginSession}.\str{state} \not\equiv expectToken}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
         \mystop{b, a, m'}\label{line:alg-rp-stop2}
       \ENDIF
-      \mystate{\myss{s'.\str{loginSessions} := s'.\str{loginSessions} - body[\mi{loginSessionToken}]}}
       \mystate{\myss{\mi{IDToken} := body[\str{IDToken}]}}
       %\myif{\mi{IDToken}.\str{PID_{rp}} \not\equiv \mi{loginSessions}.\str{PID_{rp}}}
       %  \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
       %  \mystop{b, a, m'}\label{line:alg-rp-stop3}
       %\ENDIF
-      \myif{\checksigThree{\mi{IDToken}.\str{ver}}{\an{\mi{IDToken}.\str{PID_{rp}}, \mi{IDToken}.\str{PID_{u}}}}{s'.\str{IdPConfig}.\mi{pubkey}} \equiv \bot}
+      \myif{loginSession.\str{PID_{rp}}  \not \equiv  \mi{IDToken}.\str{PID_{rp}} \wedge \checksigThree{\mi{IDToken}.\str{ver}}{\an{\mi{IDToken}.\str{PID_{rp}}, \mi{IDToken}.\str{PID_{u}}}}{s'.\str{IdPConfig}.\mi{pubkey}} \equiv \bot}\label{line:rp-check-sig}
         \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}{k}}}
         \mystop{b, a, m'}\label{line:alg-rp-stop4}
       \ENDIF
-     %\mystate{\myss{Time := \mathtt{CurrentTime}()}}
-     %\mystate{\myss{PIDValidity := session[PIDValidity]}}
-     %\mystate{\myss{Content := Token.Content}}
-     %\myif{Time>Content.Validity}
-       %\mystate{\myss{m' := \myangle{\mathtt{HTTPResp}, n, 200, \myangle{}, \mathtt{Fail}}}}
-       %\mystop{b, a, m'}
-     %\ENDIF
-      \mystate{\myss{\mi{PID_u} := \mi{IDToken}.\str{PID_{u}}}}
-      \mystate{\myss{\mi{Acct} := [\mi{loginSessions}.\str{t}]\mi{PID_u}}}\label{line:gen-acct}
+     \mystate{\myss{s'.\str{loginSessions} := s'.\str{loginSessions} - body[\mi{loginSessionToken}]}}
+      \mystate{\myss{\mi{PID_u} := \mi{IDToken}.\str{PID_{u}}}}\label{line:rp-get-pidu}
+      \mystate{\myss{\mi{Acct} := [\mi{loginSessions}.\str{t}]\mi{PID_u}}}\label{line:rp-gen-acct}
      %\mystate{\myss{Acct := \mathtt{Multiply}(PID_U, t^{-1})}}
      %\myif{Acct \not\in \mathtt{ListOfUser}()}
        %\mystate{\myss{\mathtt{AddUser}(Acct)}}
      %\ENDIF
      %\mystate{\myss{session[user] := Acct}}
-      \mystate{\myss{\mi{nonce} := \nu_2}}
+      \mystate{\myss{\mi{nonce} := \nu_2}}\label{line:rp-create-nonce}
       \mystate{\myss{s'.\str{serviceTokens} := s'.\str{serviceTokens} + ^{\myangle{}}\myangle{\mi{nonce}, \mi{Acct}}}}\label{line:add-service-token}\label{alg:rp:store-acct}
      %\mystate{\myss{s'.serviceTokens := s'.serviceTokens + ^{\myangle{}}\myangle{IDToken, Acct}}}
-      \mystate{\myss{\mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \mi{nonce}, \True, \True, \True}}}}}
-      \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{\mi{setCookie}}, \mathtt{LoginSuccess}}}{k}}}
+      \mystate{\myss{\mi{setCookie} := \myangle{\cSetCookie, \myangle{\myangle{\str{sessionid}, \an{\mi{nonce}, \mi{Acct}}, \True, \True, \True}}}}}\label{line:rp-nonce-response}
+      \mystate{\myss{m' := \encs{\myangle{\mathtt{HTTPResp}, n, 200, \myangle{\mi{setCookie}}, \mathtt{LoginSuccess}}}{k}}}\label{line:rp-token-response}
       \mystop{b, a, m'}
     \ENDIF
     \mystop{}
   \end{algorithmic}\setlength{\parindent}{1em}
   
   \subsection{Identity Providers} \label{app:idps}
-  
-  The identity provider $\mathsf{IdP}$ is a web server 
-  modeled as an atomic process $(I, Z, R, s_0)$ with 
-  the addresses $I := \mapAddresstoAP(\mathsf{IdP})$. 
-  Its initial state $s_0$ contains a list of its 
-  domains and (private) TLS keys, 
-  a list of users and identites, and a private key 
-  for signing IDTokens. Besides this, 
-  the full state of $\mathsf{IdP}$ further contains a list 
-  of used nonces, and information about active sessions.
-  
   $\mathsf{IdP}$ react to four types of requests:
   
   First, they provide the $\str{script\_idp}$, where a $t$ 
@@ -916,44 +1472,35 @@ The set $E^0$ contains only the trigger events.
   scopes as parameters. After receving consent from browsers, IdPs will calculate 
   $\mi{PID_{u}}$ and construct $\mi{IDToken}$.
   
-  \subsubsection{Formal description.} In the following, we 
+  The identity provider $\mathsf{IdP}$ is a web server 
+  modeled as an atomic process $(I^i, Z^i, R^i, s^i_0)$ with 
+  the addresses $I^i := \mapAddresstoAP(\mathsf{IdP})$. 
+ In the following, we 
   will first define the (initial) state of IdP formally and 
   afterwards present the definition of the relation $R$.
   
   To define the initial state, we will need a term that 
-  represents the ``user database'' of the IdP. We will 
-  call this term $\mi{userset}$. This database defines, 
-  which secret and $\mi{ID_u}$ is valid for which identity. 
-  It is encoded as a mapping of username to secrets and $\mi{ID_u}$. 
-  For example, if the secret $\mi{secret}_1$ and $\mi{ID_{u_1}}$ is 
-  valid for the username $u_1$ and the secret $\mi{secret}_2$ 
-  and $\mi{ID_{u_2}}$ is valid for the identity $u_2$, the 
-  $\mi{userset}^i$ looks as follows:
-  \begin{align*}
-  \mi{userset} = [u_1{:}\myangle{\mi{ID_{u_1}}, \mi{secret}_1}, 
-    u_2{:}\myangle{\mi{ID_{u_2}}, \mi{secret}_2}]
-  \end{align*}
-  
-  We define $\mi{userset}$ as $\mi{userset} = \an{\{\an{\mi{username}, \myangle{\mi{id}=\NToID(\mi{username}), \mi{secret}=\NToS(\mi{username})}}\, |\, username \in \mathbb{S}\}}$.
+  represents the "user database" of the IdP. We will 
+  call this term $\mi{userset}$.   
+  We define $\mi{userset}$ as $\mi{userset} = \an{\{\an{\mi{username}, \mathsf{IDUOfUsername}(\mi{username}), \NToS(\mi{username})}\, |\, username \in \mathsf{Username}\}}$.
   
   \begin{definition}\label{def:initial-state-idp}
-    A \emph{state $s\in Z$ of the IdP} is a term of the form
+    A \emph{state $s^i\in Z^i$ of the IdP} is a term of the form
     $\langle\mi{tlskeys}$, $\mi{users}$, $\mi{signkey}$,
     $\mi{sessions}$, $\mi{corrupt}\rangle$ where 
     $\mi{tlskeys} = \mi{tlskeys} $, 
     $\mi{users} = \mi{userset}$, 
-    $\mi{signkey} \in \nonces$ 
-    (the key used by the IdP to sign IDTokens),
-    $\mi{sessions}\in\dict{\nonces}{\terms}$, $\mi{corrupt} \in \terms$.
+    $\mi{signkey} \in K_{\text{sign}}$,
+    $\mi{sessions}\in\dict{\nonces}{\terms}$, $\mi{corrupt} \in \an{\bot,\top}$.
   
-    An \emph{initial state $s_0$ of IdP} is a state of the form 
-    $\an{\mi{tlskeys}, \mi{userset}, \mapSignKey(\mathsf{IdP}), \an{}, \bot}$.
+    An \emph{initial state $s^i_0$ of IdP} is a state of the form 
+    $\an{\mi{tlskeys}, \mi{userset}, \mi{signkey}, \an{}, \bot}$.
   \end{definition}
   
-  The relation $R$ that defines the behavior of the IdP is defined as follows:
+  The relation $R^i$ that defines the behavior of the IdP is defined as follows:
   
   %和代码基本保持一致
-  \captionof{algorithm}{\label{alg:idp} Relation of IdP $R$}
+  \captionof{algorithm}{\label{alg:idp} Relation of IdP $R^i$}
   \begin{algorithmic}[1]
     \REQUIRE \myss{\myangle{a, b, m}, s}
     \mystate{\myss{s':=s}}
@@ -974,8 +1521,8 @@ The set $E^0$ contains only the trigger events.
       \mystop{b, a, m'}
     \myelse{path \equiv /authentication}\label{line:idp-authentication}
       \mystate{\myss{\mi{username} := \mi{body}[\str{username}]}}
-      \mystate{\myss{\mi{password} := \mi{body}[\str{password}]}}
-      \myif{\mi{password} \not\equiv s'.\str{userset}[\mi{username}].\mi{secret}}\label{line:check-username-password}
+      \mystate{\myss{\mi{password} := \mi{body}[\str{password}]}}\label{line:idp-password}
+      \myif{\mi{password} \not\equiv s'.\str{userset}[\mi{username}].\mi{secret}}\label{line:idp-password-verified}
         \mystate{\myss{m':=\encs{\myangle{\mathtt{HTTPResp},n,200,\myangle{},\mathtt{LoginFailure}}}{k}}}
         \mystop{b, a, m'}
       \ENDIF
@@ -1035,14 +1582,22 @@ The set $E^0$ contains only the trigger events.
   As already mentioned in Appendix~\ref{app:outlineuppressomodel}, the set $\scriptset$ 
   of the web system $\uppressowebsystem=(\bidsystem, \scriptset, \mathsf{script}, E^0)$ 
   consists of the scripts $\Rasp$, $\mi{script\_rp}$, $\mi{script\_idp}$, and with their 
-  string representations being $\str{att\_script}$, $\str{script\_rp}$, $\str{script\_idp}$, 
-  and (defined by $\mathsf{script}$). 
+  string representations being $\str{att\_script}$, $\str{script\_rp}$, and $\str{script\_idp}$. 
   
-  In what follows, the scripts $\mi{script\_rp}$ and $\mi{script\_idp}$ are
-  defined formally.
+  Before we give the details of the scripts $\mi{script\_rp}$ and $\mi{script\_idp}$, we introduce the following notations.
+  
+  \subsubsection{URL} We write $\mathsf{URL}^d_\mi{path}$ to describe the following URL term: $\an{\tUrl, \https, d,  \mi{path}, \an{}}$.  
+  
+  \subsubsection{CHOOSEINPUT} It is the function of the form $\mathtt{CHOOSEINPUT}(\mi{inputs}, \mi{pattern})$. The first parameter is a set of messages, and the second parameter is a pattern. The result returned by the function is the message in $\mi{inputs}$ matching the $\mi{pattern}$.
+  
+  \subsubsection{PARENTWINDOW} It is the function of the form $\mathtt{PARENTWINDOW}(\mi{tree}, \mi{docnonce})$. The first parameter is the input relation tree defined before, and the second parameter is the nonce of a document. The output returned by the function is the current window's opener's nonce (null if it doesn't exist nor it is invisible to this document).
+  
+  \subsubsection{SUBWINDOW} It is the function of the form $\mathtt{PARENTWINDOW}(\mi{tree}, \mi{docnonce})$, which takes the $\mi{tree}$ defined above and the current document's $\mi{nonce}$ as the input. And it selects the $\mi{nonce}$ of the first window opened by this document as the output. However, if there is no opened windows, it returns  null.
+  
+  In what follows, the scripts $\mi{script\_rp}$ and $\mi{script\_idp}$ are  defined formally.
   
   \subsubsection{Relying Party Page (script\_rp).}\label{app:uppresso-script-rp}
-  As defined in SPRESSO, a script is a relation that takes a termas input and outputs 
+  As defined in Algorithm~\ref{alg:runscript}, Appendix~\ref{app:browser}, a script is a relation that takes a termas input and outputs 
   a new term. The input term is provided by the browser. It contains the current 
   internal state of the script (which we call \emph{scriptstate} in what follows) and
   additional information containing all browser state information the
@@ -1056,14 +1611,18 @@ The set $E^0$ contains only the trigger events.
   \begin{definition} \label{def:scriptstaterp} 
   A \emph{scriptstate $s$ of $\mi{script\_rp}$} is a term of the form $\langle 
   \mi{phase}$, 
-  %$\mi{loginSessionToken}$, 
+  $\mi{Domain_{IdP}}$,
+  $\mi{Domain_{RP}}$, 
   $\mi{refXHR}\rangle$, 
   where $phase \in \mathbb{S}$, 
-  %$\mi{loginSessionToken}$,
+  $\mi{Domain_{IdP}}$ and
+  $\mi{Domain_{RP}} \in \mathsf{Doms}$,
   $\mi{refXHR}\in \nonces \cup \{\bot\}$. 
   
   The \emph{initial scriptstate $\mi{initState_{rp}}$} of $\mi{script\_rp}$ is 
   $\an{\str{start},
+  \mi{Domain_{IdP}},
+  \mi{Domain_{RP}}, 
   %\bot,
   \bot}$.
   \end{definition}
@@ -1077,21 +1636,22 @@ The set $E^0$ contains only the trigger events.
   \breakalgohook{-1}\myss{\mi{ids},\mi{secret}\rangle}
   \mystate{\myss{ s' := \mi{scriptstate}}}
   \mystate{\myss{\mi{command} := \myangle{}}}
-  \mystate{\myss{\mi{origin} := \mathsf{GETORIGIN}(\mi{tree},\mi{docnonce})}}
-  \mystate{\myss{\mi{RPDomain} := \mi{origin}.\str{host}}}
+  \mystate{\myss{\mi{RPDomain} := \mi{s'}.\str{Domain_{RP}}}}
+  \mystate{\myss{\mi{IdPOrigin} := \an{\mi{s'}.\str{Domain_{RP}}, \str{S}}}}
   \SWITCH{\myss{s'.\str{phase}}}
   \CASE{\myss{\str{start}}}
     \mystate{\myss{\mi{url} := \an{\tUrl, \https, \mi{RPDomain}, \str{/loginSSO}, \myangle{}}}}
     \mystate{\myss{\mi{command} := \an{\tHref,\mi{url},\wBlank,\an{}}}}
-    \mystate{\myss{s'.\str{phase} := \str{expectt}}}
+    \mystate{\myss{s'.\str{phase} := \str{expectT}}}
   \ENDCASE
-  \CASE{\myss{\str{expectt}}}
+  \CASE{\myss{\str{expectT}}}
     \mystate{\myss{\mi{pattern} := \myangle{\tPostMessage, target, *, \myangle{\str{t}, *}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{\mi{input} \not\equiv \bot}
-      \mystate{\myss{t := \pi_2(\pi_4(\mi{input}))}}\label{line:receive-t}
+    \Let{$s'.\str{refXHR}$}{$\lambda_1$}
+     % \mystate{\myss{t := \pi_4(\mi{input}).\str{t}}}\label{line:receive-t}
       %\mystate{\myss{\mi{url} := \myangle{\tUrl, \https, \mi{RPDomain}, \str{/startNegotiation}, \myangle{}}}}
-      \mystate{\myss{\mi{body} := \myangle{\myangle{\str{t},t}}}}
+      \mystate{\myss{\mi{body} := \pi_4(\mi{input})}}
       \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{RPDomain}}_\str{/startNegotiation},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
       \mystate{\myss{s'.\str{phase} := \str{expectCert}}}
     \ENDIF
@@ -1102,7 +1662,6 @@ The set $E^0$ contains only the trigger events.
     \myif{\mi{input} \not\equiv \bot}
       \mystate{\myss{\mi{Cert_{rp}} := \pi_2(\mi{input}).\str{Cert_{rp}}}}
       \mystate{\myss{\mi{IdPWindowNonce} := \pi_1(\textsf{SUBWINDOWS}(\mi{tree},\mi{docnonce})).\str{nonce}}}
-      \mystate{\myss{\mi{IdPOrigin} := \mathsf{GETORIGIN}(\mi{tree}, \mi{IdPWindowNonce})}}
       \mystate{\myss{\mi{command} := \langle\tPostMessage, \mi{IdPWindowNonce}, \myangle{\str{Cert}, \mi{Cert_{rp}}},}\breakalgohook{0}\myss{\mi{IdPOrigin}\rangle}}
       \mystate{\myss{s'.\str{phase} := \str{expectToken}}}
     \ENDIF
@@ -1111,9 +1670,10 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{\mi{pattern} := \myangle{\tPostMessage, target, *, \myangle{\str{IDToken}, *}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{input \not\equiv \bot}
-      \mystate{\myss{\mi{IDToken} := \pi_2(\pi_4(\mi{input}))}}
+    \Let{$s'.\str{refXHR}$}{$\lambda_1$}
+      %\mystate{\myss{\mi{IDToken} := \pi_2(\pi_4(\mi{input}))}}
       %\mystate{\myss{\mi{url} := \myangle{\tUrl, \https, \mi{RPDomain}, \str{/uploadToken}, \myangle{}}}}
-      \mystate{\myss{\mi{body} := \myangle{\myangle{\str{IDToken},\mi{IDToken}}}}}
+      \mystate{\myss{\mi{body} := \pi_4(\mi{input})}}
       \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{RPDomain}}_\str{/uploadToken},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
       \mystate{\myss{s'.\str{phase} := \str{expectLoginResult}}}
     \ENDIF
@@ -1135,9 +1695,9 @@ The set $E^0$ contains only the trigger events.
   
   \begin{definition}\label{def:scriptstateidp}
     A \emph{scriptstate $s$ of $\mi{script\_idp}$} is a term of the form
-    $\langle \mi{phase}$, $\mi{user}$, $\mi{parameters} \rangle$ with $\mi{phase} \in
-    \mathbb{S}$, $\mi{user} \in \IDs \cup \{\an{}\} \in \gterms$ and $\mi{parameters} \in \dict{\mathbb{S}}{\terms}$,. The 
-    \emph{initial scriptstate} of $\mi{script\_idp}$ is $\an{\str{start},*,\myangle}$.
+    $\langle \mi{phase}$, $\mi{Domain_{IdP}}$, $\mi{pubkey}$,  $\mi{parameters}$, $\mi{refXHR} \rangle$ with $\mi{phase} \in
+    \mathbb{S}$, $pubkey \in \nonces$, and $\mi{parameters} \in \dict{\mathbb{S}}{\terms}$, and $\mi{refXHR}\in \nonces \cup \{\bot\}$. The 
+    \emph{initial scriptstate} of $\mi{script\_idp}$ is $\an{\str{start},\mi{Domain_{IdP}}, \mi{pubkey}, \myangle{,}, \bot}$.
   \end{definition}
   
   We now formally specify the relation of $\mi{script\_idp}$
@@ -1148,27 +1708,28 @@ The set $E^0$ contains only the trigger events.
   \breakalgohook{-1}\myss{\mi{ids},\mi{secret}\rangle}
   \mystate{\myss{s' := scriptstate}}
   \mystate{\myss{\mi{command} := \myangle{}}}
-  \mystate{\myss{\mi{target} := \textsf{OPENERWINDOW}(\mi{tree},\mi{docnonce})}}
-  \mystate{\myss{\mi{origin} := \mathsf{GETORIGIN}(\mi{tree},\mi{docnonce})}}
-  \mystate{\myss{\mi{IdPDomain} := \mi{origin}.\str{host}}}
+  \mystate{\myss{\mi{target} := \textsf{PARENTWINDOW}(\mi{tree},\mi{docnonce})}}
+  \mystate{\myss{\mi{IdPDomain} := \mi{s'}.\str{Domain_{IdP}}}}
   \SWITCH{\myss{s'.\str{phase}}}
   \CASE{\myss{start}}
     \mystate{\myss{t := \str{random}()}}
-    \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \myangle{\str{t}, t}, \myangle{}}}}\label{line:send-t}
-    \mystate{\myss{s'.\str{parameters}[t] := t}}
+    \mystate{\myss{\mi{body} := \an{\str{t}, t}}}
+    \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \mi{body}, \myangle{}}}}\label{line:send-t}
+	\Append{$\mi{body}$}{$s'.\str{parameters}$}    
     \mystate{\myss{s'.\str{phase} := \str{expectCert}}}
   \ENDCASE
   \CASE{\myss{\str{expectCert}}}
+  	\Let{$s'.\str{refXHR}$}{$\lambda_1$}
     \mystate{\myss{\mi{pattern} := \myangle{\tPostMessage, target, *, \myangle{\str{Cert}, *}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{input \not\equiv \bot}
       \mystate{\myss{\mi{Cert_{rp}} := \pi_2(\pi_4(input))}}
-      \myif{\checksigThree{\mi{Cert_{rp}}.\str{ver}}{\mi{Cert_{rp}}.\str{content}}{s'.\str{IdPConfig}.\mi{pubkey}} \equiv \True}\label{alg:script-idp-verify-cert}
-        \mystate{\myss{s'.\str{parameters}[\mi{cert}] := \mi{Cert_{rp}}}}
-        \mystate{\myss{t := s'.\str{parameters}[t]}}
-        \mystate{\myss{\mi{PID_{rp}} := [t]\mi{Cert_{rp}}.\str{content}[\mi{ID_{rp}}]}}\label{line:gen-pidrp}
-        \mystate{\myss{s'.\str{parameters}[\mi{PID_{rp}}] := \mi{PID_{rp}}}}
+      \myif{\checksigThree{\mi{Cert_{rp}}.\mi{ver}}{\mi{Cert_{rp}}.\mi{content}}{s'.\mi{pubkey}} \equiv \True}\label{alg:script-idp-verify-cert}
+\Append{$\an{\str{cert}, \mi{Cert_{RP}}}$}{$s'.\str{parameters}$}
+        \mystate{\myss{t := s'.\str{parameters}[\str{t}]}}
+        \mystate{\myss{\mi{PID_{rp}} := \mathsf{multiply}(t, \mi{Cert_{rp}}.\mi{content}[\str{ID_{rp}}])}}\label{line:gen-pidrp}
         \mystate{\myss{\mi{body} := \myangle{\myangle{\str{PID_{rp}},\mi{PID_{rp}}}}}}
+        \Append{$\mi{body}$}{$s'.\str{parameters}$}
         \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{IdPDomain}}_\str{/reqToken},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
         \mystate{\myss{s'.\str{phase} := \str{expectReqToken}}}
       \ENDIF
@@ -1178,23 +1739,22 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{pattern := \myangle{\tXMLHTTPRequest,*,s'.\str{refXHR}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{input \not\equiv \bot}
+    	\Let{$s'.\str{refXHR}$}{$\lambda_1$}
       \myif{\pi_2(input) \equiv \str{Unanthenticated}}
-        \mystate{\myss{s'.\str{user} \gets \mi{ids}}}
-        \mystate{\myss{\mi{username} := s'.\str{user}.\mi{name}}}
-        \mystate{\myss{\mi{password} := \textsf{secretOfID}(s'.\str{user})}}
-        \mystate{\myss{\mi{body} := \myangle{\myangle{\str{username}, \mi{username}}, \myangle{\str{password}, \mi{password}}}}}
-        \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{IdPDomain}}_\str{/authentication},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
+        \mystate{\myss{\mi{username} \gets \mi{ids}}}
+        \mystate{\myss{\mi{password} := \textsf{passwordOfName}(\mi{username})}}\label{line:script-idp-password}
+        \mystate{\myss{\mi{body} := \myangle{\myangle{\str{username}, \mi{username}}, \myangle{\str{password}, \mi{password}}}}}\label{line:script-idp-used}
+        \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{IdPDomain}}_\str{/authentication},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}\label{line:script-idp-sent}
         \mystate{\myss{s'.\str{phase} := \str{expectLoginResult}}}
       \myelse{\pi_2(input) \equiv \str{Unauthorized}}
-        \mystate{\myss{\mi{PID_{rp}} := s'.\str{parameters}[\mi{PID_{rp}}]}}
-        \mystate{\myss{\mi{Attr} := \textsf{GETPARAMETERS}(\mi{tree}, \mi{docnonce})[\str{iaKey}]}}
+        \mystate{\myss{\mi{PID_{rp}} := s'.\str{parameters}[\str{PID_{rp}}]}}
+        \mystate{\myss{\mi{Attr} := s'.\str{parameters}[\str{Attr}]}}
         \mystate{\myss{\mi{body} := \myangle{\myangle{\str{PID_{rp}}, \mi{PID_{rp}}}, \myangle{\str{Attr}, \mi{Attr}}}}}
         \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{IdPDomain}}_\str{/authorize},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
         \mystate{\myss{s'.\str{phase} := \str{expectToken}}}
-      \myelse{}
-        \mystate{\myss{IDToken := \pi_2(input)[\str{IDToken}]}}
-        \mystate{\myss{RPOringin := \myangle{s'.\str{parameters}[\mi{cert}].\mi{Content}[\str{Enpt}], \mathtt{S}}}}
-        \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \myangle{\str{IDToken},\mi{IDToken}}, RPOrigin}}}
+      \Else
+        \mystate{\myss{RPOringin := \myangle{s'.\str{parameters}[\str{cert}].\mi{Content}[\str{Enpt}], \mathtt{S}}}}
+        \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \pi_2(input), RPOrigin}}}
         \mystate{\myss{s'.\str{phase} := \str{stop}}}
       \ENDIF
     \ENDIF
@@ -1203,9 +1763,10 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{pattern := \myangle{\tXMLHTTPRequest,*,s'.\str{refXHR}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{input \not\equiv \bot}
+    	\Let{$s'.\str{refXHR}$}{$\lambda_1$}
       \myif{\pi_2(input) \equiv \str{LoginSuccess}}
-        \mystate{\myss{\mi{PID_{rp}} := s'.\str{parameters}[\mi{PID_{rp}}]}}
-        \mystate{\myss{\mi{Attr} := \textsf{GETPARAMETERS}(\mi{tree}, \mi{docnonce})[\str{iaKey}]}}
+        \mystate{\myss{\mi{PID_{rp}} := s'.\str{parameters}[\str{PID_{rp}}]}}
+        \mystate{\myss{\mi{Attr} := s'.\str{parameters}[\str{Attr}]}}
         \mystate{\myss{\mi{body} := \myangle{\myangle{\str{PID_{rp}}, \mi{PID_{rp}}}, \myangle{\str{Attr}, \mi{Attr}}}}}\label{line:send-pidrp}
         \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{IdPDomain}}_\str{/authorize},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
         \mystate{\myss{s'.\str{phase} := \str{expectToken}}}
@@ -1216,9 +1777,8 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{pattern := \myangle{\tXMLHTTPRequest,*,s'.\str{refXHR}}}}
     \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
     \myif{input \not\equiv \bot}
-      \mystate{\myss{IDToken := \pi_2(input)[\str{IDToken}]}}
-      \mystate{\myss{RPOringin := \myangle{s'.\str{parameters}[\mi{cert}].\mi{Content}[\str{Enpt}], \mathtt{S}}}}
-      \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \myangle{\str{IDToken},\mi{IDToken}}, RPOrigin}}}\label{line:token-send}
+      \mystate{\myss{RPOringin := \myangle{s'.\str{parameters}[\str{cert}].\mi{Content}[\str{Enpt}], \mathtt{S}}}}
+      \mystate{\myss{\mi{command} := \myangle{\tPostMessage, \mi{target}, \pi_2(input), RPOrigin}}}\label{line:token-send}
       \mystate{\myss{s'.\str{phase} := \str{stop}}}
     \ENDIF
   \ENDCASE
@@ -1226,22 +1786,19 @@ The set $E^0$ contains only the trigger events.
   \mystopp{s',\mi{cookies},\mi{localStorage},\mi{sessionStorage},\mi{command}}
   \end{algorithmic}\setlength{\parindent}{1em}
   
+
   
-  \section{Proof of Security}
   
-  To state the security properties for \uppresso, we first
-  define an \emph{\uppresso web system for authentication analysis}. This
-  web system is based on the \uppresso web system and only considers one
-  network attacker (which subsumes all web attackers and further network
-  attackers).
+\section{Proof of Security}
+For the further proof of security of UPPRESSO, we now define the \emph{UPPRESSO web system for authentication analysis}, noted as $\mi{\uppressoauthwebsystem}$.  $\mi{\uppressoauthwebsystem}$ is considered as the \uppresso web system with only one network attacker, which subsumes all web attackers and other network attackers.  
+  
   
   \begin{definition}
-    Let $\uppressoauthwebsystem = (\bidsystem, \scriptset, \mathsf{script}, E^0)$
-    an \uppresso web system. We call $\uppressoauthwebsystem$ an
-    \emph{\uppresso web system for authentication analysis} iff
+    Let $\mi{\uppressoauthwebsystem} = (\bidsystem, \scriptset, \mathsf{script}, E^0)$ be
+    an \uppresso web system. We call $\mi{\uppressoauthwebsystem}$ an
+    \uppresso web system for authentication analysis iff
     $\bidsystem$ contains only one network attacker process
-    $\fAP{attacker}$ and no other attacker processes (i.e.,
-    $\mathsf{Net} = \{\fAP{attacker}\}$, $\mathsf{Web} = \emptyset$).
+    $\fAP{attacker}$ which subsumes all web attacker processes and other network attacker processes.
     %Further, $\bidsystem$ contains no DNS servers. DNS servers are
     %assumed to be dishonest, and hence, are subsumed by
     %$\fAP{attacker}$. In the initial state $s_0^b$ of each browser $b$
@@ -1251,118 +1808,124 @@ The set $E^0$ contains only the trigger events.
     %$\mapAddresstoAP(\fAP{attacker})$.
   \end{definition}
   
-  The security properties for \uppresso are formally defined 
-  as follows. First note that every $Acct$ recorded in RP was
-  calculated by RP as the result of an HTTPS $\mPost$ request 
-  $m$. We refer to $m$ as the 
-  \emph{request corresponding to $Acct$}. 
+ % The security properties for \uppresso are formally defined   as follows. First note that every $Acct$ recorded in RP was  calculated by RP as the result of an HTTPS $\mPost$ request   $m$. We refer to $m$ as the   \emph{request corresponding to $Acct$}. 
+  
+  Next, we give the definition of a secure UPPRESSO web system for authentication. 
   
   \begin{definition}
-    Following with Lemma~\ref{Acct-mapping}, when we say a browser 
-    $b\in \fAP{B}$ owns an $Acct$, we holds that for some relying 
-    party $rp\in \fAP{RP}$ that calculate the $Acct$ and 
-    a $\mi{username} \in \mathbb{S}$ with $\mapIDtoOwner(username) = b$.
-    \[\mi{Acct}=[\NToID(username)]ID_{rp}=[ID_u]ID_{rp}=[ur]G\]
+  Let $\mi{\uppressoauthwebsystem}$ be an UPPRESSO web system for authentication analysis. $\mi{\uppressoauthwebsystem}$ is secure if for every $\rho$ of $\mi{\uppressoauthwebsystem}$, every state $(S^j, E^j, N^j)$ in $\rho$, every $r\in \fAP{RP}$ that is honest, every RP service token of the form $\an{n, \mi{Acct}}$ recorded in  $S^j(r).\str{serviceTokens}$, the following two conditions are satisfied:
+   
+   \textbf{(A)} If $\an{n,\mi{Acct}}$ is derivable from the attackers' knowledge in $S^j$ (i.e., $\an{n,\mi{Acct}} \in d_{\emptyset}(S^j(\fAP{attacker}))$), then it follows that the browser $\boldsymbol{b}$ \textbf{owning} $\boldsymbol{Acct}$ is fully corrupted in $S^j$ (\textbf{In UPPRESSO web system, a process owning an $\mi{Acct}$ means that, only this process (besides IdP) knows the $password$ corresponding to $Acct$, where $\mi{Acct} \equiv \mathsf{multiply}(\mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password)), S^j(r).rp)$}).
+   
+   \textbf{{B}} If the request corresponding to $\an{n,\mi{Acct}}$ was sent by  some $b\in \fAP{B}$ which is honest in $S^j$, then $b$ owns $Acct$.
   \end{definition}
 
-  \begin{lemma}\label{Acct-mapping}
-    $Acct$ can be treated a \emph{permanent} identifier 
-    determined by $ID_u$ and $ID_{rp}$. 
-  \end{lemma}
-  \begin{proof}
-    $ID_{rp} = [r]G$ is a generator on $\mathbb{E}$ of order $n$, 
-    as $\mathbb{E}$ is a finite cyclic group. 
-    Therefore, given a user with $ID_u$ owned by browser $b$, $Acct$ is a \emph{unique} point on 
-    $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} 
-    associated with $ID_u=u$.
-  \end{proof}
-  
-  We now define the similar security properties as the definition 52 in SPRESSO. 
-  
-  \begin{definition}\label{def:uppresso-security-property} 
-    Let $\uppressoauthwebsystem$ be an \uppresso web system for authentication analysis. 
-    We say that \emph{$\uppressoauthwebsystem$ is secure} if for every run $\rho$ of
-    $\uppressoauthwebsystem$, every state $(S^j, E^j, N^j)$ in $\rho$,
-    every $r\in \fAP{RP}$ that is honest in $S^j$, every RP service token of the form 
-    $\myangle{nonce, Acct}$ recorded in $S^j(r).\str{serviceTokens}$, the following two conditions are
-    satisfied:
-  
-    \textbf{(A)} If $\myangle{nonce, Acct}$ is derivable from the attackers knowledge
-    in $S^j$ (i.e., $\myangle{nonce, Acct} \in d_{\emptyset}(S^j(\fAP{attacker}))$),
-    then it follows that the browser $b$ owning $Acct$ is fully corrupted
-    in $S^j$ (i.e., the value of $\mi{isCorrupted}$ is $\fullcorrupt$).
-  
-    \textbf{(B)} If the request corresponding to $\myangle{nonce, Acct}$ was sent by
-    some $b\in \fAP{B}$ which is honest in $S^j$, then $b$ owns $Acct$.
-  \end{definition}
-  
-  %First note that the RP service token should be defined as $\langle IDToken$, $Acct \rangle$ 
-  %which is $\langle n$, $i \rangle$ in SPRESSO. That is,  
-  
-  %let  $\mathcal{U\!W\!S}^{auth}$ be an UPPRESSO web system for authentication analysis. We say that $\mathcal{U\!W\!S}^{auth}$ is secure if for every run $\rho$ of $\mathcal{U\!W\!S}^{auth}$, every state ($S^j$, $E^j$, $N^j$) in $\rho$, every $r \in$ $\mathtt{RP}$ that is honest, every RP service token of the form $\langle IDToken$, $Acct \rangle$ recorded in $S^j$($r$).$\mathtt{serviceTokens}$, the following two conditions are satisfied:
-  
-  %(A) If $\langle IDToken$, $Acct \rangle$ is derivable from the attackers knowledge in $S^j$ (i.e., $\langle IDToken$, $Acct \rangle \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), then it follows that the browser b owning $Acct$ is fully corrupted in $S^j$ (i.e., the value of $isCorrupted$ is $\mathtt{FULLCORRUPT}$) or $\mathtt{governor}$($Acct$) is not an honest IdP (in $S^j$).
-  
-  %(B) If the request corresponding to $\langle IDToken$, $Acct \rangle$ was sent by some $b \in \mathtt{B}$ which is honest in $S^j$, then b owns the $ID_U$ which satisfies $Acct=[ID_U]S^j(r).ID_{RP}$.
-  
-  \begin{theorem}\label{thm:authentication}
-    Let $\uppressoauthwebsystem$ be an \uppresso web system as
-    defined above. Then $\uppressoauthwebsystem$ is secure
-    w.r.t.~authentication.
+
+  To guarantee the secure of UPPRESSO, we will prove the following theorem:
+  \begin{theorem}\label{theorem:authentication}
+  Let $\mi{\uppressoauthwebsystem}$ be an UPPRESSO web system for authentication analysis. The $\mi{\uppressoauthwebsystem}$ is secure w.r.t. authentication.
+
   \end{theorem}
+  In other words, the authentication properties (A) and (B) are fulfilled for every UPPRESSO web system.
   
-  To prove Theorem~\ref{thm:authentication}, we are going to prove the following Lemmas.
+  Before we prove Theorem~\ref{theorem:authentication}, we show some general properties of the $\uppressoauthwebsystem$.
+
+\subsection{Properties of $\uppressoauthwebsystem$}
+
+Let $\uppressoauthwebsystem = (\bidsystem, \scriptset, \mathsf{script}, E^0)$
+be a web system. In the following, we write $s_x = (S^x,E^x,N^x)$ for the
+states of a web system.
+
+\begin{definition}\label{def:emitting}
+  In what follows, given an atomic process $p$ and a message $m$, we
+  say that \emph{$p$ emits $m$} in a run $\rho=(s_0,s_1,\ldots)$ if
+  there is a processing step  of the form
+  \[ s_{u-1} \xrightarrow[p \rightarrow E]{} s_{u}\] for some $u \in
+  \mathbb{N}$, a set of events $E$ and some addresses $x$, $y$ with
+  $\an{x,y,m} \in E$.
+\end{definition}
+
+\begin{definition}\label{def:contains}
+  We say that a term $t$ \emph{is derivably contained in (a term) $t'$
+    for (a set of DY processes) $P$ (in a processing step $s_i
+    \rightarrow s_{i+1}$ of a run $\rho=(s_0,s_1,\ldots)$)} if $t$ is
+  derivable from $t'$ with the knowledge available to $P$, i.e.,
+  \begin{align*}
+    t \in d_{\emptyset}(\{t'\} \cup \bigcup_{p\in P}S^{i+1}(p))
+  \end{align*}
+
+\end{definition}
+
+\begin{definition}\label{def:leak}
+  We say that \emph{a set of processes $P$ leaks a term $t$ (in a
+    processing step $s_i \rightarrow s_{i+1}$) to a set of processes
+    $P'$} if there exists a message $m$ that is emitted (in $s_i
+  \rightarrow s_{i+1}$) by some $p \in P$ and $t$ is derivably
+  contained in $m$ for $P'$ in the processing step $s_i \rightarrow
+  s_{i+1}$. If we omit $P'$, we define $P' := \bidsystem \setminus
+  P$. If $P$ is a set with a single element, we omit the set notation.
+\end{definition}
+
+\begin{definition}\label{def:creating}
+  We say that an DY process $p$ \emph{created} a message $m$ (at
+  some point) in a run if $m$ is derivably contained in a message
+  emitted by $p$ in some processing step and if there is no earlier
+  processing step where $m$ is derivably contained in a message
+  emitted by some DY process $p'$.
+\end{definition}
+
+
+\begin{definition}\label{def:accepting}
+  We say that \emph{a browser $b$ accepted} a message (as a response
+  to some request) if the browser decrypted the message (if it was an
+  HTTPS message) and called the function $\mathsf{PROCESSRESPONSE}$,
+  passing the message and the request (see
+  Algorithm~\ref{alg:processresponse}).
+\end{definition}
+
+\begin{definition}\label{def:rp-accepting}
+  In a similar fashion, we say that \emph{an RP $r$ accepted} a
+  message (as a response to some request) if the RP decrypted the
+  message (RPs can only accept HTTPS messages) and added the message's
+  body to the $\str{wkCache}$ in its state (i.e.,
+  Line~\ref{line:rp-accept} of Algorithm~\ref{alg:rp-spresso} was called).
+\end{definition}
+
+
+\begin{definition}\label{def:knowing}
+  We say that an atomic DY process \emph{$p$ knows a term $t$} in some
+  state $s=(S,E,N)$ of a run if it can derive the term from its
+  knowledge, i.e., $t \in d_{\emptyset}(S(p))$.
+\end{definition}
+
+
+\begin{definition}\label{def:initiating}
+  We say that a \emph{script initiated a request $r$} if a browser
+  triggered the script (in Line~\ref{line:trigger-script} of
+  Algorithm~\ref{alg:runscript}) and the first component of the
+  $\mi{command}$ output of the script relation is either $\tHref$, 
+  $\tIframe$, $\tForm$, or $\tXMLHTTPRequest$ such that the browser
+  issues the request $r$ in the same step as a result.
+\end{definition}
   
-  \begin{lemma}\label{lemma:k-does-not-leak-from-honest-rp} 
-    If in the processing step $s_i \rightarrow s_{i+1}$ of a run $\rho$
-    of $\uppressoauthwebsystem$ an honest relying party $r$ (I) emits an HTTPS
-    request of the form
+  For a run $\rho = (s_0, s_1,\dots)$ of $\uppressoauthwebsystem$, we state the following lemmas:
+ 
+ \begin{lemma}\label{lemma:rp-correct-idppubkey}
+ For every honest relying party $r \in \fAP{RP}$, every $s \in \rho$, and the IdP $i$, it holds that $S(r).\str{IdPconfig}[\str{pubkey}] \equiv \mathsf{pub}(S(i).\str{signkey})$.
+ \end{lemma}
+ 
+ \begin{proof}
+ For every honest relying party $r \in \fAP{RP}$, it retrieves the IdP's basic attributes (such as , $host$ and $pubkey$), during the registration phase. And then the IdP's attributes are statically configured into $r$'s server, when it must holds $S(r).\str{IdPconfig}[\str{pubkey}] \equiv \mathsf{pub}(S(idp)[\str{signkey}])$. And the $pubkey$ would not be changed unless $r$ is fully corrupted. Therefore, this lemma is proved.
+ \end{proof}
   
-    \[ m = \ehreqWithVariable{\mi{req}}{k}{\pub(k')} \]
-  %
-    (where $\mi{req}$ is an HTTP request, $k$ is a nonce (symmetric
-    key), and $k'$ is the private key of some other DY process $u$), and (II) in the
-    initial state $s_0$ the private key $k'$ is only known to $u$, and
-    (III) $u$ never leaks $k'$, then all of the following
-    statements are true:
-    \begin{enumerate}
-    \item There is no state of $\uppressoauthwebsystem$ where any party except
-      for $u$ knows $k'$, thus no one except for $u$ can
-      decrypt $\mi{req}$.
-      \label{prop:attacker-cannot-decrypt-spresso}
-    \item If there is a processing step $s_j \rightarrow s_{j+1}$ where
-      the RP $r$ leaks $k$ to $\bidsystem \setminus \{u, r\}$ there
-      is a processing step $s_h \rightarrow s_{h+1}$ with $h < j$
-      where $u$ leaks the symmetric key $k$ to $\bidsystem \setminus
-      \{u,r\}$ or $r$ is corrupted in
-      $s_j$. \label{prop:k-doesnt-leak-spresso}
-    \item The value of the host header in $\mi{req}$ is the domain that
-      is assigned the public key $\pub(k')$ in RP's keymapping
-      $s_0.\str{keyMapping}$ (in its initial
-      state). \label{prop:host-header-matches-spresso}
-    \item If $r$ accepts a response (say, $m'$) to $m$ in a processing step $s_j
-      \rightarrow s_{j+1}$ and $r$ is honest in $s_j$ and $u$ did not
-      leak the symmetric key $k$ to $\bidsystem \setminus \{u,r\}$ prior
-      to $s_j$, then $u$ created the HTTPS response $m'$ to the HTTPS
-      request $m$, i.e., the nonce of the HTTP request $\mi{req}$ is not known to
-      any atomic process $p$, except for the atomic DY processes $r$ and
-      $u$.\label{prop:only-owner-answers-spresso}
-    \end{enumerate}
-  \end{lemma}
+ \begin{definition}
+  First note that every $Acct$ recorded in RP was calculated by RP as the result of an HTTPS $\mPost$ request $m$. We refer to $m$ as the   \emph{service token request for $\an{n, Acct}$}. For every service token $\an{n,Acct}$ we define a \emph{service token response for $\an{n,Acct}$} to be an HTTPS response where the value $n$ is contained in the body of the message. A \emph{service token request for $\an{n,Acct}$} is an HTTPS request that triggered the service token response for $\an{n,Acct}$.
+\end{definition}
   
-  %\begin{lemma}\label{lemma:wkcache-never-lies}
-  %  For every honest relying party $r \in \fAP{RP}$, every $s \in \rho$, every
-  %  $\an{\mi{host}, \mi{wkDoc}} \inPairing S(r).\str{wkCache}$ it holds
-  %  that $\mi{wkDoc}[\str{signkey}] \equiv
-  %  \pub(\mathsf{signkey}(\mapDomain^{-1}(\mi{host})))$ if
-  %  $\mapDomain^{-1}(\mi{host})$ is an honest IdP.
-  %\end{lemma}
+  
   
   \begin{lemma}\label{lemma:uppresso-request-exists}
-    In a run $\rho$ of $\uppressoauthwebsystem$, for every 
-    state $s_j \in\rho$, every RP $r \in \fAP{RP}$ that is 
-    honest in $s_j$, every $\myangle{nonce, Acct} \inPairing 
-    S^j(r).\str{serviceTokens}$, the following properties hold:
+    In a run $\rho$ of $\mi{\uppressoauthwebsystem}$, for every state $s_j \in\rho$, every RP $r \in \fAP{RP}$ that is honest in $s_j$, every $\myangle{n, Acct} \inPairing S^j(r).\str{serviceTokens}$, the following properties hold:
   
     \begin{enumerate}
     \item There exists exactly one $l' < j$ such that there exists a
@@ -1370,13 +1933,13 @@ The set $E^0$ contains only the trigger events.
       \[ s_{l'} \xrightarrow[r \rightarrow \an{\an{a',f',m'}}]{e'
         \rightarrow r} s_{l'+1}\]
       with $e'$ being some events, $a'$ and $f'$
-      being addresses and $m'$ being a service token response for $Acct$.
+      being addresses and $m'$ being a service token response for $\an{n, Acct}$.
   
     \item There exists exactly one $l < j$ such that there exists a
       processing step in $\rho$ of the form 
       \[ s_{l} \xrightarrow[r \rightarrow e]{\an{a,f,m} \rightarrow r}
       s_{l+1} \] with $e$ being some events, $a$ and $f$ being
-      addresses and $m$ being a service token request for $Acct$.
+      addresses and $m$ being a service token request for $\an{n, Acct}$.
   
     \item The processing steps from (1) and (2) are the same, i.e., $l = l'$.
   
@@ -1385,29 +1948,35 @@ The set $E^0$ contains only the trigger events.
             nonce=n_\text{req}, 
             method=\mPost,
             xhost=d_r,
-            path=\str{/authorize}, 
+            path=\str{/uploadToken}, 
             parameters=x, 
             headers=h,
             xbody=b}, k\rangle, \pub(\mapTLSKey(d_r))) \]  
       for $d_r \in \mapDomain(r)$, some terms $x$, $h$, $n_\text{req}$, and a dictionary $b$ such that 
-      \[ b[\str{IDToken}] \equiv \myangle{\mi{PID_{rp}, \mi{PID_u}, ver}} \]
+      \[ b[\str{IDToken}] \equiv \an{\mi{tokenBody}, \mathsf{sig}(\mi{tokenBody}, k_{sign})}\]
       with 
-      \[ \mi{PID_{rp}} \equiv [S^l(r).\str{loginSessions}[t]]S^l(r).\str{rp}, \]
-      \[ \mi{PID_{u}} \equiv [u]\mi{PID_{rp}}, \]
-      \[ \mi{ver} \equiv \sig{\an{PID_{rp},PID_u}}{k_{sign}} \]
-      for some nonces $u$, and $k_\text{sign}$.
-    \item If the IdP $i$ is honest, we have that $k_\text{sign} = S^l(i).\str{signkey}$.
+      \[ \mi{tokenBody} \equiv \an{PID_{rp}, PID_u}, \]
+      \[ \mi{PID_{rp}} \equiv S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{PID_{rp}}  ,\]
+      \[ \mi{PID_{u}} \equiv \mathsf{multiply}(S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{t}, Acct), \]
+      for some nonces $k_\text{sign}$.
+    \item For the IdP $i$, we have that $k_\text{sign} = S^l(i).\str{signkey}$.
     \end{enumerate}
   \end{lemma}
   
-  We define the Lemma~\ref{lemma:k-does-not-leak-from-honest-rp} 
-  and ~\ref{lemma:uppresso-request-exists}, which prove 
-  that the data transmitted through HTTPS is secure and the 
-  IdP's public key used for generating IDToken is secure. 
-  In UPPRESSO, only the single IdP is trusted, so that the 
-  public key is guaranteed to be always trusted. Therefore, 
-  we can also follow the proofs in SPRESSO.
+\begin{proof}
+\textbf{(1).} The service token nonce $n$, with $\an{n, Acct} \inPairing S^j(r).\str{serviceTokens}$, can only be contained in a response that is assembled in Line~\ref{line:rp-nonce-response} of Algorithm~\ref{alg:rp}. The nonce is freshly generated in Line~\ref{line:rp-create-nonce} of Algorithm~\ref{alg:rp}. And it is stored in the form of $\an{n, Acct}$ to $S^j(r).\str{serviceTokens}$ in Line~\ref{line:add-service-token} of Algorithm~\ref{alg:rp}, and sent out in the service token response in Line~\ref{line:rp-token-response} of Algorithm~\ref{alg:rp}. The service tokens stored in $S^j(r).\str{serviceTokens}$ are not used or altered anywhere else. Therefore, each service token nonce is sent in exactly one (service token) response.
+
+\textbf{(2).} It is shown that the $Acct$ is calculated (in Line~\ref{line:rp-get-pidu}-\ref{line:rp-gen-acct}, Algorithm~\ref{alg:rp}) from the message contained in the request in Line~\ref{line:rp-uploadToken} of Algorithm~\ref{alg:rp}. 
+
+\textbf{(3).} It is obvious that each service token response is triggered by exactly one request from (1) and (2).
+
+\textbf{(4).} The basic form of the encrypted HTTPS request, the host header, and the usage of the correct encryption key are enforced by Lines~\ref{line:rp-http-form} of Algorithm~\ref{alg:rp}. The $\mi{path}$ component is checked to be $\str{/uploadToken}$ and the $\mi{method}$ component is checked to be $\mPost$ in Line~\ref{line:rp-uploadToken} of Algorithm~\ref{alg:rp}. $PID_{rp}$ is checked in Line~\ref{line:rp-check-sig} of Algorithm~\ref{alg:rp}.  The $Acct$ is derived from the $PID_u$ in Line~\ref{line:rp-gen-acct} of Algorithm~\ref{alg:rp}, which holds that $\mi{PID_{u}} \equiv \mathsf{multiply}(S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{t}, Acct)$.
+
+\textbf{(5).} In Line~\ref{line:rp-check-sig} of Algorithm~\ref{alg:rp}, the $IDToken$ is checked with the $S^l(r).\str{IdPConfig}[\str{pubkey}]$. According to Lemma~\ref{lemma:rp-correct-idppubkey}, it must hold that $k_\text{sign} = S^l(i).\str{signkey}$
+\end{proof}  
   
+  
+
   %补充证明逻辑的描述
   %lemma8的描述需要明确malicious party是哪一个，honest party是哪一个
   %lemma8采用纯数学描述，去除UPPRESSO表述
@@ -1430,15 +1999,10 @@ The set $E^0$ contains only the trigger events.
     (i.e., the value of $\mi{isCorrupted}$ is $\fullcorrupt$). 
   \end{definition}
   
-  %\begin{definition}
-  %Let $\mathcal{U\!W\!S}^{auth}$  be an UPPRESSO web system for authentication analysis. We say that $\mathcal{U\!W\!S}^{auth}$  is secure (with respect to Property A) if for every run $rho$ of $\mathcal{U\!W\!S}^{auth}$ , every state ($S^j$, $E^j$, $N^j$) in $rho$, every $r \in \mathtt{RP}$ that is honest in
-  %$S^j$, every RP service token of the form $\langle IDToken$, $Acct \rangle$ recorded in $S^j$($r$).$\mathtt{serviceTokens}$ and derivable from the attackers knowledge in $S^j$ (i.e., $\langle IDToken$, $Acct \rangle \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), it follows that the browser b owning $Acct$ is fully corrupted in $S^j$ (i.e., the value of $isCorrupted$ is $\mathtt{FULLCORRUPT}$) or $\mathtt{governor}$($Acct$) is not an honest IdP (in $S^j$).
-  %\end{definition}
+
   
-  Same as the proof in SPRESSO, we want to show that every UPPRESSO web system is secure with regard to Property A and therefore assume that there exists an UPPRESSO web system that is not secure. We will lead this to a contradication and thereby show that all UPPRESSO web systems are secure (with regard to Property A).
-  
-  %In detail, we assume: \emph{There is an UPPRESSO web system for authentication analysis $\mathcal{U\!W\!S}^{auth}$. We say that $\mathcal{U\!W\!S}^{auth}$  is secure (with respect to Property A) if for every run $rho$ of $\mathcal{U\!W\!S}^{auth}$ , every state ($S^j$, $E^j$, $N^j$) in $rho$, every $r \in \mathtt{RP}$ that is honest in
-  %$S^j$, every RP service token of the form $\langle IDToken$, $Acct \rangle$ recorded in $S^j$($r$).$\mathtt{serviceTokens}$ and derivable from the attackers knowledge in $S^j$ (i.e., $\langle IDToken$, $Acct \rangle \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), it follows that the browser b owning $Acct$ is not fully corrupted in $S^j$ and $\mathtt{governor}$($Acct$) is an honest IdP (in $S^j$).}
+  We want to show that every UPPRESSO web system is secure with regard to Property A and therefore assume that there exists an UPPRESSO web system that is not secure. We will lead this to a contradication and thereby show that all UPPRESSO web systems are secure (with regard to Property A).
+
   
   In detail, we assume: \emph{There exists an \uppresso web 
   system $\uppressoauthwebsystem$, a run $\rho$ of 
@@ -1450,133 +2014,142 @@ The set $E^0$ contains only the trigger events.
   d_{\emptyset}(S^j(\fAP{attacker}))$), and the browser $b$ 
   owning $Acct$ is not fully corrupted (in $S^j$).}
   
-  We now proceed to prove that this is a contradiction. 
-  First, we can see that for $\an{nonce, Acct}$ and $s_j$, 
-  the conditions in Lemma~\ref{lemma:uppresso-request-exists} 
-  are fulfilled, i.e., a service token request $m$ and a 
-  service token response $m'$ to/from $r$ exist, and $m'$ is 
-  of form shown in Property~\ref{lemma:item:form} where there is an IDToken.
-  Let $I$ be the Identity Provider. 
-  We know that $I$ is an honest IdP.
-  As such, it never leaks its signing key (see Algorithm~\ref{alg:idp}). 
-  Therefore, the signed subterm $\mi{IDToken} := \myangle{\mi{Content}, \mi{ver}}$ in which
-  $\mi{Content} := \myangle{PID_{rp}, PID_u}$ and 
-  $\mi{ver} := \sig{\an{PID_{rp},PID_u}}{k_{sign}}$ 
-  had to be created by the IdP $I$. 
-  An (honest) IdP creates signatures only in Line~\ref{line:sign-token} of Algorithm~\ref{alg:idp}.
+  We now give the proof that this is a contradiction. First, we can see that for $\an{n, Acct}$ and $s_j$, according to Lemma~\ref{lemma:uppresso-request-exists} there is, a service token request $m$ and a service token response $m'$ to/from $r$ exist, and $m'$ is of form shown in Lemma~\ref{lemma:uppresso-request-exists}. Let $i$ be the Identity Provider. Therefore, the signed subterm $\mi{IDToken} := \myangle{\mi{tokenBody}, \mi{\mathsf{sig}(tokenBody, k_{sign})}}$ had to be created by the IdP $i$ according to Lemma~\ref{lemma:rp-correct-idppubkey}. IdP creates signatures only in Line~\ref{line:sign-token} of Algorithm~\ref{alg:idp}.
   
   %nonce从哪些获得？
   %当且仅当从系统中的任何一个角色获得token，攻击者可以实现攻击。
   %假设获得token，但无法获得，推翻假设。
   %spresso definition
   \begin{lemma}\label{lemma:b-trigger-request}%(Same as Lemma 4 in SPRESSO) 
-    Under the assumption above, only the browser b can issue a 
-    request $req$ (say, $m_{auth}$)that triggers the IdP I to 
-    create the signed term IDToken. The request was sent by b 
-    over HTTPS using I's public HTTPS key.
+    Under the assumption above, only the browser $b$ owning $Acct$ (at honest relying party $r$) can issue a request $req$ (say, $\mi{m_{auth}}$) that triggers the IdP $i$ to create the signed term $IDToken$ defined in Lemma~\ref{lemma:uppresso-request-exists}. The request was sent by $b$ over HTTPS using $i$'s public HTTPS key.
   \end{lemma}
   \begin{proof}
-    We have to consider two cases for the request $m_{auth}$:
+    We have to consider two cases for the request $\mi{m_{auth}}$:
   
-    \textbf{(A).} First, if the user is not logged in with the 
-    $username$ at $I$ (i.e., the browser $b$ has no session 
-    cookie that carries a nonce which is a session id at $I$ for 
-    which the identitiy is marked as being logged in, compare 
-    Line~\ref{line:uppresso-idp-check-login-state} of 
-    Algorithm~\ref{alg:idp}), then the request has to carry (in
-    the request body) the password matching the $username$ 
-    ($\NToS(username)$) to the path $\str{/authentication}$ to 
-    retrieve the session cookie. This secret is only known to 
-    $b$ initially. Depending on the corruption status of $b$, we 
-    can now have two cases:
+    \textbf{(A). IdP $i$ only issues the $IDToken$ to $b$, with
+    $$ PID_{rp} := \mi{m_{auth}.\str{PID_{rp}}}, $$ 
+    $$ PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}), $$ 
+    where 
+    $$ ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password)), $$ 
+  for $password$ is corresponding to $Acct$}.
+    
+    \textbf{(A.1).} First, if the user is not logged in with the    $username$ at $i$ (i.e., the browser $b$ has no session cookie that carries a nonce which is a session id at $i$ for which the identitiy is marked as being logged in, compare Line~\ref{line:uppresso-idp-check-login-state} of Algorithm~\ref{alg:idp}), then the request has to carry (in the request body) the password matching the $username$    ($\NToS(username)$) to the path $\str{/authentication}$ to retrieve the session cookie. This secret is only known to $b$ initially. Depending on the corruption status of $b$, we can now have two cases:
     \begin{enumerate}
     \item[a)] If $b$ is honest in $s_j$, it has not sent the 
-      password to any party except over HTTPS to $I$ (as defined 
+      password to any party except over HTTPS to $i$ (as defined 
       in the definition of browsers). 
     \item[b)] If $b$ is close-corrupted, it has not sent it to 
       any other party while it was honest (case a). When 
       becoming close-corrupted, it discarded the secret.
     \end{enumerate}
   
-    I.e., the password has been sent only to $I$ over HTTPS or 
+    I.e., the password has been sent only to $i$ over HTTPS or 
     to nobody at all. The IdP $I$ cannot send it to any other 
     party. Therefore we know that only the browser $b$ can send 
     the request $m_\text{attr}$ in this case.
   
-    \textbf{(B).} Second, if the user is logged in at $I$, the 
-    browser provides a session id to $I$ that refers to a 
-    logged in session at $I$. This session id can only be 
-    retrieved from $I$ by logging in, i.e., case (A) applies, 
+    \textbf{(A.2).} Second, if the user is logged in at $i$, the 
+    browser provides a session id to $i$ that refers to a 
+    logged in session at $i$. This session id can only be 
+    retrieved from $i$ by logging in, i.e., case (A) applies, 
     in particular, $b$ has to provide the proper password, 
-    which only itself and $I$ know (see above). The session id 
+    which only itself and $i$ know (see above). The session id 
     is sent to $b$ in the form of a cookie, which is set to 
-    secure (i.e., it is only sent back to $I$ over HTTPS, and
+    secure (i.e., it is only sent back to $i$ over HTTPS, and
     therefore not derivable by the attacker) and httpOnly 
     (i.e., it is not accessible by any scripts). The browser $b$ 
-    sends the cookie only to $I$. The IdP $I$ never sends the 
+    sends the cookie only to $i$. The IdP $i$ never sends the 
     session id to any other party than $b$. The session id 
-    therefore only leaks to $b$ and $I$, and never to the 
+    therefore only leaks to $b$ and $i$, and never to the 
     attacker. Hence, the browser $b$ is the only atomic DY 
     process which can send the request $m_\text{auth}$ in this case.
   
     We can see that in both cases, the request was sent by $b$ 
-    using HTTPS and $I$'s public key: If the browser would 
+    using HTTPS and $i$'s public key: If the browser would 
     intend to sent the request without encryption, the request 
     would not contain the password in case (A) or the cookie in 
     case (B). The browser always uses the ``correct'' encryption 
     key for any domain (as defined in $\uppressoauthwebsystem$).
   %The proof is same as the Lemma 4's proof in SPRESSO.
   %It can be proved that the $IDToken$ only contains the $PID_U:=[ID_U]PID_{RP}$ while $PID_U$ is provided by $b$, and $b$ owns the password of $ID_U$.
+  
+	\textbf{(B). IdP $i$ issues the $IDToken$ to $b$, with
+    $$ PID_{rp} := \mi{m_{auth}.\str{PID_{rp}}}, $$ 
+    $$ PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}), $$ 
+    for $password$ is corresponding to $Acct$. There always be
+	$$ Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t), PID_u),$$
+	for nonce $t$ and $PID_{rp}$ are negotiated by $b$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$).    
+    }
+    
+    To issue an identity token requested for $PID_{RP}$, the honest IdP authenticates the user with $ID_U$ and calculates $PID_U = [ID_U]PID_{RP}$, following Equation \ref{equ:PIDU}. The RP designated by $PID_{RP}$ should have received a $t$ from the user. Following Equation \ref{equ:AccountNotChanged}, it can calculate $Acct = [t^{-1}]PID_{U} = [ID_U]ID_{RP}$, which is a \emph{permanent} identifier determined by $ID_U$ and $ID_{RP}$ after the user and the RP register at the IdP. $ID_{RP} = [r]G$ is a generator on $\mathbb{E}$ of order $n$, as $\mathbb{E}$ is a finite cyclic group. Therefore, given a user with $ID_U$, $Acct$ is a \emph{unique} point on $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} associated with $ID_U=u$. 
+%We first prove that $PID_{U}$ \emph{uniquely} identifies one account at the designated RP and one user in the system. 
+This proves that $PID_U$ in $TK$ identifies an account $Acct$ at the designated RP, which is uniquely mapped to a user with $ID_U$ in the system.
+
+Next, we consider two adversarial scenarios where the attacker replays a token $TK$ for another user to (1) the designated RP but receiving $t'\neq t$ in this login, and (2) any other honest RP with $ID_{RP'} = [r']G \neq [r]G$ (i.e., $r' \neq r$). In the first case, the designated RP would calculate an account as $[t'^{-1}]PID_U = [t'^{-1}ut]ID_{RP}$.
+Because a user's identity is randomly selected by the IdP in $\mathbb{Z}_n$ and known only to the user (and the honest IdP), the probability that $t'^{-1}ut$ happens to be the identity of another user is negligible, when $n$ is sufficiently large. As a result, $[t'^{-1}]PID_U$ is likely not to identify any known account at the RP and therefore would be treated as a new account by the RP. 
+Secondly, the attacker presents $TK$ to $RP'$ in the system, where $ID_{RP'} = [r']G \neq [r]G$. $RP'$ would calculate the account as $Acct' = [\tilde{t}^{-1}]PID_{U} = [\tilde{t}^{-1}utrr'^{-1}][r']G = [\tilde{t}^{-1}utrr'^{-1}]ID_{RP'}$. The probability that $\tilde{t}^{-1}utrr'^{-1}$ happens to be the identity of another user at $RP'$ is also negligible, when $n$ is sufficiently large. 
+%it identifies no account mapped to a user, at any RP not designated by $PID_{RP}$.
+
+    
+    \textcolor{red}{proof of User Identification and Integrity}
+      
+  
+  
+  \textbf{(C). IdP $i$ would not issue the $IDToken$ to $\mi{b_{attacker}}$ with 
+  $$PID_{rp} := \mi{m_{auth}}.\str{PID_{rp}} , $$
+  $$PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}),$$
+  where
+  $$PID_{rp} \equiv \mathsf{multiply}(t', S(\mi{r_{attacker}}).rp)$$
+  $$ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password_\mi{attacker})),$$
+  $$Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t), PID_u)$$
+  for nonce $t$ and $PID_{rp}$ are negotiated by $\mi{b_{attacker}}$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$), because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$)}
+  
+	To satisfy the above statements, there must be $PID_{rp} \equiv \mathsf{multiply}(t, S(r).rp) \equiv \mathsf{multiply}(t', S(\mi{r_{attacker}}).rp)$. Finding $t$ and $t'$ can be described as a $PID_{RP}$-collision game $\mathcal{G}_c$ between an adversary and a challenger: the adversary receives from the challenger a finite set of RP identities, i.e., $ID_{RP_1}$, ..., $ID_{RP_m}$, where $m$ is the number of RPs in the system, and outputs $(a, b, t, t')$ where $a \neq b$. If $[t]ID_{RP_a}=[t']ID_{RP_b}$, which occurs with a probability ${\rm Pr}_s$, the adversary succeeds in this game.
+%The attack success probability is defined as ${\rm Pr}_s$.
+
+As depicted in Figure \ref{fig:ecdlp_algorithm}, we design a probabilistic polynomial time (PPT) algorithm $\mathcal{D}^*_c$ based on $\mathcal{G}_c$, to solve the ECDLP: find a number $x \in \mathbb{Z}_n$ satisfying $Q = [x]G$, where $Q$ is a point on $\mathbb{E}$ and $G$ is a generator on $\mathbb{E}$ of order $n$.
+
+
+
+
+The algorithm $\mathcal{D}^*_c$ works as below.
+The input of $\mathcal{D}^*_c$ is in the form of ($G, Q$). On receiving an input ($G$, $Q$), the challenger first randomly chooses $r_1, \cdots, r_m$ in $\mathbb{Z}_n$ to calculate $[r_1]G, \cdots, [r_m]G$.
+Then, it randomly chooses $j \in [1,m]$, replaces $[r_j]G$ with $Q$, and sends $m$ RP identities to the adversary, which returns the result ($a$, $b$, $t$, $t'$). Finally, the challenger calculates $s = t^{-1}t'r_b \bmod n$ and returns $s$ as the output of $\mathcal{D}^*_c$.
+
+If the adversary succeeds in $\mathcal{G}_c$ and $[r_a]G$ happens to be replaced with $Q$, then $\mathcal{D}^*_c$ outputs $s=t^{-1}t'r_b =x$ because $[tr_a]G = [t]Q = [t'r_b]G$. For the adversary, $Q$ is indistinguishable from any other RP identities in the input set, as $[r_j]G$ is randomly replaced by the challenger.
+Hence, the probability of solving the ECDLP using $\mathcal{D}^*_c$ is formulated as:
+\begin{equation*}
+{\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\} = {\rm Pr}\{s = x\}={\rm Pr}\{a=j\}{\rm Pr}_s=\frac{1}{m}{\rm Pr}_s
+\end{equation*}
+
+If the probability of finding $t$ and $t'$ satisfying $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is non-negligible, the adversary would have advantages  in $\mathcal{G}_c$ and ${\rm Pr}_s$ is non-negligible regardless of the security parameter $\lambda$.
+Thus, we would find that ${\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\}$ also becomes non-negligible even when $\lambda$ is sufficiently large, because $m$ is a finite integer and $m \ll 2^\lambda$.
+This violates the ECDLP assumption. Therefore, the probability of finding $t$ and $t'$ that satisfy $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is negligible. 
+	
+	
+	\textcolor{red}{proof of RP Designation }
   \end{proof}
   
   \begin{lemma}\label{lemma:script-idp-trigger-request} %(Same as Lemma 5 in SPRESSO) 
-    In the browser $b$, the request $m_{auth}$ was triggered by $\mi{script\_idp}$ 
-    loaded from the origin $\myangle{d, S}$ for some $d \in \mathtt{dom}(I)$.
+    In the browser $b$, the request $\mi{m_{auth}}$ was triggered by $\mi{script\_idp}$ loaded from the origin $\myangle{d, S}$ for $d \in \mathtt{dom}(i)$.
   \end{lemma}
   \begin{proof}
-    First, $\an{d,\https}$ for some $d \in \mapDomain(I)$ is the 
-    only origin that has access to the password $\NToS(u)$ for 
-    the username $u$.
-    (as defined in Appendix~\ref{app:browsers-uppresso}).
+	The IdP $i$'s host is statically configured in $r$'s server, therefore, the honest relying party $r$ would not lead $b$ to download the $\str{stt_script}$.  So $\an{d,\https}$ for some $d \in \mapDomain(i)$ is the only origin that has access to the $password$. (as defined in Appendix~\ref{app:browsers-uppresso}).
+	
+  So, the $password$ is used in $script_idp$. It is easy to see that the $password$ is created in Line~\ref{line:script-idp-password} and used in Line~\ref{line:script-idp-password-used} of Algorithm~\ref{alg:uppresso-script-idp}. Then it is posted to the host $\mi{IdPDomain}$ in Line~\ref{line:script-idp-sent}, which is statically configured in the script by IdP and never changed. 
   
-    With the general properties defined in~\cite{BrowserID} and the
-    definition of Identity Providers in Appendix~\ref{app:idps}, in
-    particular their property that they only send out one script,
-    $\mi{script\_idp}$, we can see that this is the only script that can
-    trigger a request containing the password.
-  %The proof follows the Lemma 5's proof in SPRESSO.
-  %It can be proved that only the IdP's script $script\_idp$ owns the password of $ID_U$ can request the $IDToken$ from $I$.
+  Then IdP receives the $password$ in Line~\ref{line:idp-password} and verifies it in Line~\ref{line:idp-password-verified} of Algorithm~\ref{alg:idp}. The $password$ is no more used. Therefore, attacker cannot know the $password$.
+  
+  Above all, the lemma is proved.
   \end{proof}
 
-  We now know that only the $\mi{script\_idp}$ in an honest browser 
-  loaded from the IdP can issue a request for the IDToken. 
-  That is to say, the attacker cannot request for the correct IDToken 
-  by himself. Therefore, next we are going to discuss whether the attacker
-  can steal the IDToken stored in honest parties.
 
-  Obviously, the attacker is unable to get the IDToken from IdP because IdP 
-  is always honest and never leak it. Therefore, we need to prove that both 
-  the browser and honest RP will not leak the IDToken to the attacker. 
-  To state that the browser doesn't leak the IDToken, 
-  we will prove that the browser is honest after receiving the IDToken.
   
   \begin{lemma} \label{lemma:idp-to-script-idp} %(Same as Lemma 6 in SPRESSO)
-    In the browser $b$, the script $\mi{script\_idp}$ receives 
-    the response to the request $m_{auth}$ (and no other script), 
-    and at this point, the browser is still honest.
+    In the browser $b$, the script $\mi{script\_idp}$ receives the response to the request $\mi{m_{auth}}$ (and no other script), and at this point, the browser is still honest.
   \end{lemma}
   \begin{proof}
-    From the definition of browser corruption, we can see that 
-    the browser $b$ discards any information about pending 
-    requests in its state when it becomes close-corrupted, in 
-    particular any TLS keys. It can therefore not decrypt the 
-    response if it becomes close-corrupted before receiving the 
-    response.
-  
-    The rest follows from the general properties defined
-    in~\cite{BrowserID}.
-  %The proof follows Lemma 6's proof in SPRESSO.
-  %It is proved that only the closed-corrupted browser cannot receive the $IDToken$ responding to the $req$ started by the honest browser $b$.
+    From the definition of browser corruption, we can see that the browser $b$ discards any information about pending requests in its state when it becomes close-corrupted, in particular any TLS keys. It can therefore not decrypt the response if it becomes close-corrupted before receiving the response.
   \end{proof}
   
   We now know that only the script $\mi{script\_idp}$ received 
@@ -1596,7 +2169,7 @@ The set $E^0$ contains only the trigger events.
     $\langle d_r, \https\rangle$.
   \end{lemma}
   \begin{proof}
-    It is clear that, the IDToken held by the honest 
+    It is clear that, the $IDToken$ held by the honest 
     $script\_idp$ is only sent to the origin 
     $\langle Cert_{rp}.Enpt_{rp}, \https\rangle$, 
     while the $IDToken.PID_{rp} \equiv [t]Cert_{rp}.ID_{rp}$, 
@@ -1605,8 +2178,7 @@ The set $E^0$ contains only the trigger events.
     by the signature $Cert_{rp}.ver$ generated by IdP $I$. 
     The process is shown at Line~\ref{line:token-send}
     Algorithm~\ref{alg:uppresso-script-idp}.
-  %The proof is same as proof of Lemma 8 in SPRESSO.
-  %It can be proved that, the $IDToken$ held by the honest $script\_idp$ is only sent to the origin $\langle Cert_{RP}.Enpt_{RP}, S \rangle$, while the $IDToken.PID_{RP} \equiv [t]Cert_{RP}.ID_{RP}$, and $t$ is the one-time random number.  The relation of $ID_RP$ and $Enpt$ is guaranteed by the signature generated by IdP $I$. The process is shown at Line 9, 16, 19, 21, 38, 39, 59, 60  in Algorithm~\ref{alg:script_idp}.
+    \textcolor{red}{proof of Confidentiality}
   \end{proof}
   
   \begin{lemma}\label{lemma:script-rp-to-rp} %(Same as Lemma 9 in SPRESSO) 
@@ -1621,133 +2193,15 @@ The set $E^0$ contains only the trigger events.
   %The proof follows the proof of Lemma 9 in SPRESSO.
   \end{proof}
   
-  These proofs are enough for SPRESSO system to show its 
-  security, however, they are not enough for UPPRESSO. So far, 
-  the proofs only guarantee that the $IDToken$ is never leaked 
-  to the attacker. Obviously, the $tag$ in SPRESSO can be only 
-  decrypted to a unique domain of RP. However, in UPPRESSO, this 
-  statement is not easy to see (i.e., an attacker may misuse a 
-  incorrect $IDToken$ to retrieve the service token from an 
-  honest RP). Here, we distinct two kinds of adversarial scenarios.
 
-  \begin{enumerate}[I.]
-    \item The attacker just simply replays an $IDToken$. Here, 
-      we assume the $IDToken$ is from a corrupted browser with 
-      $IDToken.\mi{PID_{RP}}$ designating the honest RP from 
-      which the attacker want to retrieve the service token.
+  
+  With Lemmas~\ref{lemma:idp-to-script-idp}--\ref{lemma:script-rp-to-rp} we see that the $\mi{IDToken}$, once it was signed by $i$, was transferred only to $r$, the browser $b$. It cannot be known to the attacker or any corrupted party, as none of the listed parties leak it to any corrupted party or the attacker.
 
-      We can easily note that the $t'$ used for this new login 
-      is not equal with the $t$ for the $IDToken$'s generating.
-      Therefore, the designated RP would calculate an 
-      account as $[t'^{-1}]PID_u = [t'^{-1}ut]ID_{rp}$.
-      Because a user's identity is randomly selected by the IdP 
-      in $\mathbb{Z}_n$ and known only to the user (and the honest 
-      IdP), the probability that $t'^{-1}ut$ happens to be the 
-      identity of another user is negligible, when $n$ is 
-      sufficiently large. As a result, $[t'^{-1}]PID_u$ is likely 
-      not to identify any known account at the RP and therefore 
-      would be treated as a new account by the RP.
+Moreover, for $\an{n,Acct}$ to be created and recorded in $S^j(r)$, the $IDToken$ can only be created with the knowledge of $\mi{password}$, according to~\ref{lemma:b-trigger-request}. However $\mi{password}$ is unknown to attacker according to Lemma~\ref{lemma:script-idp-trigger-request}. 
 
-      Obviously we can have that no matter what kind of 
-      incorrect $IDToken$, the same proof as above can be applied.
-      Even if the attacker can get an $IDToken$ from an honest 
-      browser with $IDToken.\mi{PID_{RP}}$ designating the 
-      honest RP, when the attacker start a new login session, 
-      the $t$ in this login will be changed and, hence, the 
-      attacker can not retrieve the service token for a user 
-      owned by the honest browser.
-
-    \item The attacker not only replays an $IDToken$, but also 
-      change the $t$ in the login session which can be done by 
-      control a corrupted browser to alter the $\str{script_{rp}}$ 
-      loaded from the honest RP. Here, 
-      we assume the $IDToken$ is from a corrupted RP with 
-      $IDToken.\mi{PID_{U}}$ designating a user from the honest 
-      browser whom the attacker want to log in as.
-
-      In this case, the attacker may try to find the 
-      $t^{adversary}$ satisfying $IDToken.PID_{RP} \equiv 
-      [t^{adversary}]ID_{RP}^{honest}$.
-      However, according to Lemma \ref{lemma-rp}, given 
-      $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ 
-      designates another RP with $ID_{RP'}$ is \emph{negligible}. 
-      This means that $IDToken.\mi{PID_{RP}}$ cannot be 
-      associated with any other RPs in the system. 
-      That is to say, the $t^{adversary}$ is not derivable from 
-      the attackers knowledge in $S^j$ (i.e., $t^{adversary} \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), 
-      which satisfies that $IDToken.PID_{RP} \equiv [t^{adversary}]ID_{RP}^{honest}$.
-      This can also be applied to any other kind of incorrect $IDToken$.
-  \end{enumerate}
-
-  %\begin{lemma}
-  %  The $t^{adversary}$ is not derivable from the attackers knowledge in $S^j$ (i.e., $t^{adversary} \in d_{\emptyset}$($S^j$($\mathtt{attacker}$))), which satisfies that $IDToken.PID_{RP} \equiv [t^{adversary}]ID_{RP}^{honest}$.
-  %\end{lemma}
-  %\begin{proof}
-  %  In UPPRESSO, $PID_{RP}=[t]ID_{RP}$ is generated by a user based on the target RP's identity $ID_{RP}$ and a user-selected random number $t \in [1,n)$.
-    %The target RP with $ID_{RP}$ receives $t$, and it will also calculate $PID_{RP}=[t]ID_{RP}$ to match $PID_{RP}$ extracted from a token received.
-    %It is computationally easy for any party who knows $ID_{RP}$ and $t$ to validate the $PID_{RP}$ in an identity token. A valid
-  %  Thus, $PID_{RP}$ always specifies an RP, i.e., %$PID_{RP}$ sent by a user in her identity-token request is calculated as $PID_{RP} = [t]ID_{RP}$, where $ID_{RP}$ is the target RP's identity and $t$ is a random number selected by the user and shared with this RP.
-  %  designates the target RP that knows $t$. 
-  %  Moreover, according to Lemma \ref{lemma-rp}, given $PID_{RP} = [t]ID_{RP}$, the probability that $PID_{RP}$ designates another RP with $ID_{RP'}$ is \emph{negligible}. %This means that $PID_{RP}$ cannot be associated with any other RPs in the system.
-  %  Therefore, $PID_{RP}$ designates only the target RP with $ID_{RP}$ in the system, 
-  %  so attacker cannot find a number $t^{adversary}$\hfill
-  %\end{proof}
-  
-  \begin{lemma}\label{lemma-rp}
-    Given any two points on an elliptic curve denoted by $[r]G$ and $[r']G$ 
-    where $r$ and $r'$ are different numbers unknown to an adversary, 
-    and $G$ is a generator on $\mathbb{E}$ of order $n$, 
-    the probability that the adversary finds different numbers $t$ and $t' \in [1,n)$ 
-    satisfying $[tr]G = [t'r']G$ is negligible.
-  \end{lemma}
-  \begin{proof}
-    Finding $t$ and $t'$ that satisfy $[tr]G = [t'r']G$ can be described as 
-    a collision game $\mathcal{G}_c$ between an adversary and a challenger: 
-    the adversary receives from the challenger a finite set of points, 
-    i.e., $[r_1]G$, ..., $[r_m]G$, where $m$ is the number of points, 
-    and outputs $(a, b, t, t')$ where $a \neq b$. If $[tr_a]G=[t'r_b]G$, 
-    which occurs with a probability ${\rm Pr}_s$, the adversary succeeds in this game.
-    
-    As depicted in Figure \ref{fig:ecdlp_algorithm}, 
-    we design a probabilistic polynomial time (PPT) algorithm $\mathcal{D}^*_c$ based on $\mathcal{G}_c$, 
-    to solve the ECDLP: find a number $x \in \mathbb{Z}_n$ satisfying $Q = [x]G$, 
-    where $Q$ is a point on $\mathbb{E}$ and $G$ is a generator on $\mathbb{E}$ of order $n$.
-  
-    \begin{figure}[tb]
-      \centering
-      \includegraphics[width=0.96\linewidth]{fig/ecdlp_algorithm.pdf}
-      \caption{The PPT algorithm $\mathcal{D}^*_c$ constructed based on the $PID_{RP}$ collision game to solve the ECDLP.}
-      \label{fig:ecdlp_algorithm}
-    \end{figure}
-  
-    The algorithm $\mathcal{D}^*_c$ works as below.
-    The input of $\mathcal{D}^*_c$ is in the form of ($G, Q$). 
-    On receiving an input ($G$, $Q$), 
-    the challenger first randomly chooses $r_1, \cdots, r_m$ in $\mathbb{Z}_n$ to calculate $[r_1]G, \cdots, [r_m]G$.
-    Then, it randomly chooses $j \in [1,m]$, replaces $[r_j]G$ with $Q$, and sends $m$ points to the adversary, 
-    which returns the result ($a$, $b$, $t$, $t'$). 
-    Finally, the challenger calculates $s = t^{-1}t'r_b \bmod n$ and returns $s$ as the output of $\mathcal{D}^*_c$.
-  
-    If the adversary succeeds in $\mathcal{G}_c$ and $[r_a]G$ happens to be replaced with $Q$, 
-    then $\mathcal{D}^*_c$ outputs $s=t^{-1}t'r_b =x$ because $[tr_a]G = [t]Q = [t'r_b]G$. 
-    For the adversary, $Q$ is indistinguishable from any other points in the input set, 
-    as $[r_j]G$ is randomly replaced by the challenger.
-    Hence, the probability of solving the ECDLP using $\mathcal{D}^*_c$ is formulated as:
-    \begin{equation*}
-      {\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\} = {\rm Pr}\{s = x\}={\rm Pr}\{a=j\}{\rm Pr}_s=\frac{1}{m}{\rm Pr}_s
-    \end{equation*}
-  
-    If the probability of finding $t$ and $t'$ satisfying $[tr]G = [t'r']G$ is non-negligible, 
-    the adversary would also have non-negligible advantages in $\mathcal{G}_c$ and ${\rm Pr}_s$ regardless of the security parameter $\lambda$.
-    Thus, we would find that ${\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\}$ also becomes non-negligible even when $\lambda$ is sufficiently large, 
-    because $m$ is a finite integer and $m \ll 2^\lambda$.
-    This violates the ECDLP assumption. 
-    Therefore, the probability of finding $t$ and $t'$ that satisfy $[tr]G = [t'r']G$ is negligible.
-  \end{proof}
-  
-  Therefore, there is a contradication to the assumption, where we assumed that 
-  $\myangle{n, Acct} \in d_{\emptyset}(S^j(\fAP{attacker}))$. 
-  This shows every $\mathcal{U\!W\!S}^{auth}$ is secure in the sense of Property A.
+This is a contradication to the assumption, where we assumed that
+$\an{n,Acct} \in d_{\emptyset}(S^j(\fAP{attacker}))$. This shows
+every $\uppressoauthwebsystem$ is secure in the sense of Property~A.
   
   \subsection{Proof of Property B}
   As stated above, Property B is defined as follows:
@@ -1798,11 +2252,11 @@ The set $E^0$ contains only the trigger events.
     According to lemma~\ref{lemma:request-m-is-from-script-rp}, 
     we know that $m$ was sent by $\mi{script\_rp}$ loaded from an honest relying party. 
     The RP accepts the user's identity at line~\ref{line:add-service-token} in Algorithm~\ref{alg:rp}.
-    And the user's identity at RP is generated at Line~\ref{line:gen-acct}, 
-    based on the $PID_u$ retrieved from the IDToken and the trapdoor $t^{-1}$. 
+    And the user's identity at RP is generated at Line~\ref{line:rp-gen-acct}, 
+    based on the $PID_u$ retrieved from the IDToken and the trapdoor $t^{-1} := \mathsf{reverse}(t)$. 
     
     The $t^{-1}$ is generated and set at Line~\ref{line:gen-t}, 
-    holding that $\mi{PID_{rp}}=[t]\mi{ID_{rp}}$.
+    holding that $\mi{PID_{rp}} := \mathsf{mutiply}(t, \mi{ID_{rp}})$.
     Originally, $t$ is chosen by $\mi{script\_idp}$ at Line~\ref{line:gen-t}, Algorithm~\ref{alg:uppresso-script-idp} 
     and transmit to RP through $\mi{script\_rp}$.
     Similar to lemma~\ref{lemma:script-idp-to-script-rp} and lemma~\ref{lemma:script-rp-to-rp}, 
@@ -1817,7 +2271,8 @@ The set $E^0$ contains only the trigger events.
     at Line~\ref{line:send-pidrp} in Algorithm~\ref{alg:uppresso-script-idp}.
     IdP adds the $\mi{PID_{rp}}$ from $\mi{script\_idp}$ into the IDToken.
     Therefore, we can see that 
-    $\mi{IDToken}.\mi{PID_{rp}}=[t]\mi{ID_{rp}}$ meaning that it is the same as in RP.
+    $\mi{IDToken}.\mi{PID_{rp}} \equiv \mathsf{multiply}(t, \mi{ID_{rp}})$ meaning that it is the same as in RP.
+
 
     The IDToken is issued at Line~\ref{line:sign-token} in Algorithm~\ref{alg:idp}.
     The IdP generates the $PID_u$ based on the $PID_{rp}$ and $ID_u$.
@@ -1830,18 +2285,19 @@ The set $E^0$ contains only the trigger events.
     Since the username and password are owned by the honest browser and 
     $ID_u$ is mapped to this credential at Line~\ref{line:get-idu} in Algorithm~\ref{alg:idp}. 
     Now we can see that the $ID_u$ used to generate IDToken must be owned by the browser 
-    and $\mi{IDToken}.\mi{PID_{u}}=[\mi{ID_u}]\mi{PID_{rp}}$.
+    and $\mi{IDToken}.\mi{PID_{u}} \equiv \mathsf{multiply}(\mi{ID_u}, \mi{PID_{rp}})$.
     
 
     %In summary, for every IDToken sent by honest $b$ and IdP, there must be 
     %$\mi{IDToken}.\mi{PID_{rp}} \equiv [t]\mi{ID_{rp}} \equiv \mi{PID_{rp}}$ and 
     %$\mi{IDToken}.\mi{PID_{u}} \equiv [\mi{ID_u}]\mi{PID_{rp}}$. 
     %According to lemma~\ref{user-identification}, 
-    Therefore, with Lemma~\ref{Acct-mapping}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
+    Therefore, with Lemma~\ref{lemma:b-trigger-request}, the $Acct$ calculated by RP following Equation~\ref{equ:calc-acct} must uniquely identifies the user $ID_u$ which is owned by honest $b$.  
     \begin{equation}\label{equ:calc-acct}
-      \begin{split}
-      Acct=[t^{-1}]PID_u=[t^{-1}][ID_u]PID_{rp}=\\
-      [t^{-1}utr]G =[ur]G=[ID_U]ID_{RP}
+    \begin{split}
+      Acct& \equiv \mathsf{multiply}(t^{-1}, PID_u) \equiv \mathsf{multiply}(t^{-1}, \mathsf{multiply}(ID_u, PID_{rp})) \\
+      & \equiv \mathsf{multiply}(t^{-1}*u*t*r, G)  \equiv \mathsf{multiply}(u*r, G)\\
+      & \equiv \mathsf{multiply}(ID_U, ID_{RP})
       \end{split}
     \end{equation}
   \end{proof}
@@ -1853,7 +2309,7 @@ The set $E^0$ contains only the trigger events.
   Definition~\ref{def:B}, therefore $\uppressoauthwebsystem$ 
   must be secure of Property B.
   
-  These prove Theorem~\ref{thm:authentication}.\QED
+  These prove Theorem~\ref{theorem:authentication}.\QED
   
   \section{Proof of Privacy against IdP-based Login Tracing}
   
