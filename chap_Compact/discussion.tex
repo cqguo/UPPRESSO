@@ -88,10 +88,10 @@ After receiving an authorization code, an RP uses it along with a secret credent
 \noindent \textbf{Quantum resistance.}
 The current designs of \usso\ do not achieve quantum resistance.
 In the future, we will investigate alternative algorithms for quantum-secure services.
-We plan to adopt a quantum-resistant public-key algorithm for the IdP to sign identity tokens and RP certificates.
+We plan to adopt a quantum-resistant public-key algorithm to sign identity tokens and RP certificates.
 Moreover, we will study existing quantum-resistant ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf}
  to investigate if they support RP designation (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions).
-As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
+%As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
 
 %To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.
 %to find out whether they can work for the quantum-secure identity transformations in \usso.

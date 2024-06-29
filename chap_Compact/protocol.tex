@@ -85,7 +85,7 @@ Even if an honest RP accepts a token which is generated for some malicious RP in
  due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,\footnote{If $u$ is publicly known, privacy against RP-based identity linkage is broken.
     However, in this case, \usso\ still provides secure SSO services if an (honest) RP accepts only identity tokens with \emph{matching} $PID_{RP}$ due to Lemma \ref{lemma-rp-designation}.}
     to manipulate the calculated account.
-Thus, an unmatched token results in a non-existing account, and the RP will treat it as a newly-registered user (see Lemma \ref{lemma-user-id}).
+Thus, an unmatched token results in an \emph{unregistered} account, and the RP will treat it as a newly-registered user (see Lemma \ref{lemma-user-id}).
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  
 %--- remove following the shepherd's comment
