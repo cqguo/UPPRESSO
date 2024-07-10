@@ -1665,7 +1665,7 @@ states of a web system.
       \[ b[\str{IDToken}] \equiv \an{\mi{tokenBody}, \mathsf{sig}(\mi{tokenBody}, k_{sign})}\]
       with 
       \[ \mi{tokenBody} \equiv \an{PID_{rp}, PID_u}, \]
-      \[ \mi{PID_{rp}} \equiv S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{PID_{rp}}  ,\]
+%      \[ \mi{PID_{rp}} \equiv S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{PID_{rp}}  ,\]
       \[ \mi{PID_{u}} \equiv \mathsf{multiply}(S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{t}, Acct), \]
       for some nonces $k_\text{sign}$.
     \item For the IdP $i$, we have that $k_\text{sign} = S^l(i).\str{signkey}$.
@@ -1803,13 +1803,15 @@ states of a web system.
   $$PID_{rp} := \mi{m_{auth}}.\str{PID_{rp}} , $$
   $$PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}),$$
   where
-  $$PID_{rp} \equiv \str{RandomPoint}$$
+  $$PID_{rp} \equiv \str{RandomPoint} := \funcMultiply{x, G}$$
   $$ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password_\mi{attacker})),$$
   $$Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t), PID_u)$$
   for nonce $t$ is negotiated by $\mi{b_{attacker}}$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$),
   because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$).
   To be noticed that, $PID_{rp} \not\equiv \mathsf{multiply}(t, ID_{rp})$}.
   
+  
+  To satisfy the above statement, there must be $Acct \equiv \funcMultiply{ID_{u_{honest}}, S(r).rp} \equiv \funcMultiply{(\funcReverse{t}*ID_{u_{attacker}}*x), G}$,  for every $t \not \in d_{\emptyset}(S(\fAP{attacker}))$ is always true. It is proved by Lemma~\ref{lemma:user-identification}.
   
   
   \textbf{(D). Attacker controlled relying party $r_{attacker}$ would not replay the $IDToken$ to honest relying party $r$ with 
@@ -1822,18 +1824,11 @@ states of a web system.
   for $password$ is corresponding to $Acct$, nonce $t$ is negotiated by $b$ and $r_{attacker}$, nonce $t'$ is negotiated by $attacker$ and $r$, because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$),
   To be noticed that, $PID_{rp} \not\equiv \mathsf{multiply}(t, ID_{rp})$}.  
   
+  To satisfy the above statement, there must be $Acct \equiv \funcMultiply{ID_u, S(r).rp} \equiv \funcMultiply{(\funcReverse{t'}*t*ID_u), S(r_{attacker}.rp)}$, for every $t' \not \in d_{\emptyset}(S(\fAP{attacker}))$ is always true. It is proved by Lemma~\ref{lemma:rp-designation}.
   
   
   
   
-  
-	To satisfy the above statements, there must be $PID_{rp} \equiv \mathsf{multiply}(t, S(r).rp) \equiv \mathsf{multiply}(t', G)$. Finding $t$ and $t'$ can be described as a $PID_{RP}$-collision game $\mathcal{G}_c$ between an adversary and a challenger: the adversary receives from the challenger a finite set of RP identities, i.e., $ID_{RP_1}$, ..., $ID_{RP_m}$, where $m$ is the number of RPs in the system, and outputs $(a, b, t, t')$ where $a \neq b$. If $[t]ID_{RP_a}=[t']ID_{RP_b}$, which occurs with a probability ${\rm Pr}_s$, the adversary succeeds in this game.
-%The attack success probability is defined as ${\rm Pr}_s$.
-
-As depicted in Figure \ref{fig:ecdlp_algorithm}, we design a probabilistic polynomial time (PPT) algorithm $\mathcal{D}^*_c$ based on $\mathcal{G}_c$, to solve the ECDLP: find a number $x \in \mathbb{Z}_n$ satisfying $Q = [x]G$, where $Q$ is a point on $\mathbb{E}$ and $G$ is a generator on $\mathbb{E}$ of order $n$.
-
-
-
 
   \end{proof}
   
