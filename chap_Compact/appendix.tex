@@ -1,3 +1,21 @@
+%定义所有的function
+\newcommand{\funcPub}[1]{\mathsf{pub}(\mi{#1})}
+\newcommand{\funcEncA}[1]{\mathsf{enc_a}(\mi{#1})}
+\newcommand{\funcDecA}[1]{\mathsf{dec_a}(\mi{#1})}
+\newcommand{\funcEncS}[1]{\mathsf{enc_s}(\mi{#1})}
+\newcommand{\funcDecS}[1]{\mathsf{dec_s}(\mi{#1})}
+\newcommand{\funcSig}[1]{\mathsf{sig}(\mi{#1})}
+\newcommand{\funcCheckSig}[1]{\mathsf{checksig}(\mi{#1})}
+\newcommand{\funcExtractMsg}[1]{\mathsf{extractmsg}(\mi{#1})}
+\newcommand{\funcMultiply}[1]{\mathsf{multiply}(\mi{#1})}
+\newcommand{\funcReverse}[1]{\mathsf{reverse}(\mi{#1})}
+\newcommand{\funcCheckValid}[1]{\mathsf{checkvalid}(\mi{#1})}
+
+
+
+
+
+
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \newcommand{\deflet}{\textbf{let}}
 \newcommand{\mystate}[1]{\STATE \textbf{let} {{}#1}}
@@ -46,316 +64,7 @@
 \appendix
 
 \onecolumn
-
-\section{The Concepts of Web Model}
-
-%所有和SPRESSO的不同点放在同一个章节中一起说明。
-
-Our formal security analysis of UPPRESSO is based on 
-the general Dolev-Yao web model in SPRESSO~\cite{SPRESSO}. 
-This web model is designed independently of a specific web application and closely mimics published (de-facto) standards and specifications for the web, for instance, the HTTP/1.1 and HTML5 standards and associated (proposed) standards. 
-So far, the web model has been employed to analyze both trace-based authentication and indistinguishability/privacy properties for web applications.
-Therefore, we formalize UPPRESSO in the web model to prove the authentication and privacy properties for UPPRESSO.
-
-To facilitate the definition of UPPRESSO, however, 
-we have some difference from SPRESSO. 
-In particular, we remove some processes and 
-add some function symbols for asymmetric encryption/decryption.
-In this section, we present the model of the web infrastructure, along with the following changes and additions compared to SPRESSO:
-\begin{itemize}
-\item For constants $C$, we add the $\mathbb{P}$ as the set of points on the chosen elliptic curve over a finite field, which has been described in section~\ref{sec:UPPRESSO}.
-\item We add the function symbols $\mathsf{multiply}(\cdot, \cdot)$, $\mathsf{reverse}(\cdot)$, and $\mathsf{checkvalid}(\cdot)$, representing the Elliptic Curve calculations.
-\item We remove the DNS servers and messages in UPPRESSO. In UPPRESSO, however, we only have one centralized IdP server, and 
-all RPs know the relevant information of the IdP in advance.
-So all DNS requests are generated spontaneously by the browser, 
-not introduced by our scripts.
-\end{itemize}
-
-
-
-
-
-
-\begin{comment}
-
-\subsection{Functions Symbols}
-
-Since our model is using ECC(Elliptic Curve Cryptography) to encrypt/decrypt the data,
-we add the following symbols to the signature $\Sigma$ for the terms and messages:
-
-\begin{itemize}
-  \item $\mathbb{E}$ is an elliptic curve over a finite field $\mathbb{F}_q$, $G$ is a base point(or generator) of $\mathbb{E}$ and the order of $G$ is a prime number n.
-  \item $[t]P$ means using asymmetric key $t$ to encrypt the point $P=[p]G$ on the elliptic curve where $p$ is the actual plaintext.
-  \item $[t^{-1}]C$ means using the reverse of $t$ to decrypt the point $C=[c]G=[tm]G$ on the elliptic curve where $c$ is the cipertext.  
-  \item $\str{isValid}(P)$ checks whether $P$ is a valid point on the elliptic curve. That is to say whether $P=[m]G$ for the base point $G$ and some nonce $m$.
-\end{itemize}
-
-\subsection{DNS servers}
-
-%如果是自己编写的脚本引入了DNS请求，那就需要在模型中考虑DNS服务器，UPPRESSO可以不需要考虑。
-
-In SPRESSO, when receiving an e-mail address, 
-RP needs to send DNS requests to DNS servers manually 
-to fetch the information of the IdP server. 
-Since there may be various DNS servers in SPRESSO, 
-DNS server security issues need to be given special consideration.
-As a result, DNS servers are added into the formal model of SPRESSO.
-
-In UPPRESSO, however, we only have one centralized IdP server, and 
-all RPs know the relevant information of the IdP in advance.
-So all DNS requests are generated spontaneously by the browser, 
-not introduced by our scripts.
-Therefore, we remove DNS servers from the formal model of UPPRESSO.
-
-\end{comment}
-
-
-\subsection{Communication Model}
-We follow the SPRESSO to describe the basic concepts of the DY-style communication model.
-
-\subsubsection{Terms, Messages and Events}
-
-The signature $\Sigma$ for the terms and
-messages in this work can be described as the following sets of symbols:
-\begin{itemize}
-\item constants $C = \addresses\,\cup\, \mathbb{S}\cup\mathbb{P}\cup  \{\True,\bot,\notdef\}$ where the four sets are pairwise disjoint,
-$\addresses$ is interpreted to be a set of (IP) addresses,
-and $\mathbb{S}$ is interpreted to be the set of ASCII strings
-  (including the empty string $\varepsilon$),
-and $\mathbb{P}$ is interpreted to be the set of points on the chosen elliptic curve over a finite field where $G \in \mathbb{P}$ is the base point (or generator),
-\item function symbols for public keys, (a)symmetric
-  en\-cryp\-tion/de\-cryp\-tion, signatures, elliptic curve multiplication, reversing elliptic curve multiplication scalar, and checking point is valid on the chosen elliptic curve: $\mathsf{pub}(\cdot)$,
-  $\enc{\cdot}{\cdot}$, $\dec{\cdot}{\cdot}$, $\encs{\cdot}{\cdot}$,
-  $\decs{\cdot}{\cdot}$, $\sig{\cdot}{\cdot}$,
-  $\checksig{\cdot}{\cdot}$,  $\unsig{\cdot}$,
-  $\mathsf{multiply}(\cdot, \cdot)$,$\mathsf{reverse}(\cdot)$,
-  and $\mathsf{checkvalid}(\cdot)$,
-\item $n$-ary sequences $\an{}, \an{\cdot}, \an{\cdot,\cdot},
-  \an{\cdot,\cdot,\cdot},$ etc., and
-\item projection symbols $\pi_i(\cdot)$ for all $i \in \mathbb{N}$.
-\end{itemize}
-
-The equational theory associated with $\Sigma$ is shown as follows:
-\begin{align*}
-\dec{\enc x{\pub(y)}}{y} &= x\\
-\decs{\encs x{y}}{y} &= x\\
-\mathsf{multiply}(x, \mathsf{multiply}(y, P)) &= \mathsf{multiply}(y, \mathsf{multiply}(x, P))\\
-\mathsf{multiply}(\mathsf{reverse}(x), \mathsf{multiply}(x, P)) &= P \text{\;\;if\ } P \in \mathbb{P}\\
-\checksigThree{\sig{x}{y}}{x}{\pub(y)} &= \True\\
-\mathsf{checkvalid}(\mathsf{multiply}(x, P)) &= \True  \text{\;\;if\ } P \in \mathbb{P}\\
-\mathsf{checkvalid}(P) &= \bot  \text{\;\;if\ } P \not\in \mathbb{P}\\
-\pi_i(\an{x_1,\dots,x_n}) &= x_i \text{\;\;if\ } 1 \leq i \leq n \\
-\proj{j}{\an{x_1,\dots,x_n}} &= \notdef \text{\;\;if\ } j
-\not\in \{1,\dots,n\}
-\end{align*}
-
-\begin{definition}[Terms]\label{def:terms}
-  We denote the set of variables $X$ and an infinite set of nonces $\nonces$. For $N\subseteq\nonces$, the set of \textbf{terms} over $\Sigma\cup N\cup X$, $\gterms_N(X)$ can be defined as usual: 
-  (1) If $t\in N\cup X$, then $t \in \gterms_N(X)$ is a term. 
-  (2) If $f \in \Sigma$ is an $n$-ary function symbol in $\Sigma$ for some $n\ge 0$ and  $t_1,\ldots,t_n \in \gterms_N(X)$, then $f(t_1,\ldots,t_n) \in \gterms_N(X)$ is a term.
-  (3) If for some $n\ge 0$ and  $t_1,\ldots,t_n \in \gterms_N(X)$, then n-ary sequence <$t_1,\ldots,t_n$> $\in \gterms_N(X)$ is a term. 
-  (4) If the n-ary sequence <$t_1,\ldots,t_n$> $\in \gterms_N(X)$, then projection symbol $\pi_i(\an{x_1,\dots,x_n}) \in \gterms_N(X)$ is a term.
-\end{definition}
-
-\begin{definition}[Messages and Protomessages]\label{def:messages}
-  The set $\messages$ of messages (over $\nonces$) is defined to be
-  the set of terms without variables (ground terms), i.e., $\messages :=\gterms_{\nonces}$.
-  The set of protomessages, $\messages^\nu$ is defined to be the set of terms with only the predefined set of variables $V_{\text{process}} = \{\nu_1, \nu_2, \dots\}$ (called placeholders), i.e., $\messages^\nu := \gterms_N(V_{\text{process}})$.
-\end{definition}
-
-\begin{definition}[Normal Form]
-  Let $t$ be a term. The \emph{normal form} of $t$ is acquired by reducing the function symbols from left to right as far as possible  using the equational theory. For a term $t$, we denote its normal form as $t\nf$.
-\end{definition}
-
-\begin{definition}[Pattern Matching]
-  Let $\mi{pattern} \in \terms(\{*\})$ be a term containing the
-  wildcard (variable $*$). We say that a term $t$ \emph{matches}
-  $\mi{pattern}$ iff $t$ can be acquired from $\mi{pattern}$ by
-  replacing each occurrence of the wildcard with an arbitrary term
-  (which may be different for each instance of the wildcard). We write
-  $t \sim \mi{pattern}$.
-
-  For a term $t'$ we write $t'|\, \mi{pattern}$ to denote the term
-  that is acquired from $t'$ by removing all immediate subterms of
-  $t'$ that do not match $\mi{pattern}$.
-\end{definition}
-
-
-  For example, for a pattern $p = \an{\top,*}$ we have that $\an{\top,42} \sim p$, $\an{\bot,42} \not\sim p$, and \[\an{\an{\bot,\top},\an{\top,23},\an{\str{a},\str{b}},\an{\top,\bot}} |\, p = \an{\an{\top,23},\an{\top,\bot}}\ .\]
-
-
-\begin{definition}[Variable Replacement]
-  Let $N\subseteq \nonces$, $\tau \in \gterms_N(\{x_1,\ldots,x_n\})$,
-  and $t_1,\ldots,t_n\in \gterms_N$. By
-  $\tau[t_1\!/\!x_1,\ldots,t_n\!/\!x_n]$ we denote the term obtained
-  from $\tau$ by replacing all occurrences of $x_i$ in $\tau$ by
-  $t_i$, for all $i\in \{1,\ldots,n\}$.
-\end{definition}
-
-
-\begin{definition}[Events and Protoevents]
-  An \emph{event (over $\addresses$ and $\messages$)} is a term of the
-  form $\an{a, f, m}$, for $a$, $f\in \addresses$ and $m \in
-  \messages$, where $a$ is interpreted to be the receiver address and
-  $f$ is the sender address. We denote by $\events$ the set of all
-  events. Events over $\addresses$ and $\messages^\nu$ are called
-  \emph{protoevents} and are denoted $\events^\nu$. By
-  $2^{\events\an{}}$ (or $2^{\events^\nu\an{}}$, respectively) we
-  denote the set of all sequences of (proto)events, including the
-  empty sequence (e.g., $\an{}$, $\an{\an{a, f, m}, \an{a', f', m'},
-    \dots}$, etc.). 
-\end{definition}
-
-\subsubsection{Atomic Processes, Systems and Runs}
-
-\begin{definition}[Generic Atomic Processes]
-The atomic process is the modelling web nodes, in the form p=($I^p$, $Z^p$, $R^p$, $s_0^p$). The definitions of these notations is described as below.
-\begin{itemize}
-\item $I^p$ is the set of addresses that the process listens to, where $I^p \subseteq \addresses$.
-\item  $Z^p$ is the set of \textbf{states} that describes the process. The state is the formal \textbf{term}, where $Z^p \subseteq \terms(V_{\text{process}})$. For any new state $s$ and any sequence of nonces  $(\eta_1, \eta_2, \dots)$ we demand that $s[\eta_1/\nu_1,  \eta_2/\nu_2, \dots] \in Z^p$.
-\item $R^p$ is the set of \textbf{relations} $R$ between the input event $e$, state $z \in Z^p$ and an output events sequence $E$, the new state $z' \in Z^p$. It means that, at one time point, while the process is on state $s$ and receive the event $e$, it would transition to state $s'$ and send the events $E$ to other process. There is $R^p\subseteq (\events \times Z^p) \times (2^{\events^\nu\an{}}
-  \times \terms(V_{\text{process}}))$. 
-\item $s_0^p$ is an initial state.
-\end{itemize}
-\end{definition}
-
-\begin{definition}[Systems]
-A \emph{system} $\process$ is a  (possibly infinite) set of processes \aps.
-\end{definition}
-
-\begin{definition}[Configurations]
- The configuration of system represents the instantaneous state of the system at the exact moment.
-  A \emph{configuration of a system $\process$} is a tuple $(S, E, N)$
-  where the state of the system $S$ maps every atomic process  $p\in \process$ to its current state $S(p)\in Z^p$, the sequence of  waiting events $E$ is an infinite sequence $(e_1, e_2, \dots)$ of events waiting to be delivered, and $N$ is an infinite sequence of nonces  $(n_1, n_2, \dots)$.
-\end{definition}
-
-\begin{definition}[Concatenating sequences]
-  For a term $a = \an{a_1, \dots, a_i}$ and a sequence $b = (b_1, b_2,
-  \dots)$, we define the \emph{concatenation} as $a \cdot b := (a_1,
-  \dots, a_i, b_1, b_2, \dots)$.
-  
-\end{definition}
-
-\begin{definition}[Subtracting from Sequences]
-  For a sequence $X$ and a set or sequence $Y$ we define $X \setminus
-  Y$ to be the sequence $X$ where for each element in $Y$, a
-  non-deterministically chosen occurence of that element in $X$ is
-  removed.
-\end{definition}
-
-\begin{definition}[Processing Steps]\label{def:processing-step}
-  The processing step is the system migrating from configurations ($S, E, N$) to ($S', E', N'$) by processing an event $e \in E$.
-  A \emph{processing step of the system $\process$} is of the form
-  \[(S,E,N) \xrightarrow[p \rightarrow E_{\text{out}}]{e_\text{in}
-    \rightarrow p} (S', E', N')\]
-  where
-  \begin{enumerate}
-  \item $(S,E,N)$ and $(S',E',N')$ are configurations of $\process$,
-  \item $e_\text{in} = \an{a, f, m} \in E$ is an event,
-  \item $p \in \process$ is a process,
-  \item $E_{\text{out}}$ is a sequence (term) of events
-  \end{enumerate}
-  such that there exists 
-  \begin{enumerate}
-  \item a sequence (term)
-    $E^\nu_{\text{out}} \subseteq 2^{\events^\nu\an{}}$ of protoevents,
-  \item a term $s^\nu \in \gterms_{\nonces}(V_{\text{process}})$, 
-  \item a sequence $(v_1, v_2, \dots, v_i)$ of all placeholders appearing in $E^\nu_{\text{out}}$ (ordered lexicographically),
-  \item a sequence $N^\nu = (\eta_1, \eta_2, \dots, \eta_i)$ of the first $i$ elements in $N$ 
-  \end{enumerate}
-  with
-  \begin{enumerate}
-  \item $((e_{\text{in}}, S(p)), (E^\nu_{\text{out}}, s^\nu)) \in R^p$
-    and $a \in I^p$,
-  \item $E_{\text{out}} = E^\nu_{\text{out}}[m_1/v_1, \dots, m_i/v_i]$
-  \item $S'(p) = s^\nu[m_1/v_1, \dots, m_i/v_i]$ and $S'(p') = S(p')$ for all $p' \neq p$
-  \item $E' = E_{\text{out}} \cdot (E \setminus \{e_{\text{in}}\})$ 
-  \item $N' = N \setminus N^\nu$ 
-  \end{enumerate}
-\end{definition} 
-
-\begin{definition}[Runs]
-  Let $\process$ be a system, $E^0$ be sequence of events, and $N^0$ be
-  a sequence of nonces. A \emph{run $\rho$ of a system $\process$
-    initiated by $E^0$ with nonces $N^0$} is a finite sequence of
-  configurations $((S^0, E^0, N^0),\dots,(S^n, E^n, N^n))$ or an infinite sequence
-  of configurations $((S^0, E^0, N^0),\dots)$ such that $S^0(p) = s_0^p$ for
-  all $p \in \process$ and $(S^i, E^i, N^i) \xrightarrow{} (S^{i+1},
-  E^{i+1}, N^{i+1})$ for all $0 \leq i < n$ (finite run) or for all $i \geq 0$  
-  (infinite run).
-
-  We denote the state $S^n(p)$ of a process $p$ at the end of a run $\rho$ by $\rho(p)$.
-\end{definition}
-
-\subsubsection{Atomic Dolev-Yao Processes}  
-
-We next define
-atomic Dolev-Yao processes, for which we require that the
-messages and states that they output can be computed (more
-formally, derived) from the current input event and
-state. For this purpose, we first define what it means to
-derive a message from given messages.
-
-
-
-
-\begin{definition}[Deriving Terms]
-  Let $M$ be a set of ground terms. We say that \emph{a
-    term $m$ can be derived from $M$ with placeholders $V$} if there
-  exist $n\ge 0$, $m_1,\ldots,m_n\in M$, and $\tau\in
-  \gterms_{\emptyset}(\{x_1,\ldots,x_n\} \cup V)$ such that $m\equiv
-  \tau[m_1/x_1,\ldots,m_n/x_n]$. We denote by $d_V(M)$ the set of all
-  messages that can be derived from $M$ with variables $V$.
-\end{definition}
-For example, $a\in d_{\{\}}(\{\enc{\an{a,b,c}}{\pub(k)}, k\})$.
-
-\begin{definition}[Atomic Dolev-Yao Process] \label{def:adyp} An \emph{atomic Dolev-Yao process
-    (or simply, a DY process)} is a tuple $p = (I^p, Z^p,$ $R^p,
-  s^p_0)$ such that $(I^p, Z^p, R^p, s^p_0)$ is an atomic process and
-  (1) $Z^p \subseteq \gterms_{\nonces}$ (and hence, $s^p_0\in
-  \gterms_{\nonces}$), and (2) for all events $e \in \events$,
-  sequences of protoevents $E$, $s\in \gterms_{\nonces}$, $s'\in
-  \gterms_{\nonces}(V_{\text{process}})$, with $((e, s), (E, s')) \in R^p$ it holds
-  true that $E$, $s' \in d_{V_{\text{process}}}(\{e,s\})$.
-\end{definition}
-
-\begin{definition}[Atomic Attacker Process]\label{def:atomicattacker}
-  An \emph{(atomic) attacker process for a set of sender addresses
-    $A\subseteq \addresses$} is an atomic DY process $p = (I, Z, R,
-  s_0)$ such that for all events $e$, and $s\in \gterms_{\nonces}$ we
-  have that $((e, s), (E,s')) \in R$ iff $s'=\an{e, E, s}$ and
-  $E=\an{\an{a_1, f_1, m_1}, \dots, \an{a_n, f_n, m_n}}$ with $n \in
-  \mathbb{N}$, $a_1,\dots,a_n\in \addresses$, $f_0,\dots,f_n\in A$,
-  $m_1,\dots,m_n\in d_{V_{\text{process}}}(\{e,s\})$.
-\end{definition}
-
-
-\subsubsection{Scripting Processes}
-
-\begin{definition}[Scripting Processes]
- A scripting process is the modelling JavaScript code, as a relation $R$, representing the server-defined functions, while the input and output are handled by the browser. There is, $R\subseteq \terms \times
-  \terms(V_{\text{script}})$ such that for all $s \in \terms$, $s' \in \terms(V_{\text{script}})$ with $(s, s') \in R$ it follows that $s'\in d_{V_{\text{script}}}(s)$.
-\end{definition}
-
-\begin{definition}[Attacker Script]
-  The attacker script $\Rasp$ outputs everything that is derivable
-  from the input, i.e., $\Rasp=\{(s, s')\mid s\in \terms, s'\in
-  d_{V_{\text{script}}}(s)\}$.
-\end{definition}
-
-
-\subsection{Web Systems Model}
-\label{app:websystemmodel}
-
-
-The architecture of the web and its applications are represented through an model known as a web system. This system encompasses a set of DY processes, which may be infinite in number, to depict various components such as web browsers, servers, and potential adversaries capable of compromising these elements.
-It also contains a set of scripting processes, including the honest and malicious processes.
-
-\begin{definition}[Web Systems]
-We can formulate the web infrastructure as a web system of form $\mathcal{WS}$=($\mathcal{W}$, $\mathcal{S}$, $\mathtt{script}$, $E^0$), where $\mathcal{W}$ is the set of atomic processes containing both honest and malicious processes, $\mathcal{S}$ is the set of scripting processes including honest and malicious scripts, $\mathtt{script}$ is the set of concrete script codes related to specific scripting processes in $\mathcal{S}$, and $E^0$ is the set of events acceptable to the processes in $\mathcal{W}$.
-\end{definition}
-
-In the following sections, we will formulate UPPRESSO system based on the web system model. Based on the UPPRESSO web system model, we will give the formal analysis of security and privacy.  
+\input{chap_Compact/appendix_webmodel.tex}
 
 
 \section{The Formal Model of Basic Messages}
@@ -1402,7 +1111,7 @@ The set $E^0$ contains only the trigger events.
       \mystate{\myss{\mi{PID_{rp}} := [\mi{t}]\mi{ID_{rp}}}}
       \mystate{\myss{\mi{state} := \str{expectToken}}}
       \mystate{\myss{\mi{Cert_{rp}} := s'.\str{IdPConfig}.\mi{Cert_{RP}}}}
-      \mystate{\myss{s'.\str{loginSessions}[\mi{loginSessionToken}] := \an{\mi{t}, \mi{PID_{rp}}, \mi{state}}}}\label{alg:rp:store-t}
+      \mystate{\myss{s'.\str{loginSessions}[\mi{loginSessionToken}] := \an{\mi{t}, \mi{PID_{rp}}, \mi{state}}}}\label{line:rp-store-t}
      %\mystate{\myss{session[t] := t}}
      %\mystate{\myss{session[t^{-1}] := t^{-1}}}
      %\mystate{\myss{session[state] := expectToken}}
@@ -1645,14 +1354,14 @@ The set $E^0$ contains only the trigger events.
     \mystate{\myss{s'.\str{phase} := \str{expectT}}}
   \ENDCASE
   \CASE{\myss{\str{expectT}}}
-    \mystate{\myss{\mi{pattern} := \myangle{\tPostMessage, target, *, \myangle{\str{t}, *}}}}
-    \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}
+    \mystate{\myss{\mi{pattern} := \myangle{\tPostMessage, target, *, \myangle{\str{t}, *}}}}\label{line:rp-t-pattern}
+    \mystate{\myss{\mi{input} := \textsf{CHOOSEINPUT}(\mi{scriptinputs}, \mi{pattern})}}\label{line:rp-t-input}
     \myif{\mi{input} \not\equiv \bot}
     \Let{$s'.\str{refXHR}$}{$\lambda_1$}
      % \mystate{\myss{t := \pi_4(\mi{input}).\str{t}}}\label{line:receive-t}
       %\mystate{\myss{\mi{url} := \myangle{\tUrl, \https, \mi{RPDomain}, \str{/startNegotiation}, \myangle{}}}}
       \mystate{\myss{\mi{body} := \pi_4(\mi{input})}}
-      \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{RPDomain}}_\str{/startNegotiation},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}
+      \mystate{\myss{\mi{command} := \langle\tXMLHTTPRequest,\textsf{URL}^{\mi{RPDomain}}_\str{/startNegotiation},\mPost,\mi{body},}\breakalgohook{0}\myss{s'.\str{refXHR}\rangle}}\label{line:rp-t-send}
       \mystate{\myss{s'.\str{phase} := \str{expectCert}}}
     \ENDIF
   \ENDCASE
@@ -1956,7 +1665,7 @@ states of a web system.
       \[ b[\str{IDToken}] \equiv \an{\mi{tokenBody}, \mathsf{sig}(\mi{tokenBody}, k_{sign})}\]
       with 
       \[ \mi{tokenBody} \equiv \an{PID_{rp}, PID_u}, \]
-      \[ \mi{PID_{rp}} \equiv S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{PID_{rp}}  ,\]
+%      \[ \mi{PID_{rp}} \equiv S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{PID_{rp}}  ,\]
       \[ \mi{PID_{u}} \equiv \mathsf{multiply}(S^l(r).\str{loginSessions}[h[\str{Cookie}]].\str{t}, Acct), \]
       for some nonces $k_\text{sign}$.
     \item For the IdP $i$, we have that $k_\text{sign} = S^l(i).\str{signkey}$.
@@ -2024,13 +1733,13 @@ states of a web system.
     Under the assumption above, only the browser $b$ owning $Acct$ (at honest relying party $r$) can issue a request $req$ (say, $\mi{m_{auth}}$) that triggers the IdP $i$ to create the signed term $IDToken$ defined in Lemma~\ref{lemma:uppresso-request-exists}. The request was sent by $b$ over HTTPS using $i$'s public HTTPS key.
   \end{lemma}
   \begin{proof}
-    We have to consider two cases for the request $\mi{m_{auth}}$:
+    We have to consider three cases for the request $\mi{m_{auth}}$:
   
     \textbf{(A). IdP $i$ only issues the $IDToken$ to $b$, with
     $$ PID_{rp} := \mi{m_{auth}.\str{PID_{rp}}}, $$ 
     $$ PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}), $$ 
     where 
-    $$ ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password)), $$ 
+    $$ ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{passwordOfName^{-1}}(password)), $$ 
   for $password$ is corresponding to $Acct$}.
     
     \textbf{(A.1).} First, if the user is not logged in with the    $username$ at $i$ (i.e., the browser $b$ has no session cookie that carries a nonce which is a session id at $i$ for which the identitiy is marked as being logged in, compare Line~\ref{line:uppresso-idp-check-login-state} of Algorithm~\ref{alg:idp}), then the request has to carry (in the request body) the password matching the $username$    ($\NToS(username)$) to the path $\str{/authentication}$ to retrieve the session cookie. This secret is only known to $b$ initially. Depending on the corruption status of $b$, we can now have two cases:
@@ -2076,22 +1785,17 @@ states of a web system.
 	\textbf{(B). IdP $i$ issues the $IDToken$ to $b$, with
     $$ PID_{rp} := \mi{m_{auth}.\str{PID_{rp}}}, $$ 
     $$ PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}), $$ 
+    where 
+    $$ ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfUser^{-1}}(b)), $$ 
     for $password$ is corresponding to $Acct$. There always be
 	$$ Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t), PID_u),$$
 	for nonce $t$ and $PID_{rp}$ are negotiated by $b$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$).    
     }
     
-    To issue an identity token requested for $PID_{RP}$, the honest IdP authenticates the user with $ID_U$ and calculates $PID_U = [ID_U]PID_{RP}$, following Equation \ref{equ:PIDU}. The RP designated by $PID_{RP}$ should have received a $t$ from the user. Following Equation \ref{equ:AccountNotChanged}, it can calculate $Acct = [t^{-1}]PID_{U} = [ID_U]ID_{RP}$, which is a \emph{permanent} identifier determined by $ID_U$ and $ID_{RP}$ after the user and the RP register at the IdP. $ID_{RP} = [r]G$ is a generator on $\mathbb{E}$ of order $n$, as $\mathbb{E}$ is a finite cyclic group. Therefore, given a user with $ID_U$, $Acct$ is a \emph{unique} point on $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} associated with $ID_U=u$. 
-%We first prove that $PID_{U}$ \emph{uniquely} identifies one account at the designated RP and one user in the system. 
-This proves that $PID_U$ in $TK$ identifies an account $Acct$ at the designated RP, which is uniquely mapped to a user with $ID_U$ in the system.
-
-Next, we consider two adversarial scenarios where the attacker replays a token $TK$ for another user to (1) the designated RP but receiving $t'\neq t$ in this login, and (2) any other honest RP with $ID_{RP'} = [r']G \neq [r]G$ (i.e., $r' \neq r$). In the first case, the designated RP would calculate an account as $[t'^{-1}]PID_U = [t'^{-1}ut]ID_{RP}$.
-Because a user's identity is randomly selected by the IdP in $\mathbb{Z}_n$ and known only to the user (and the honest IdP), the probability that $t'^{-1}ut$ happens to be the identity of another user is negligible, when $n$ is sufficiently large. As a result, $[t'^{-1}]PID_U$ is likely not to identify any known account at the RP and therefore would be treated as a new account by the RP. 
-Secondly, the attacker presents $TK$ to $RP'$ in the system, where $ID_{RP'} = [r']G \neq [r]G$. $RP'$ would calculate the account as $Acct' = [\tilde{t}^{-1}]PID_{U} = [\tilde{t}^{-1}utrr'^{-1}][r']G = [\tilde{t}^{-1}utrr'^{-1}]ID_{RP'}$. The probability that $\tilde{t}^{-1}utrr'^{-1}$ happens to be the identity of another user at $RP'$ is also negligible, when $n$ is sufficiently large. 
-%it identifies no account mapped to a user, at any RP not designated by $PID_{RP}$.
-
+    First of all, it must be true that, $Acct \equiv \mathsf{multiply}(ID_u, ID_{rp-target})$. From Algorithm~\ref{alg:uppresso-script-idp}, it can be observed that, the $m_{auth}.PID_{rp}$ is generated at Line~\ref{line:gen-pidrp} based on the $ID_{rp}$ contained in the $Cert_{rp}$ and the randomly generated $t^*$. To be noticed that, because the generated $\mi{IDToken}$ is finally transmitted to the script in the Origin of $Cert_{rp}.Content[\str{Enpt}]$, the $Cert_{rp}$ must belong to the target relying party (i.e., $Cert_{rp}.Content[\str{ID_{rp}}] \equiv ID_{rp-target}$).  Otherwise, the target relying party $r$ would not receive this token. Moreover, there should be $t^* \equiv t$, where $t \in S(r).loginSession[S(b).\str{cookies}[dom(r)]]$. In Line~\ref{line:send-t}, Algorithm~\ref{alg:uppresso-script-idp}, $t*$ is sent to the script in the origin of target $r$. In Algorithm~\ref{alg:uppresso-script-rp}, $t*$ is received in Line~\ref{line:rp-t-pattern}, \ref{line:rp-t-input} and sent to the $host$ and $path$ statically configured in the script in Line~\ref{line:rp-t-send}. While receiving the $t^*$, $r$ would store it in Line~\ref{line:rp-store-t}, Algorithm~\ref{alg:rp}. Therefore, there must be $t^* \equiv t$.
     
-    \textcolor{red}{proof of User Identification and Integrity}
+    That is, although the $ID_{rp}$ and $ID_u$ are not bounded in one token and protected by the signature of IdP (as it in the OpenID Connect), they are implicitly bounded by the protocol of  $Cert_{rp}$ and $\mi{IDToken}$. This property is proved by Lemma~\ref{lemma:integrity}.
+    
       
   
   
@@ -2099,35 +1803,33 @@ Secondly, the attacker presents $TK$ to $RP'$ in the system, where $ID_{RP'} = [
   $$PID_{rp} := \mi{m_{auth}}.\str{PID_{rp}} , $$
   $$PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}),$$
   where
-  $$PID_{rp} \equiv \mathsf{multiply}(t', S(\mi{r_{attacker}}).rp)$$
+  $$PID_{rp} \equiv \str{RandomPoint} := \funcMultiply{x, G}$$
   $$ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password_\mi{attacker})),$$
   $$Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t), PID_u)$$
-  for nonce $t$ and $PID_{rp}$ are negotiated by $\mi{b_{attacker}}$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$), because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$)}
+  for nonce $t$ is negotiated by $\mi{b_{attacker}}$ and $r$ (i.e., $S(r).loginSession[S(b).\str{cookies}[dom(r)]] \equiv \an{t, PID_{rp}, *}$),
+  because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$).
+  To be noticed that, $PID_{rp} \not\equiv \mathsf{multiply}(t, ID_{rp})$}.
   
-	To satisfy the above statements, there must be $PID_{rp} \equiv \mathsf{multiply}(t, S(r).rp) \equiv \mathsf{multiply}(t', S(\mi{r_{attacker}}).rp)$. Finding $t$ and $t'$ can be described as a $PID_{RP}$-collision game $\mathcal{G}_c$ between an adversary and a challenger: the adversary receives from the challenger a finite set of RP identities, i.e., $ID_{RP_1}$, ..., $ID_{RP_m}$, where $m$ is the number of RPs in the system, and outputs $(a, b, t, t')$ where $a \neq b$. If $[t]ID_{RP_a}=[t']ID_{RP_b}$, which occurs with a probability ${\rm Pr}_s$, the adversary succeeds in this game.
-%The attack success probability is defined as ${\rm Pr}_s$.
+  
+  To satisfy the above statement, there must be $Acct \equiv \funcMultiply{ID_{u_{honest}}, S(r).rp} \equiv \funcMultiply{(\funcReverse{t}*ID_{u_{attacker}}*x), G}$,  for every $t \not \in d_{\emptyset}(S(\fAP{attacker}))$ is always true. It is proved by Lemma~\ref{lemma:user-identification}.
+  
+  
+  \textbf{(D). Attacker controlled relying party $r_{attacker}$ would not replay the $IDToken$ to honest relying party $r$ with 
+  $$PID_{rp} := \mi{m_{auth}}.\str{PID_{rp}} , $$
+  $$PID_u := \mathsf{mutiply}(ID_u, \mi{m_{auth}.\str{PID_{rp}}}),$$
+  where
+  $$PID_{rp} \equiv \mathsf{multiply}(t, S(r_{attacker}).rp)$$
+  $$ID_u \equiv \mathsf{IDUOfUsername} (\mathsf{ownerOfpassword}(password)),$$
+  $$Acct \equiv \mathsf{multiply}(\mathsf{reverse}(t'), PID_u)$$
+  for $password$ is corresponding to $Acct$, nonce $t$ is negotiated by $b$ and $r_{attacker}$, nonce $t'$ is negotiated by $attacker$ and $r$, because nonce $t'$ is not derivable from attacker's knowledge (i.e., $t' \not \in  d_{\emptyset}(S(\fAP{attacker}))$),
+  To be noticed that, $PID_{rp} \not\equiv \mathsf{multiply}(t, ID_{rp})$}.  
+  
+  To satisfy the above statement, there must be $Acct \equiv \funcMultiply{ID_u, S(r).rp} \equiv \funcMultiply{(\funcReverse{t'}*t*ID_u), S(r_{attacker}.rp)}$, for every $t' \not \in d_{\emptyset}(S(\fAP{attacker}))$ is always true. It is proved by Lemma~\ref{lemma:rp-designation}.
+  
+  
+  
+  
 
-As depicted in Figure \ref{fig:ecdlp_algorithm}, we design a probabilistic polynomial time (PPT) algorithm $\mathcal{D}^*_c$ based on $\mathcal{G}_c$, to solve the ECDLP: find a number $x \in \mathbb{Z}_n$ satisfying $Q = [x]G$, where $Q$ is a point on $\mathbb{E}$ and $G$ is a generator on $\mathbb{E}$ of order $n$.
-
-
-
-
-The algorithm $\mathcal{D}^*_c$ works as below.
-The input of $\mathcal{D}^*_c$ is in the form of ($G, Q$). On receiving an input ($G$, $Q$), the challenger first randomly chooses $r_1, \cdots, r_m$ in $\mathbb{Z}_n$ to calculate $[r_1]G, \cdots, [r_m]G$.
-Then, it randomly chooses $j \in [1,m]$, replaces $[r_j]G$ with $Q$, and sends $m$ RP identities to the adversary, which returns the result ($a$, $b$, $t$, $t'$). Finally, the challenger calculates $s = t^{-1}t'r_b \bmod n$ and returns $s$ as the output of $\mathcal{D}^*_c$.
-
-If the adversary succeeds in $\mathcal{G}_c$ and $[r_a]G$ happens to be replaced with $Q$, then $\mathcal{D}^*_c$ outputs $s=t^{-1}t'r_b =x$ because $[tr_a]G = [t]Q = [t'r_b]G$. For the adversary, $Q$ is indistinguishable from any other RP identities in the input set, as $[r_j]G$ is randomly replaced by the challenger.
-Hence, the probability of solving the ECDLP using $\mathcal{D}^*_c$ is formulated as:
-\begin{equation*}
-{\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\} = {\rm Pr}\{s = x\}={\rm Pr}\{a=j\}{\rm Pr}_s=\frac{1}{m}{\rm Pr}_s
-\end{equation*}
-
-If the probability of finding $t$ and $t'$ satisfying $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is non-negligible, the adversary would have advantages  in $\mathcal{G}_c$ and ${\rm Pr}_s$ is non-negligible regardless of the security parameter $\lambda$.
-Thus, we would find that ${\rm Pr}\{\mathcal{D}^*_c(G, [x]G)=x\}$ also becomes non-negligible even when $\lambda$ is sufficiently large, because $m$ is a finite integer and $m \ll 2^\lambda$.
-This violates the ECDLP assumption. Therefore, the probability of finding $t$ and $t'$ that satisfy $[t]ID_{RP_j} = [t']ID_{RP_{j'}}$ is negligible. 
-	
-	
-	\textcolor{red}{proof of RP Designation }
   \end{proof}
   
   \begin{lemma}\label{lemma:script-idp-trigger-request} %(Same as Lemma 5 in SPRESSO) 
