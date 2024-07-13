@@ -83,9 +83,9 @@ The RP does not need to check if $PID_{RP}$ in the received token is equal to $[
 Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
  a colluding user cannot solve and send $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
  due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,\footnote{If $u$ is publicly known, privacy against RP-based identity linkage is broken.
-    However, in this case, \usso\ still provides secure SSO services when an (honest) RP accepts only identity tokens with \emph{matching} $PID_{RP}$ due to Lemma \ref{lemma-rp-designation}.}
+    However, in this case, \usso\ still provides secure SSO services when an (honest) RP accepts only identity tokens with \emph{matching} $PID_{RP}$ because no collision exists in the RPs' pseudo-identities.}
     to manipulate the calculated account.
-Thus, an unmatched token results in an \emph{unregistered} account, and the RP will treat it as a newly-registered user (see Lemma \ref{lemma-user-id}).
+Thus, an unmatched token results in an \emph{unregistered} account, and the RP will treat it as a newly-registered user.
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  
 %--- remove following the shepherd's comment
@@ -192,8 +192,8 @@ The RP verifies $Cert_{RP}$ using $PK$, and accepts $ID_{RP}$ and $Cert_{RP}$ if
 Each user registers once at the IdP. She sets up her unique username and the corresponding credential.
 The IdP will then assign
 a unique random identity $ID_U = u \in [1, n)$ to the user.
-Note that $ID_U$ is known only to the IdP \emph{internally},
- and is not enclosed in any token or message.
+Note that $ID_U$ is used only by the IdP \emph{internally},
+ not enclosed in any token or message.
 
 
 \vspace{1.5mm}
