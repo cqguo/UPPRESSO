@@ -82,10 +82,11 @@ Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ 
 The RP does not need to check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
 Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
  a colluding user cannot solve and send $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
- due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,\footnote{If $u$ is publicly known, privacy against RP-based identity linkage is broken.
-    However, in this case, \usso\ still provides secure SSO services when an (honest) RP accepts only identity tokens with \emph{matching} $PID_{RP}$ because no collision exists in the RPs' pseudo-identities.}
-    to manipulate the calculated account.
-Thus, an unmatched token results in an \emph{unregistered} account, and the RP will treat it as a newly-registered user.
+ due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,
+    to manipulate the calculated account  (see Theorem \ref{thm-rp-designation}).
+Thus, an \emph{unmatched} token results in a meaningless account which corresponds to an unregistered (or non-existing) user, and the RP will treat it as a newly-registered user.
+We also discuss the impact of leaked user identities in Section \ref{sec:discussion}.
+
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  
 %--- remove following the shepherd's comment
@@ -141,7 +142,7 @@ To avoid this assumption, we can implement the user agent with trusted browser e
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[height=0.55\textheight]{fig/process-js.pdf}
+  \includegraphics[height=0.52\textheight]{fig/process-js.pdf}
   \caption{The SSO login flow of \usso}
   \label{fig:process}
 \end{figure*}

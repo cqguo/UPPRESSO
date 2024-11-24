@@ -38,14 +38,14 @@ This request is redirected to the IdP. Once the IdP authenticates the user, it i
   MISO \cite{miso} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$$^1$  \\ \hline 
   BrowserID \cite{BrowserID} & $\CIRCLE$ & $\CIRCLE$$^2$ & $\Circle$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \hline
   SPRESSO \cite{SPRESSO} & $\CIRCLE$ & $\CIRCLE$ & $\LEFTcircle$$^3$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \hline
-  AIF-ZKP \cite{save-flow} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \hline
+  POIDC \cite{POIDC,save-flow} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \hline
   PRIMA \cite{prima} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \hline
   PseudoID \cite{PseudoID} & $\CIRCLE$ & $\Circle$ & $\LEFTcircle$$^4$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
   Opaak \cite{Opaak} & $\LEFTcircle$$^5$ & $\Circle$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
  % U-Prove \cite{uprov} & $\CIRCLE$ & $\Circle$ & $\LEFTcircle$$^6$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
  % UnlimitID \cite{UnlimitID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
  % EL PASSO \cite{ELPASSO} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
-  \cite{ELPASSO,uprov,UnlimitID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$$^6$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
+   \cite{ELPASSO,uprov,UnlimitID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$$^6$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
   Fabric Idemix \cite{hyperledge-idemix} & $\LEFTcircle$$^7$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \hline
  % PrivacyPass \cite{privacypass,trusttoken} & $\Circle$ & $\Circle$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ \\ \hline
   \usso & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ \\ \hline
@@ -116,8 +116,11 @@ For example, in BrowserID \cite{BrowserID} %(formerly known as Firefox Accounts 
 the IdP %(called the primary identity authority in BrowserID)
 issues a ``user certificate'' token that binds a user identity to an \emph{ephemeral} public key. The user then signs a subsidiary ``identity assertion'' token that binds the target RP's identity and sends both tokens to the RP.
 The RP creates a one-time pseudo-identity for each login in SPRESSO \cite{SPRESSO}, 
- or a user sends an identity-token request with a cryptographic commitment on the RP identity in AIF-ZKP \cite{save-flow,POIDC},
+ or a user sends an identity-token request with a cryptographical-hash commitment on the RP identity in POIDC \cite{POIDC,save-flow},
         which are enclosed in identity tokens along with the user's unique identity.
+Besides, an improved version of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
+        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a server \cite{zkp-benchmark},
+        which is impracticable for a user agent.
 
 \noindent\textbf{Privacy-preserving identity federation.}
 In PRIMA \cite{prima}, the IdP signs a credential
@@ -142,6 +145,6 @@ Besides, the users locally manage their accounts at different RPs, and it actual
 
 \noindent\textbf{Anonymous identity federation.}
 Such approaches offer strong privacy protections. They allow users to access RPs with pseudonyms that cannot be used to link any two actions.
-Anonymous identity federation was formalized \cite{WangWS13} and implemented using cryptographic primitives such as group signature and zero-knowledge proof (ZKP) \cite{WangWS13, HanCSTWW20, HanCSTW18}. Special features including proxy re-verification \cite{HanCSTWW20}, designated verification \cite{HanCSTW18} and distributed IdP servers \cite{TSAPP}, are considered. %in these schemes.
+Anonymous identity federation was formalized \cite{WangWS13} and implemented using cryptographic primitives such as group signature and ZKP \cite{WangWS13, HanCSTWW20, HanCSTW18}. Special features including proxy re-verification \cite{HanCSTWW20}, designated verification \cite{HanCSTW18} and distributed IdP servers \cite{TSAPP}, are considered. %in these schemes.
 %and proposed for different applications such as GSM communications \cite{ElmuftiWRR08},
 These completely-anonymous authentication services only work for special scenarios and do not support user identification at an RP, a common requirement in most applications.
