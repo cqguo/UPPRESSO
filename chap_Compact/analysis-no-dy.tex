@@ -11,13 +11,13 @@ It is worth noting that these guarantees are proved against different adversarie
 
 Based on our design goals (i.e., the desired security and privacy guarantees) and the potential adversaries discussed in Section \ref{subsec:threatmodel}, we consider three adversarial scenarios as below.
 
-\noindent\textbf{Adversaries against security.} Malicious users could collude with each other and even with malicious RPs \cite{FettKS14,BrowserID,SPRESSO}, attempting to (\emph{a}) impersonate an honest user to log into an honest RP or (\emph{b}) entice an honest user to log into an honest RP under a malicious user's account.
+\noindent\textbf{Adversaries against security.} Malicious users could collude with each other and even with malicious RPs \cite{FettKS14,BrowserID,SPRESSO}, attempting to (\emph{a}) impersonate an honest user to log into an honest RP or (\emph{b}) entice an honest user to log into an honest RP under another user's account.
 
 \noindent\textbf{Adversaries against IdP untraceability.}
 The honest-but-curious IdP tries to infer the identities of the RPs that an honest user requests to access. %or link multiple logins to any RP initiated by a user.
 
 \noindent\textbf{Adversaries against RP unlinkability.}
-Malicious RPs could collude with each other and even with malicious users, attempting to link logins across these RPs that are initiated by honest users. 
+Malicious RPs could collude with each other and even malicious users, attempting to link logins across these RPs initiated by honest users. 
 
 %\oldc
 
@@ -54,14 +54,14 @@ Malicious RPs could collude with each other and even with malicious users, attem
 %could collude with each other and even with malicious RPs, attempting to (\emph{a}) impersonate an honest user to log into an honest RP or (\emph{b}) entice an honest user to log into an honest RP under a malicious user's account.
 
 In secure SSO systems, an identity token $TK$ which is requested by a user to visit an RP,
-    enables only this user to log into the honest target RP as her account at this RP.
-When confidentiality and integrity of $TK$ are ensured by secure communications and digital signatures, we list the following necessary and sufficient conditions of secure SSO systems:
+    enables only this user to log into only the honest target RP exactly as her account at this RP.
+When confidentiality and integrity of $TK$ are ensured by secure communications and digital signatures in \usso, we summarize the following necessary and sufficient conditions of secure SSO services \cite{FettKS14,BrowserID,SPRESSO}:
 
 \noindent \textbf{RP Designation.} $TK$ designates the target RP,
     and only the designated (honest) RP derives a meaningful account which responds to some registered user after accepting $TK$.
-That is, at any other honest RP, no meaningful account will be derived from this token.
+That is, at other honest RPs, no meaningful account will be derived.
 
-\noindent \textbf{User Identification.} At the designated RP, $TK$ identifies the user who requests this token from the IdP. That is, the designated honest RP will derive the account exactly corresponding to the identified user.
+\noindent \textbf{User Identification.} At the designated RP, $TK$ identifies only the user who requests this token from the IdP. That is, the designated honest RP will derive only the account exactly corresponding to the identified user.
 
 
 
@@ -98,33 +98,63 @@ Thus, \usso\ is a secure SSO system.
 
 %We prove that identity tokens in \usso\ and the enclosed pseudo-identities satisfy four properties, namely, \emph{RP designation}, \emph{user identification}, \emph{token confidentiality}, and \emph{token integrity}, which together ensure the security of \usso\ in the first adversarial scenario.
 
-Let's assume that \usso\ consists of $s$ users and $p$ RPs,
-    whose identities are denoted as $u_{k}$ $(1 \leq k \leq s)$ and $[r_{j}]G$ $(1 \leq j \leq p)$.
-We prove that in \usso\ 
-an identity token binding $PID_{RP} = [t]ID_{RP}$ and $PID_U = [ID_U]PID_{RP}$, which is requested by an authenticated user with $ID_U$ to visit an RP with $ID_{RP}$,
-    satisfies the requirement of RP Designation and User Identification.
+Assume totally $s$ users and $p$ RPs in \usso,
+    whose identities are denoted as $\mathbf{u} = \{u_{i}, 1 \leq i \leq s\}$ and $\mathbb{ID}_{RP} = \{[r_{j}]G, 1 \leq j \leq p\}$, respectively.
+Therefore, there are accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ $(1 \leq i \leq s)$ automatically registered at each RP.
+Accounts are known to RPs.
+Because $[r_j]G$ is also a generator on $\mathbb{E}$ of order $n$,
+    at each RP $Acct_{i,j}=[u_i r_j]G$ $(u_i \in \mathbb{Z}_n)$ is \emph{unique}.
+
+We prove that, in \usso\ 
+an identity token binding $PID_{RP} = [t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, which is requested by an authenticated user with $ID_U =u$ to visit an RP with $ID_{RP}$,
+    satisfies RP designation and user identification.
 
 %\setcounter{lemma}{50}  % 使得相同Lemma的编号与Appendix一致
 \begin{thm}[RP Designation]
-\emph{Given $\mathbf{u}=\{{u_1}, {u_2}, \cdots, {u_s}\}$,
-from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [ID_U]PID_{RP}$,
-    any honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive a meaningful account $Acct = [u']ID_{RP'}$ where $u' \in \mathbf{u}$.}
-\label{thm-rp-designation}
+\emph{Given $u \in \mathbf{u}$ and $ID_{RP} \in \mathbb{ID}_{RP}$,
+from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$,
+    any honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive $Acct = [u']ID_{RP'}$ where $u' \in \mathbf{u}$ and $ID_{RP'} \in \mathbb{ID}_{RP}$.}\label{thm-rp-designation}
 \end{thm}
-
-
 
 \noindent\textbf{\textsc{Proof.}} 
 A malicious user colluding with malicious RPs,
     might forward $TK$ to some honest RP other than the designated RP,
-        along with a manipulated trapdoor $t'$.
-Then, this RP derives the account as $Acct = [t']PID_U = [t'utr]G$.
+        even with a manipulated trapdoor $t'$.
+Then, this deceived RP derives $Acct = [t'^{-1}]PID_U = [t'^{-1}utr]G$.
 
-We prove that, when $u_k$ and $r_j$ are unknown,
-    for any $[r']G \neq [r]G$ where $[r']G \in \{[r_j]G, (1 \leq j \leq p)\}$,
-    the adversaries cannot find $t$ and $t'$ satisfying $[t'][tr]G = [u'r_j]G$ and $u' \in \mathbf{u}$.
+Next, we prove that, when $u_{i, 1\leq i \leq s}$ and $r_{j, 1\leq j \leq p}$ are unknown,
+    for any $[r']G \neq [r]G$ where $[r']G \in \mathbb{ID}_{RP}$,
+    the adversaries cannot find $t$ and $t'$ satisfying $[t'^{-1}utr]G = [u'r']G$ where $u' \in \mathbf{u}$.
+This attack can be described as an account-collision game $\mathcal{G}_a$ between an adversary and a challenger:
+ the adversary receives from the challenger a set of RP identities $\mathbb{ID}_{RP}$,
+  $ID_{RP_{a}}$ and a set of accounts $\{Acct_{i,j}= [u_ir_j]G\}$,
+ and then outputs $(i_1, i_2, b, t, t')$ where $b \neq a$ and $b \in [1,p]$.
+If $[t'^{-1}t]Acct_{i_1,r_a} = [t'^{-1}u_{i_1}tr_{a}]G = [u_{i_2}r_{b}]G = Acct_{i_2,r_b}$, which occurs with a probability ${\rm Pr}_s$, the adversary succeeds.
 
-This attack can be described as an account-collision game $\mathcal{G}_a$ between an adversary and a challenger: the adversary receives from the challenger a finite set of RP identities, i.e., $ID_{RP_1}$, ..., $ID_{RP_m}$, where $m$ is the  finite number of RPs in the system, and outputs $(a, b, t, t')$ where $a \neq b$. If $[t]ID_{RP_a}=[t']ID_{RP_b}$, which occurs with a probability ${\rm Pr}_s$, the adversary succeeds in this game.
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.96\linewidth]{fig/ecdlp_algorithm2.pdf}
+  \caption{The PPT algorithm $\mathcal{D}^*_a$ constructed based on the account-collision game to solve the ECDLP.}
+  \label{fig:collision_account}
+\end{figure}
+
+As depicted in Figure \ref{fig:collision_account}, we design a probabilistic polynomial time (PPT) algorithm $\mathcal{D}^*_a$ based on $\mathcal{G}_a$, to solve the ECDLP: find a number $x \in \mathbb{Z}_n$ satisfying $Q = [x]G$, where $Q$ is a point on $\mathbb{E}$ and $G$ is a generator on $\mathbb{E}$ of order $n$.
+
+The algorithm $\mathcal{D}^*_a$ works as below.
+The input of $\mathcal{D}^*_a$ is in the form of ($G, Q$). On receiving an input, the challenger firstly chooses $r_1, \cdots, r_p$  random in $\mathbb{Z}_n$ to calculate $\{[r_j]G, 1\leq j \leq p\}$,
+ randomly chooses $a \in [1,p]$ to replace $[r_{a}]G$ with $Q$,
+ and constructs $\mathbb{ID}_{RP} = \{[r_1]G, \cdots, Q, [r_{a+1}], \cdots, [r_{p}]G\}$.
+The challenger also chooses $u_1, \cdots, u_s$ random in $\mathbb{Z}_n$ to construct $\{Acct_{i,j}= [u_i]ID_{RP_j}, 1\leq i \leq s, 1 \leq j \leq p\}$.
+Then, it sends $\mathbb{ID}_{RP}$, $Q$ and $\{Acct_{i,j}\}$ to the adversary, which returns the result $(i_1, i_2, b, t, t')$.
+ Finally, the challenger calculates $e = t'u_{i_1}^{-1}t^{-1}u_{i_2}r_{b} \bmod n$, and sets $e$ as the output of $\mathcal{D}^*_a$.
+
+If $[t'^{-1}u_{i_1}t]Q = [u_{i_2}r_{b}]G$ and the adversary succeeds in $\mathcal{G}_a$, then $\mathcal{D}^*_a$ outputs $e =x$
+ because $Q = [t'u_{i_1}^{-1}t^{-1}u_{i_2}r_{b}]G$.
+If the adversary would have advantages  in $\mathcal{G}_a$ and then ${\rm Pr}_s$ is non-negligible regardless of the security parameter $\lambda$,
+    we would find that ${\rm Pr}\{\mathcal{D}^*_a(G, [x]G)=x\}$ also becomes non-negligible even when $\lambda$ is sufficiently large.
+This violates the ECDLP assumption.
+Thus, the probability that the adversary succeeds in $\mathcal{G}_a$ is negligible,
+    and RP designation is ensured in \usso.
 \hfill $\square$
 
 
@@ -134,43 +164,45 @@ This attack can be described as an account-collision game $\mathcal{G}_a$ betwee
 %\label{lemma-rp-main}
 %\end{lemma}
 
-Because $TK$ only works at the ``implicitly'' designated RP and
-    no registered user will be derived at other RPs when $ID_U$ is kept unknown to adversaries,
- in Step 4.2 the RP does not need to check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
+Because $TK$ works only at the ``implicitly'' designated RP and
+    no meaningful user will be derived at any other RPs when $u_i$ and $r_j$ are kept unknown to adversaries,
+ in Step 4.2 an RP does not check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
 
 
-\begin{thm}[User Identification] \emph{From $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [ID_U]PID_{RP}$,
-    the honest RP with $ID_{RP}$ can only derive a meaningful account $Acct = [ID_U]ID_{RP}$.}
-\label{thm-user-id}
+\begin{thm}[User Identification] \emph{Given $u \in \mathbf{u}$ and $ID_{RP} \in \mathbb{ID}_{RP}$,
+from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$,
+ the meaningful account derived at the honest RP with $ID_{RP}$ 
+ is only $Acct = [u]ID_{RP}$.}\label{thm-user-id}
 \end{thm}
 
-\noindent\textbf{\textsc{Proof.}}
-First of all, the account $Acct=[ID_U]ID_{RP}$ is automatically registered at the RP with $ID_{RP}$,
-    when $ID_{RP}$ and $ID_U$ are registered at the IdP.
+%\noindent\textbf{\textsc{Proof.}}
+%If $PID_{RP} = [t]ID_{RP}$ and $ID_U = u'$,    the RP with $ID_{RP}$ calculates an account as $[t^{-1}]PID_U = [t^{-1}][ID_U]PID_{RP} = [ID_U]ID_{RP}$.
+%Because $G$ is a generator on $\mathbb{E}$ of order $n$ and then $ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$, 
 
-If $PID_{RP} = [t]ID_{RP}$ and $ID_U = u'$,
-    the RP with $ID_{RP}$ calculates an account as $[t^{-1}]PID_U = [t^{-1}][ID_U]PID_{RP} = [ID_U]ID_{RP}$.
-Because $G$ is a generator on $\mathbb{E}$ of order $n$ and then $ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$, 
-
-In \usso, $PID_{RP}=[t]ID_{RP}$ is generated by a user based on the target RP's identity $ID_{RP}$ and a user-selected random number $t \in [1,n)$.
+%In \usso, $PID_{RP}=[t]ID_{RP}$ is generated by a user based on the target RP's identity $ID_{RP}$ and a user-selected random number $t \in [1,n)$.
 %The target RP with $ID_{RP}$ receives $t$, and it will also calculate $PID_{RP}=[t]ID_{RP}$ to match $PID_{RP}$ extracted from a token received.
 %It is computationally easy for any party who knows $ID_{RP}$ and $t$ to validate the $PID_{RP}$ in an identity token. A valid
-Thus, $PID_{RP}$ specifies an RP, i.e., %$PID_{RP}$ sent by a user in her identity-token request is calculated as $PID_{RP} = [t]ID_{RP}$, where $ID_{RP}$ is the target RP's identity and $t$ is a random number selected by the user and shared with this RP.
-designates the target RP that knows $t$. 
+%Thus, $PID_{RP}$ specifies an RP, i.e., designates the target RP that knows $t$. %$PID_{RP}$ sent by a user in her identity-token request is calculated as $PID_{RP} = [t]ID_{RP}$, where $ID_{RP}$ is the target RP's identity and $t$ is a random number selected by the user and shared with this RP.
 
-
-To issue an identity token requested for $PID_{RP}$, the honest IdP authenticates the user with $ID_U$ and calculates $PID_U = [ID_U]PID_{RP}$.
-The RP designated by $PID_{RP}$ receives $t$ from the user,
-    and calculates $Acct = [t^{-1}]PID_{U} = [ID_U]ID_{RP}$, which is a \emph{permanent} identifier determined by $ID_U$ and $ID_{RP}$.
-$ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$ of order $n$, as $\mathbb{E}$ is a finite cyclic group. Therefore, given a user with $ID_U$, $Acct$ is a \emph{unique} point on $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} associated with $ID_U=u$. 
+%To issue an identity token requested for $PID_{RP}$, the honest IdP authenticates the user with $ID_U$ and calculates $PID_U = [ID_U]PID_{RP}$.
+\noindent\textbf{\textsc{Proof.}}
+Firstly, on receiving $t$,
+the RP designated by $TK$ calculates $Acct = [t^{-1}]PID_{U} =[t^{-1}ut]ID_{RP} = [u]ID_{RP}$,
+    exactly corresponding to the authenticated user.
+% which is a \emph{permanent} identifier determined by $ID_U$ and $ID_{RP}$.
+%$ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$ of order $n$, as $\mathbb{E}$ is a finite cyclic group. Therefore, given a user with $ID_U$, $Acct$ is a \emph{unique} point on $\mathbb{E}$ for any $u \in [1, n)$, and it is \emph{uniquely} associated with $ID_U=u$. 
 %We first prove that $PID_{U}$ \emph{uniquely} identifies one account at the designated RP and one user in the system. 
-This proves that $PID_U$ in $TK$ identifies an account $Acct$ at the designated RP, which is uniquely mapped to a user with $ID_U$ in the system.
+%This proves that $PID_U$ in $TK$ identifies an account $Acct$ at the designated RP, which is uniquely mapped to a user with $ID_U$ in the system.
 
-Next, we consider adversarial scenarios where the attacker replays $TK$ for another user,
- to (\emph{a}) the designated RP but receiving $t'\neq t$ in this login, and (\emph{b}) any other honest RP with $ID_{RP'} = [r']G \neq [r]G$ (i.e., $r' \neq r$). In the first case, the designated RP calculates an account as $[t'^{-1}]PID_U = [t'^{-1}ut]ID_{RP}$.
-Because a user's identity is randomly selected by the IdP in $\mathbb{Z}_n$ and known only to the honest IdP, the probability that $t'^{-1}ut$ happens to be the identity of another user is negligible, when $n$ is sufficiently large. As a result, $[t'^{-1}]PID_U$ does not identify any existing account at the RP and therefore will be treated as a new account. 
-Secondly, the attacker presents $TK$ to another RP with $ID_{RP'} = [r']G \neq [r]G$.
-This RP will calculate the account as $Acct' = [\tilde{t}^{-1}]PID_{U} = [\tilde{t}^{-1}utrr'^{-1}][r']G = [\tilde{t}^{-1}utrr'^{-1}]ID_{RP'}$. The probability that $\tilde{t}^{-1}utrr'^{-1}$ happens to be the identity of another registered user at this RP is also negligible, when $n$ is sufficiently large. 
+We consider $TK$ replayed by malicious users to the target RP, but with a manipulated trapdoor $t' \neq t$.
+The designated RP will derive another account $[t'^{-1}]PID_U = [t'^{-1}ut]ID_{RP}$.
+Because $G$ is a generator on $\mathbb{E}$ of order $n$, $ID_{RP}$ and $[ut]ID_{RP}$ are also generators on $\mathbb{E}$.
+Therefore, when $u_{i, 1\leq i \leq s}$ are unknown, the probability that $[t'^{-1}ut]ID_{RP}$ happens to be another meaningful account $[u_i]ID_{RP}$ at this RP is $\frac{s-1}{n}$,
+because $u_i$ is randomly selected by the IdP in $\mathbb{Z}_n$.
+
+This probability becomes negligible, when $n$ is sufficiently large.
+As a result, $[t'^{-1}]PID_U$ $(t' \neq t)$ does not result in any meaningful account at the designated RP. 
+%Secondly, the attacker presents $TK$ to another RP with $ID_{RP'} = [r']G \neq [r]G$. This RP will calculate the account as $Acct' = [\tilde{t}^{-1}]PID_{U} = [\tilde{t}^{-1}utrr'^{-1}][r']G = [\tilde{t}^{-1}utrr'^{-1}]ID_{RP'}$. The probability that $\tilde{t}^{-1}utrr'^{-1}$ happens to be the identity of another registered user at this RP is also negligible, when $n$ is sufficiently large. 
 %it identifies no account mapped to a user, at any RP not designated by $PID_{RP}$.
 \hfill $\square$
 
@@ -204,22 +236,21 @@ This RP will calculate the account as $Acct' = [\tilde{t}^{-1}]PID_{U} = [\tilde
 \subsection{Privacy against IdP-based Login Tracing}
 \label{subsec:IdP-privacy}
 
-In \usso\ the IdP would attempts to infer the RP's identity visited by a user. Since the IdP is considered \emph{honest-but-curious}, it only collects information from the login requests, % to infer the visited RPs' identities,
+In \usso\ the \emph{curious} IdP would attempts to infer the RP's identity visited by a user. Since the IdP is considered \emph{honest}, it only collects information from the login requests, % to infer the visited RPs' identities,
  but does not deviate from the protocol or collude with others.
 
-The IdP does not obtain any information related to the target RP in each login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$) except its \emph{ephemeral} pseudo-identity $PID_{RP}$.
+The IdP does not obtain any information related to the target RP in each login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except its \emph{ephemeral} pseudo-identity $PID_{RP}$.
 Next, we prove in Theorem \ref{thm-idp-untraceability} that with these $PID_{RP}$s in the identity-token requests,
- the IdP cannot (\emph{a}) associate multiple logins to the same RP, or (\emph{b}) distinguish a login to one RP from other logins to another RP, because $PID_{RP}$ is \emph{indistinguishable} from any random variables to the IdP. So, \usso\ prevents the honest-but-curious IdP from tracing a user's login activities.
+ the IdP cannot (\emph{a}) associate multiple logins to the same RP, or (\emph{b}) distinguish a login to one RP from other logins to another RP, because $PID_{RP}$ is \emph{indistinguishable} from any random variables on $\mathbb{E}$ to the IdP. So \usso\ prevents the honest-but-curious IdP from tracing a user's login activities.
 
 \begin{thm}[IdP Untraceability]
-\emph{In \usso, the IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$ and kept unknown to the IdP.}
-\label{thm-idp-untraceability}
+\emph{In \usso, the IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$ and kept unknown to the IdP.}\label{thm-idp-untraceability}
 \end{thm}
 
 \noindent\textbf{\textsc{Proof.}}
 Consider a finite cyclic group $\mathbb{E}$ where the number of points on $\mathbb{E}$ is $n$.
 Because $G$ is a generator of order $n$, $ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$ of order $n$. %According to the formal model in Appendix \ref{appendix-model}, 
-When $t$ is randomly chosen in $\mathbb{Z}_n$ and unknown to the IdP, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is randomly chosen on $\mathbb{E}$ \cite{oprf-proved,voprf-proved}.\footnote{This property has been proved in OPRFs \cite{oprf-proved,voprf-proved}, where the OPRF server works similarly to the IdP and learns \emph{nothing} about a client's inputs or outputs of the evaluated pseudo-random function.} \hfill $\square$
+When $t$ is randomly chosen in $\mathbb{Z}_n$ and unknown to the IdP, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is randomly chosen on $\mathbb{E}$ \cite{oprf-proved,voprf-proved}.\footnote{This property actually has been proved in OPRFs \cite{oprf-proved,voprf-proved}, where the OPRF server works similarly to the IdP and learns \emph{nothing} about a client's inputs or outputs of the evaluated pseudo-random function.} \hfill $\square$
 
 
 \subsection{Privacy against RP-based Identity Linkage}
@@ -231,9 +262,9 @@ aim to infer the identities of honest users
     or link an honest user's accounts across these RPs.
 
 
-In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identifier $PID_{U} = [{ID_U}]{PID_{RP}}$ of the user, from which it derives a permanent pseudo-identifier $Acct = [ID_U]ID_{RP}$. However, it cannot calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
+In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identifier $PID_{U} = [{ID_U}]{PID_{RP}}$ of the user, from which it derives a permanent pseudo-identifier $Acct = [ID_U]ID_{RP}$. However, it cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
 %Next, we show that, with Property {\bf C1}, \usso\ prevents malicious RP(s) from reading or altering the identity token request sent by the IdP script that runs in an honest browser to the IdP. Therefore, the RP obtains no knowledge about the user identity $ID_U$. Meanwhile, following the formal model in Appendix \ref{appendix-model}, we see that the RP script running in an honest browser is always honest, no matter if the RP would be corrupted at a later time or not. A script download from a malicious RP would not be installed by an honest user. 
-Next, we prove in Theorem \ref{thm-rp-unlinkability} that even if malicious RPs collude with each other and malicious users by sharing $PID_U$s and other information observed in all the logins, they still cannot link any login from an honest user to any other logins from any other honest users to malicious RPs.
+Next, we prove in Theorem \ref{thm-rp-unlinkability} that even if malicious RPs collude with each other and some malicious users by sharing $PID_U$s and other information observed in all the logins, they still cannot link any login from an honest user to any other logins from any honest users to other colluding RPs.
 
 %\usso\ prevents the privacy threats of \emph{RP-based identity linkage} against \emph{malicious RPs which collude with malicious users}, attempting to link the logins initiated by an honest user but visiting different colluding RPs. 
 %The IdP does not collude with the adversaries in this scenario.
@@ -248,45 +279,14 @@ With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID
 
 When $c$ malicious RPs collude with each other, they create a shared view of all their logins, denoted as $\mathbb{L}$.
 %some of which are initiated by honest users and denoted as $\mathbb{L}^h$, and the others by $v$ malicious users  are $\mathbb{L}^m = \mathbb{L} \setminus \mathbb{L}^h$.
-When they collude further with $v$ malicious users, the logins initiated by these malicious users are picked out and linked together as
+When they collude further with $v$ malicious users, the logins initiated by these malicious users are picked out of $\mathbb{L}$ and linked together as
 $\mathfrak{L}^m=\left \{ \begin{matrix}
 L^m_{1,1},&L^m_{1,2},&\cdots,&L^m_{1,c}\\
 L^m_{2,1},& L^m_{2,2},&\cdots,&L^m_{2,c}\\
 \cdots,&\cdots,&L^m_{i,j},&\cdots\\
 L^m_{v,1},&L^m_{v,2},&\cdots,&L^m_{v,c}
 \end{matrix}\right\}$,
-where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G)$ for $1 \le i \le v$ and $1 \le j \le c$, and $L^m_{i,j} \in \mathbb{L}$. Any login in $\mathbb{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to one of the $c$ malicious RPs.
-
-
-\begin{thm}[RP Unlinkability]
-\emph{In \usso, given $\mathbb{L}$ and $\mathfrak{L}^m$, $c$ malicious RPs and $v$ malicious users cannot link any login from an honest user to some malicious RP to any subset of logins from honest users to any other malicious RPs.}
-\label{thm-rp-unlinkability}
-\end{thm}
-
-
-\noindent\textbf{\textsc{Proof.}} From the logins in $\mathbb{L}$,
- we randomly choose one login $L' \neq L^m_{i,j}$,
- which is from an (unknown) honest user with $ID_{U'}=u'$ to a malicious $RP_a$ and $a \in [1,c]$.
-Then, we randomly choose another malicious $RP_b$, where $b \in [1,c]$ and $b \neq a$.
-Consider any subset $\mathbb{L}''$ of $w$ logins visiting $RP_b$ by unknown honest users,
- we denote the identities of the honest users who initiate these logins as $\mathbf{u}_w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
-Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}_w$ or randomly selected from the universal user set.
-This indicates the colluding adversaries cannot link $L'$ to another login visiting $RP_b$
-    or to another subset of logins visiting $RP_b$.
-
-We define an RP-based linkage game $\mathcal{G}_r$ between an adversary and a challenger, which describes this login linkage privacy threat: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger and outputs $s$, where $s = 1$ if it decides $u'$ is in $\mathbf{u}_w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$
-and $s=0$ if it believes $u'$ is randomly chosen from the universal user set.
-Thus, the adversary succeeds in $\mathcal{G}_r$ with an advantage $\mathbf{Adv}$:
-\begin{align*}
-%&{\rm Pr}_1={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \{{u''_1}, {u''_2}, \cdots, {u''_w}\})=1\} \\
-&{\rm Pr}_1={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \;| \; u' \in \mathbf{u}_w)  \\
-%&{\rm Pr}_2={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \mathbb{Z}_n)=1\}\\
-&{\rm Pr}_2={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbb{Z}_n)\\
-&{\mathbf{Adv}}=|{\rm Pr}_1-{\rm Pr}_2|
-\end{align*}
-
-As depicted in Figure \ref{fig:dalgorithm}, we then design a PPT algorithm $\mathcal{D}^*_r$ based on $\mathcal{G}_r$ to solve the elliptic curve decisional Diffie-Hellman (ECDDH) problem: given $(G, [x]G$, $[y]G$, $[z]G)$, decide whether $z$ is equal to $xy$ or randomly chosen in $\mathbb{Z}_n$, where $G$ is a point on an elliptic curve $\mathbb{E}$ of order $n$, and $x$ and $y$ are integers randomly and independently chosen in $\mathbb{Z}_n$.
-
+where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbb{L}$ for $1 \le i \le v$ and $1 \le j \le c$. Any login in $\mathbb{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to one of the $c$ malicious RPs.
 
 \begin{figure}[tb]
   \centering
@@ -294,6 +294,34 @@ As depicted in Figure \ref{fig:dalgorithm}, we then design a PPT algorithm $\mat
   \caption{The PPT algorithm $\mathcal{D}^*_r$ constructed based on the RP-based linkage game to solve the ECDDH problem.}
   \label{fig:dalgorithm}
 \end{figure}
+
+
+\begin{thm}[RP Unlinkability]
+\emph{In \usso, given $\mathbb{L}$ and $\mathfrak{L}^m$, $c$ malicious RPs and $v$ malicious users cannot link any login from an honest user to some malicious RP to any subset of logins from honest users to any other malicious RPs.}\label{thm-rp-unlinkability}
+\end{thm}
+
+\noindent\textbf{\textsc{Proof.}} From the logins in $\mathbb{L}$,
+ we randomly choose one login $L' \neq L^m_{i,j}$,
+ which is from an (unknown) honest user with $ID_{U'}=u'$ to a malicious $RP_{a}$ where $a \in [1,c]$.
+Then, we randomly choose another malicious $RP_{b}$, where $b \in [1,c]$ and $b \neq a$.
+Consider any subset $\mathbb{L}'' \subset \mathbb{L}$ of $w$ logins visiting $RP_{b}$ by unknown honest users,
+ we denote the identities of the honest users who initiate these logins as $\mathbf{u}^w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
+Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}^w$ or randomly selected from the universal user set.
+This indicates that the colluding adversaries cannot link $L'$ to another login (or even a subset of logins) visiting $RP_{b}$.
+
+
+We define an RP-based linkage game $\mathcal{G}_r$ between an adversary and a challenger, which describes this login linkage threat: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger and outputs $e$, where (\emph{a}) $e = 1$ if it decides $u'$ is in $\mathbf{u}^w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$
+and (\emph{b}) $e=0$ if it believes $u'$ is randomly chosen from the universal user set.
+Thus, the adversary succeeds in $\mathcal{G}_r$ with an advantage $\mathbf{Adv}$:
+\begin{align*}
+%&{\rm Pr}_1={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \{{u''_1}, {u''_2}, \cdots, {u''_w}\})=1\} \\
+&{\rm Pr}_1={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \;| \; u' \in \mathbf{u}^w)  \\
+%&{\rm Pr}_2={\rm Pr}\{\mathcal{G}_r(\mathfrak{L}, L', \mathbb{L}'' | u' \in \mathbb{Z}_n)=1\}\\
+&{\rm Pr}_2={\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbb{Z}_n)\\
+&{\mathbf{Adv}}=|{\rm Pr}_1-{\rm Pr}_2|
+\end{align*}
+
+As depicted in Figure \ref{fig:dalgorithm}, we then design a PPT algorithm $\mathcal{D}^*_r$ based on $\mathcal{G}_r$ to solve the elliptic curve decisional Diffie-Hellman (ECDDH) problem: given $(G, [x]G$, $[y]G$, $[z]G)$, decide whether $z$ is equal to $xy$ or randomly chosen in $\mathbb{Z}_n$, where $G$ is a point on an elliptic curve $\mathbb{E}$ of order $n$, and $x$ and $y$ are integers randomly and independently chosen in $\mathbb{Z}_n$.
 
 
 The algorithm $\mathcal{D}^*_r$ works as below. (1) Upon receiving an input $(G, Q_1=[x]G, Q_2=[y]G, Q_3=[z]G)$, %of $\mathcal{D}^*_r$
@@ -310,8 +338,8 @@ Hence, for $1 \le i \le v$, the challenger replaces $L^m_{i, b}=([r_b]G, t_{i,b}
 In this process, it ensures that $[u''_k]G \neq Q_1$ (i.e., $u''_k \neq x$) and $u''_k \neq u_i$,
  for $1 \le i \le v$ and $1 \le k \le w$.
 Finally, it randomly chooses $d \in [1, w]$ and replaces $L''_{d}$ with $(Q_2, t''_d, Q_3) = ([y]G, t''_d, [z]G)$.
- Thus, $\mathbb{L}'' = \{L''_{k;1\leq k \leq w}\}$ represents the logins initiated by $w$ honest users, i.e., $\mathbf{u}_w=\{u''_1, u''_2, \cdots, u''_{d-1}, z/y, u''_{d+1}, \cdots, u''_w\}$.
- (5) When the adversary of $\mathcal{G}_r$ receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger, it returns $s$ as the output of $\mathcal{D}^*_r$.
+ Thus, $\mathbb{L}'' = \{L''_{k;1\leq k \leq w}\}$ represents the logins initiated by $w$ honest users, i.e., $\mathbf{u}^w=\{u''_1, u''_2, \cdots, u''_{d-1}, z/y, u''_{d+1}, \cdots, u''_w\}$.
+ (5) When the adversary of $\mathcal{G}_r$ receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger, it returns $e$ which is also the output of $\mathcal{D}^*_r$.
 
 According to the above construction, % of $\mathfrak{L}$, $L'$ and $\mathbb{L}''$,
 $x$ is embedded as $ID_{U'}$ in the login $L'$ visiting the RP with $ID_{RP_{a}} = [r_{a}]G$,
@@ -325,13 +353,14 @@ Because $x \neq u''_{k; 1\leq k \leq w, k \neq d}$ and then $x$ is not in $\{u''
  Therefore, using $\mathcal{D}^*_r$ to solve the ECDDH problem, we have an advantage $\mathbf{Adv}^*=|{\rm Pr}^*_1 - {\rm Pr}^*_2|$, where
 \begin{align*}
 &{\rm Pr}^*_1 =  {\rm Pr}(\mathcal{D}^*_r(G, [x]G, [y]G, [xy]G)=1) \\
-=&{\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbf{u}_w) = {\rm Pr}_1 \\
+=&{\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbf{u}^w) = {\rm Pr}_1 \\
 &{\rm Pr}^*_2= {\rm Pr}(\mathcal{D}^*_r(G, [x]G, [y]G, [z]G)=1) \\
 =&{\rm Pr}(\mathcal{G}_r(\mathfrak{L}^m, L', \mathbb{L}'')=1 \; | \; u' \in \mathbb{Z}_n) = {\rm Pr}_2 \\
 &\mathbf{Adv}^*=|{\rm Pr}^*_1-{\rm Pr}^*_2|=|{\rm Pr}_1-{\rm Pr}_2|={\mathbf{Adv}}
 \end{align*}
 
-If in $\mathcal{G}_r$ the adversary has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption. Therefore, the adversary has no advantage in $\mathcal{G}_r$ and cannot decide whether $L'$ is initiated by some user with an identity in $\mathbf{u}_w$ or by a user in the universal user set.
+If in $\mathcal{G}_r$ the adversary has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption.
+ Therefore, the adversary has no advantage in $\mathcal{G}_r$ and cannot decide whether $L'$ is initiated by some user with an identity in $\mathbf{u}^w$ or by a user in the universal user set.
 Because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
 \hfill $\square$
 

@@ -53,8 +53,8 @@ This request is redirected to the IdP. Once the IdP authenticates the user, it i
     \label{tbl:comparison-protocol}
 \flushleft
 {\footnotesize
-$^{\dag}$. This threat happens when \emph{all} servers involved in the processing of identity tokens collude, usually the IdP and target RPs.\\
-1. MISO is immune to collusive attacks by the IdP and RPs, but another \emph{fully-trusted} server called mixer is involved in the identity-token generation.\\
+$^{\dag}$. \emph{All} servers involved in the processing of identity tokens collude, usually the IdP and target RPs.\\
+1. MISO is immune to collusive attacks by the IdP and RPs, but an \emph{extra fully-trusted} server called mixer is involved in the identity-token generation.\\
 2. A BrowserID user generates an \emph{ephemeral} private key to sign subsidiary ``identity assertion'' tokens,
 also verified by the RP.\\
 3. SPRESSO can be extended to provide selective user attributes in the tokens, while the prototype does not implement this feature.\\
@@ -100,7 +100,7 @@ An IdP creates a unique PPID for a user to log into some RP and encloses it in i
 It does not prevent IdP-based login tracing because the IdP needs the RP's identity to assign PPIDs.
 
 MISO \cite{miso} decouples the calculation of PPIDs from an IdP,
-        and another mixer server calculates a user's PPID
+        and another trusted mixer server calculates a user's PPID
     based on $ID_U$, $ID_{RP}$ and a secret,
     after it receives the authenticated user's identity from the IdP.
 MISO prevents both RP-based identity linkag, %for the RPs receives only PPIDs,
@@ -116,10 +116,10 @@ For example, in BrowserID \cite{BrowserID} %(formerly known as Firefox Accounts 
 the IdP %(called the primary identity authority in BrowserID)
 issues a ``user certificate'' token that binds a user identity to an \emph{ephemeral} public key. The user then signs a subsidiary ``identity assertion'' token that binds the target RP's identity and sends both tokens to the RP.
 The RP creates a one-time pseudo-identity for each login in SPRESSO \cite{SPRESSO}, 
- or a user sends an identity-token request with a cryptographical-hash commitment on the RP identity in POIDC \cite{POIDC,save-flow},
+ or a user sends an identity-token request with a hash commitment on the RP identity in POIDC \cite{POIDC,save-flow},
         which are enclosed in identity tokens along with the user's unique identity.
-Besides, an improved version of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
-        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a server \cite{zkp-benchmark},
+Besides, another version of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
+        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{zkp-benchmark},
         which is impracticable for a user agent.
 
 \noindent\textbf{Privacy-preserving identity federation.}

@@ -20,7 +20,7 @@ Table \ref{tbl:notations-protocol} lists the notations.
     {$t$} & {$t \in [1, n)$ is a user-selected random integer in each login; $t$ is shared with the target RP and kept unknown to the IdP.} \\ \hline
     {$PID_{RP_j}^i$} & {$PID_{RP} = [t]{ID_{RP}} = [tr]G$ is the $j$-th RP's pseudo-identity, in the user's $i$-th login to this RP.} \\ \hline
     {$PID_{U,j}^i$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the user's pseudo-identity, in the user's $i$-th login to the $j$-th RP.} \\ \hline
-     {$Acct_j$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the user's account at the $j$-th RP.} \\ \hline
+     {$Acct_j$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the user's account at the $j$-th RP, publicly known.} \\ \hline
     {$SK$, $PK$} & {The IdP's private key and public key, which are used to sign and verify identity tokens and RP certificates.} \\ \hline
 %    {$T$} & {The trapdoor to derive $Account$: $T=N_U^{-1} \bmod n$.} \\ \hline
     {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens.} \\ \hline
@@ -71,9 +71,10 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 
 
 With the help of $t$, the RP derives a \emph{unique} account from different identity tokens for the same user in her different logins. It is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
-Meanwhile, the user's accounts at different RPs are inherently different and unlinkable (see Section \ref{sec:analysis} for detailed proofs).
+Meanwhile, the user's accounts at different RPs are inherently different and unlinkable.
+% (see Section \ref{sec:analysis} for detailed proofs).
 
-A user's identity $u$ is kept secret from adversaries. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link them.
+A user's identity $u$ is kept secret from adversaries. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link these accounts.
 Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
 %The IdP never discloses $r$ to RPs.
 Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j = [r]Acct_{j'}$ holds.
@@ -81,11 +82,11 @@ Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ 
 
 The RP does not need to check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
 Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
- a colluding user cannot solve and send $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
+ a colluding user cannot find $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
  due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,
     to manipulate the calculated account  (see Theorem \ref{thm-rp-designation}).
-Thus, an \emph{unmatched} token results in a meaningless account which corresponds to an unregistered (or non-existing) user, and the RP will treat it as a newly-registered user.
-We also discuss the impact of leaked user identities in Section \ref{sec:discussion}.
+Thus, an \emph{unmatched} token results in a \emph{meaningless} account which corresponds to an unregistered (or non-existing) user, and the RP will imperceptively treat it as a newly-registered user.
+We discuss the impact of leaked user identities in Section \ref{sec:discussion}.
 
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  

@@ -44,7 +44,7 @@ The identity token issued by the IdP then binds only $PID_U$ and $PID_{RP}$, ins
 
 \usso\ prevents %two privacy risks,
  both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO systems address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, FirefoxAccount,save-flow} or an extra trusted server is needed \cite{miso}.
-Meanwhile, \usso\ works compatibly with widely-used SSO protocols \cite{OpenIDConnect, rfc6749, SAML, NIST2017draft}, providing all the desirable features of SSO services.
+Meanwhile, \usso\ works compatibly with widely-used SSO protocols \cite{OpenIDConnect, rfc6749, SAML, NIST2017draft}, providing all the desirable features of secure SSO services.
 % and then offers a comprehensive privacy-preserving SSO solution.
 In contrast, privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix} supports some but not all of these features.
 %
@@ -60,7 +60,7 @@ Our contributions are as follows.
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
 \item We proposed a novel identity-transformation approach for privacy-preserving SSO and also designed identity-transformation algorithms with desirable properties.
-\item We developed the \usso\ protocol based on identity transformations with several designs specific to web applications, and proved that it satisfies the security and privacy requirements of SSO services.
+\item We developed the \usso\ protocol based on the identity transformations with several designs specific to web applications, and proved that it satisfies the security and privacy requirements of SSO services.
 \item We implemented a prototype of \usso\ on top of an open-source OIDC implementation. Through performance evaluations, we confirmed that \usso\ introduces reasonable overheads.
 \end{itemize}
 

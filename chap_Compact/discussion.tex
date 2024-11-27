@@ -42,12 +42,12 @@ In addition, stronger elliptic curves accommodate more RPs and users, e.g., $n$ 
 \usso\ requires that $ID_U$ is known only to the honest IdP,
 so a user inputs her username in the authentication to the IdP,
      and $ID_U$ is processed only by the IdP internally.
-The IdP should encrypt random user identities in storage and decrypt them only in memory.
+The IdP should encrypt user identities in storage and decrypt them only in memory.
 
-If $ID_U$ is leaked to RPs, this user's privacy against RP-based identity linkage is broken;
- however, in this case, \usso\ still provides secure SSO services, providing that in Step 4.2 an (honest) RP accepts only identity tokens with \emph{matching} $PID_{RP}$,
- because adversaries cannot deceive any honest RP other than the designated one to accept a token (i.e., no $PID_{RP} collision$) in this case.
-We prove it in Appendix \ref{proof-rp-collision}.
+If user identities were leaked, RP unlinkability is broken;
+ however, in this case, \usso\ still provides secure SSO services, providing that in Step 4.2 an RP accepts only identity tokens with \emph{matching} $PID_{RP}$
+    and then adversaries cannot deceive an honest RP other than the designated one to accept a token due to the \emph{collision-freeness} property of $PID_{RP}$.
+We discuss this risk in Appendix \ref{sp-leak-uid} with more details.
 
 
 %\vspace{0.75mm}
@@ -103,7 +103,7 @@ The current designs of \usso\ do not achieve quantum resistance.
 In the future, we will investigate alternative algorithms for quantum-secure services.
 We plan to adopt a quantum-resistant public-key algorithm to sign identity tokens and RP certificates,
     and study existing quantum-resistant ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf}
- to investigate if they support RP designation as discussed in Section \ref{analysis-security} (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions).
+ to investigate if they support RP designation with leaked $ID_U$ (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions; see Appendix \ref{proof-rp-collision}).
 %As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
 
 %To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.
