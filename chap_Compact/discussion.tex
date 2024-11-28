@@ -19,14 +19,6 @@
 %Finally, stronger elliptic curves accommodate more RPs and users, e.g., $n$ is about $2^{384}$ for the NIST P384 curve.
 
 
-%\noindent \textbf{Risk of leaked user identities.}
-%\usso\ requires $ID_U$ is known only to the honest IdP, so a user inputs her username in the authentication to the IdP and $ID_U$ is processed only by the IdP internally.
-%$ID_u$ may be calculated by hashing a username concatenated with the IdP's secret key, or the IdP encrypts user identities in storage and decrypts them only in memory.
-%
-%If user identities were leaked, RP unlinkability is broken; however, in this case, \usso\ still provides secure SSO services, providing that in Step 4.2 an RP accepts only identity tokens with \emph{matching} $PID_{RP}$.
-%Then, adversaries cannot deceive an honest RP other than the designated one to accept a token, due to the \emph{collision-freeness} property of $PID_{RP}$. We analyze this risk in Appendix \ref{sp-leak-uid} with more details.
-
-
 %\vspace{0.75mm}
 \noindent \textbf{Alternatives for generating $ID_{RP}$ and binding $Enpt_{RP}$.}
 In \usso\ the IdP generates random $ID_{RP}$ and uses an RP certificate to bind $ID_{RP}$ and $Enpt_{RP}$, which is verified by the IdP script. This ensures that the target RP has already registered itself at the IdP and prevents unauthorized RPs from accessing the IdP's services \cite{save-flow}.
@@ -68,9 +60,9 @@ Because a COTS browser controls access to web resources with the same-origin pol
 
 %\vspace{0.75mm}
 \noindent \textbf{Support for the authorization code flow.} In OIDC authorization code flow \cite{OpenIDConnect}, the IdP does not directly return identity tokens.
-Instead, it sends an authorization code to the RP, which uses this code to request identity tokens. The identity-transformation algorithms, namely $\mathcal{F}_{PID_{U}}$, $\mathcal{F}_{PID_{RP}}$, and $\mathcal{F}_{Acct}$, can be integrated into this flow as below. %similar to the login flow introduced in Section \ref{implementations},
+Instead, it sends an authorization code to the RP, which uses this code to request identity tokens. The identity-transformation algorithms, namely $\mathcal{F}_{PID_{U}}$, $\mathcal{F}_{PID_{RP}}$, and $\mathcal{F}_{Acct}$, can be integrated into this flow as below.
 
-The IdP script can forward an authorization code to the RP script, and then to the RP. %that binds $PID_U$ and $PID_{RP}$.
+The IdP script can forward an authorization code to the RP script, and then to the RP.
 The code only serves as an index to retrieve identity tokens from the IdP and does not reveal any more information about the user.
 After receiving an authorization code, an RP uses it along with a secret credential issued by the IdP during the initial registration \cite{OpenIDConnect} to retrieve identity tokens from the IdP. However, to protect the RP identities from the IdP, anonymous tokens (e.g., ring or group signatures \cite{ring-sig,chaum1991group} and TrustToken \cite{trusttoken}) and anonymous communications (e.g., Tor \cite{tor} and oblivious proxies \cite{ODoH}) need to be adopted for RPs in the retrieval of identity tokens.
 
@@ -82,12 +74,6 @@ We plan to adopt a quantum-resistant public-key algorithm to sign identity token
     and study quantum-resistant OPRFs \cite{ideal-lattice-oprf,isogency-oprf}
  to investigate if they support collision-free $PID_{RP}$s (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions; see Appendix \ref{proof-rp-collision}).
 %As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
-
-%To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.
-%to find out whether they can work for the quantum-secure identity transformations in \usso.
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%% 几个方面的扩展
 % 1. 解决IdP数据泄露
