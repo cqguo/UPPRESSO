@@ -7,52 +7,29 @@
 %can be applied to a wide range of SSO scenarios, including web applications, mobile Apps, and native software.
 %These algorithms follow the common model of popular SSO protocols and do not depend on any specific implementations.
 
-\noindent{\textbf{IdP-RP collusive attacks.}}
-Privacy-preserving identity federation approaches \cite{ELPASSO, UnlimitID, idemix, PseudoID, Opaak, uprov} can prevent collusive attacks by a malicious IdP and malicious RPs.
-However, they require (\emph{a}) a long-term secret that is held by each user and verified by the RPs and (\emph{b}) user-managed accounts for each user at different RPs.
-While these accounts can be derived from an RP's domain and the user's secret \cite{ELPASSO, UnlimitID, Opaak, uprov,idemix},
- they still cause inconvenience to users.
-For example, in web applications, the users need to install a browser extension to handle the long-term secret.
-If it is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
-If the relationship of these accounts is not masked by the user secret or another trusted server \cite{miso},
- the colluding IdP and RPs can eventually find a way to link them;
-% on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
-Unlike these approaches, \usso\ is not designed to prevent such collusive attacks,
- because a user is authenticated only \emph{once} in the login flow.
-In \usso\ the user's identity at the IdP is obliviously transformed into accounts at RPs,
- which are not related to any user credentials such as passwords, one-time passwords, %smart cards,
-  or FIDO devices.
-
 %\vspace{0.75mm}
-\noindent \textbf{Scalability.}
-$ID_{RP}$ is generated uniquely during the initial registration of an RP with a capacity of $n$, which is the order of $G$. For the NIST P256 elliptic curve, $n$ is approximately $2^{256}$.
-$PID_{RP}$ is ensured to be unique in unexpired tokens.
-The probability of at least two identical $PID_{RP}$s among $\sigma$ unexpired tokens is $1-\prod_{i=0}^{\sigma-1}(1-i/n)$.
-If the system serves $10^{8}$ requests per second and each token has a validity period of 10 minutes, $\sigma$ is less than $2^{36}$. So the $PID_{RP}$-collision probability is negligible, i.e., less than $2^{-183}$ for the NIST P256 curve.
+%\noindent \textbf{Scalability.}
+%$ID_{RP}$ is generated uniquely during the initial registration of an RP with a capacity of $n$, which is the order of $G$. For the NIST P256 elliptic curve, $n$ is approximately $2^{256}$.
+%$PID_{RP}$ is ensured to be unique in unexpired tokens.
+%The probability of at least two identical $PID_{RP}$s among $\sigma$ unexpired tokens is $1-\prod_{i=0}^{\sigma-1}(1-i/n)$.
+%If the system serves $10^{8}$ requests per second and each token has a validity period of 10 minutes, $\sigma$ is less than $2^{36}$. So the $PID_{RP}$-collision probability is negligible, i.e., less than $2^{-183}$ for the NIST P256 curve.
+%
+%The maximal amount of accounts at any RP is the same as the capacity of user identities at the IdP.
+%At any RP a unique account is automatically assigned to each user because $Acct =  [ID_U]ID_{RP} = [u]ID_{RP}$.
+%Finally, stronger elliptic curves accommodate more RPs and users, e.g., $n$ is about $2^{384}$ for the NIST P384 curve.
 
-The capacity of accounts at any RP is the same as the capacity of user identities at the IdP.
- %which is also determined by $n$ because $n$ is much greater than the number of users.
-Since $\mathbb{E}$ is a finite cyclic group, $ID_{RP} = [r]G$ is also a generator of order $n$.
-Therefore, at any RP, a unique account is automatically assigned to each user because $Acct =  [ID_U]ID_{RP} = [u]ID_{RP}$.
-In addition, stronger elliptic curves accommodate more RPs and users, e.g., $n$ is about $2^{384}$ for the NIST P384 curve.
+
+%\noindent \textbf{Risk of leaked user identities.}
+%\usso\ requires $ID_U$ is known only to the honest IdP, so a user inputs her username in the authentication to the IdP and $ID_U$ is processed only by the IdP internally.
+%$ID_u$ may be calculated by hashing a username concatenated with the IdP's secret key, or the IdP encrypts user identities in storage and decrypts them only in memory.
+%
+%If user identities were leaked, RP unlinkability is broken; however, in this case, \usso\ still provides secure SSO services, providing that in Step 4.2 an RP accepts only identity tokens with \emph{matching} $PID_{RP}$.
+%Then, adversaries cannot deceive an honest RP other than the designated one to accept a token, due to the \emph{collision-freeness} property of $PID_{RP}$. We analyze this risk in Appendix \ref{sp-leak-uid} with more details.
 
 
 %\vspace{0.75mm}
-\noindent \textbf{Risk of leaked user identities.}
-\usso\ requires that $ID_U$ is known only to the honest IdP,
-so a user inputs her username in the authentication to the IdP,
-     and $ID_U$ is processed only by the IdP internally.
-The IdP should encrypt user identities in storage and decrypt them only in memory.
-
-If user identities were leaked, RP unlinkability is broken;
- however, in this case, \usso\ still provides secure SSO services, providing that in Step 4.2 an RP accepts only identity tokens with \emph{matching} $PID_{RP}$
-    and then adversaries cannot deceive an honest RP other than the designated one to accept a token due to the \emph{collision-freeness} property of $PID_{RP}$.
-We discuss this risk in Appendix \ref{sp-leak-uid} with more details.
-
-
-%\vspace{0.75mm}
-\noindent \textbf{Alternative methods for generating $ID_{RP}$ and binding $Enpt_{RP}$.}
-In \usso, the IdP generates random $ID_{RP}$ and uses an RP certificate to bind $ID_{RP}$ and $Enpt_{RP}$, which is verified by the IdP script. This ensures that the target RP has already registered itself at the IdP and prevents unauthorized RPs from accessing the IdP's services \cite{save-flow}.
+\noindent \textbf{Alternatives for generating $ID_{RP}$ and binding $Enpt_{RP}$.}
+In \usso\ the IdP generates random $ID_{RP}$ and uses an RP certificate to bind $ID_{RP}$ and $Enpt_{RP}$, which is verified by the IdP script. This ensures that the target RP has already registered itself at the IdP and prevents unauthorized RPs from accessing the IdP's services \cite{save-flow}.
 
 An alternative method for binding $ID_{RP}$ and $Enpt_{RP}$ is
  to design a \emph{deterministic} scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
@@ -94,16 +71,16 @@ Because a COTS browser controls access to web resources with the same-origin pol
 Instead, it sends an authorization code to the RP, which uses this code to request identity tokens. The identity-transformation algorithms, namely $\mathcal{F}_{PID_{U}}$, $\mathcal{F}_{PID_{RP}}$, and $\mathcal{F}_{Acct}$, can be integrated into this flow as below. %similar to the login flow introduced in Section \ref{implementations},
 
 The IdP script can forward an authorization code to the RP script, and then to the RP. %that binds $PID_U$ and $PID_{RP}$.
-An authorization code only serves as an index to retrieve identity tokens from the IdP and does not reveal any more information about the authenticated user.
-After receiving an authorization code, an RP uses it along with a secret credential issued by the IdP during the initial registration \cite{OpenIDConnect} to retrieve identity tokens from the IdP. However, to protect the RP identities from the IdP, anonymous tokens (e.g., ring or group signatures \cite{ring-sig,chaum1991group} and TrustToken \cite{trusttoken}) and anonymous networks (e.g., Tor \cite{tor}) need to be adopted for RPs in the retrieval of identity tokens.
+The code only serves as an index to retrieve identity tokens from the IdP and does not reveal any more information about the user.
+After receiving an authorization code, an RP uses it along with a secret credential issued by the IdP during the initial registration \cite{OpenIDConnect} to retrieve identity tokens from the IdP. However, to protect the RP identities from the IdP, anonymous tokens (e.g., ring or group signatures \cite{ring-sig,chaum1991group} and TrustToken \cite{trusttoken}) and anonymous communications (e.g., Tor \cite{tor} and oblivious proxies \cite{ODoH}) need to be adopted for RPs in the retrieval of identity tokens.
 
 %\vspace{0.75mm}
 \noindent \textbf{Quantum resistance.}
 The current designs of \usso\ do not achieve quantum resistance.
 In the future, we will investigate alternative algorithms for quantum-secure services.
 We plan to adopt a quantum-resistant public-key algorithm to sign identity tokens and RP certificates,
-    and study existing quantum-resistant ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf}
- to investigate if they support RP designation with leaked $ID_U$ (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions; see Appendix \ref{proof-rp-collision}).
+    and study quantum-resistant OPRFs \cite{ideal-lattice-oprf,isogency-oprf}
+ to investigate if they support collision-free $PID_{RP}$s (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions; see Appendix \ref{proof-rp-collision}).
 %As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
 
 %To build quantum-secure SSO services with the \usso\ protocol, an IdP needs to generate a key pair of quantum-resistant public-key algorithms for signing identity tokens and RP certificates. Moreover, as discussed in Section \ref{sec:related}, \usso\ leverages the OPRF design \cite{oprf-proved,voprf-proved} in identity transformations for privacy-preserving SSO. To support RP designation, it requires that no collision exists in the blinded inputs of the evaluated pseudo-random function. In our future work, we will study if existing quantum-secure ORPF protocols \cite{ideal-lattice-oprf,isogency-oprf} support this property.

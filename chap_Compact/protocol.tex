@@ -15,13 +15,13 @@ Table \ref{tbl:notations-protocol} lists the notations.
     \begin{tabular}{|p{0.93cm}|p{6.71cm}|} \hline
     {\textbf{Notation}} & {\textbf{Description}} \\ \hline
     {$\mathbb{E}$, $G$, $n$} & {$\mathbb{E}$ is an elliptic curve over a finite field $\mathbb{F}_q$. $G$ is a base point (or generator) on $\mathbb{E}$, and the order of $G$ is a prime number $n$.} \\ \hline
-    {$ID_U$} & {$ID_U = u \in [1, n)$ is a user's unique identity at the IdP, which is known only to the IdP.} \\ \hline
-   {$ID_{RP_j}$} & {$ID_{RP} = [r]G$ is the $j$-th RP's unique identity, which is publicly known; $r \in [1, n)$ is known to \emph{nobody}.} \\ \hline
-    {$t$} & {$t \in [1, n)$ is a user-selected random integer in each login; $t$ is shared with the target RP and kept unknown to the IdP.} \\ \hline
+    {$ID_U$} & {$ID_U = u \in \mathbb{Z}_n$ is a user's unique identity at the IdP, which is known only to the IdP.} \\ \hline
+   {$ID_{RP_j}$} & {$ID_{RP} = [r]G$ is the $j$-th RP's unique identity, which is publicly known; $r \in \mathbb{Z}_n$ is known to \emph{nobody}.} \\ \hline
+    {$t$} & {$t \in \mathbb{Z}_n$ is a user-selected random integer in each login; $t$ is shared with the target RP and kept unknown to the IdP.} \\ \hline
     {$PID_{RP_j}^i$} & {$PID_{RP} = [t]{ID_{RP}} = [tr]G$ is the $j$-th RP's pseudo-identity, in the user's $i$-th login to this RP.} \\ \hline
     {$PID_{U,j}^i$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the user's pseudo-identity, in the user's $i$-th login to the $j$-th RP.} \\ \hline
      {$Acct_j$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the user's account at the $j$-th RP, publicly known.} \\ \hline
-    {$SK$, $PK$} & {The IdP's private key and public key, which are used to sign and verify identity tokens and RP certificates.} \\ \hline
+    {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
 %    {$T$} & {The trapdoor to derive $Account$: $T=N_U^{-1} \bmod n$.} \\ \hline
     {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens.} \\ \hline
     {$Cert_{RP_j}$} & {The IdP-signed RP certificate binding $ID_{RP_j}$ and $Enpt_{RP_j}$.} \\ \hline
@@ -35,7 +35,7 @@ The IdP assigns a unique random integer $u$ to a user (i.e., $ID_U = u$),
 Here, $G$ is a base point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
 
 
-\noindent {\bf $\boldsymbol{ID_{\boldsymbol{RP}}}$-$\boldsymbol{PID_{\boldsymbol{RP}}}$ Transformation.} In each login, the user selects a random number $t \in [1, n)$ as the trapdoor to calculate $PID_{RP}$.
+\noindent {\bf $\boldsymbol{ID_{\boldsymbol{RP}}}$-$\boldsymbol{PID_{\boldsymbol{RP}}}$ Transformation.} In each login, a user selects a random number $t \in \mathbb{Z}_n$ as the trapdoor to calculate $PID_{RP}$.
 \begin{equation}
 PID_{RP} = \mathcal{F}_{PID_{RP}}(ID_{RP}) = [t]{ID_{RP}} = [tr]G
 \label{equ:PIDRP}
@@ -70,23 +70,15 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 \end{equation}
 
 
-With the help of $t$, the RP derives a \emph{unique} account from different identity tokens for the same user in her different logins. It is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
-Meanwhile, the user's accounts at different RPs are inherently different and unlinkable.
+With the help of $t$, the RP derives a \emph{unique} account from different tokens for the same user in her different logins. This is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
+A user's accounts at different RPs are inherently different and unlinkable.
 % (see Section \ref{sec:analysis} for detailed proofs).
 
-A user's identity $u$ is kept secret from adversaries. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link these accounts.
+A user's identity $u$ is kept secret from all entities except the honest IdP. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link these accounts.
 Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
 %The IdP never discloses $r$ to RPs.
 Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j = [r]Acct_{j'}$ holds.
 %enumerate the user's accounts by calculating  and link them.
-
-The RP does not need to check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
-Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
- a colluding user cannot find $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for a given victim with $Acct = [ur]G$,
- due to the elliptic curve discrete logarithm problem (ECDLP) when $u$ is kept secret,
-    to manipulate the calculated account  (see Theorem \ref{thm-rp-designation}).
-Thus, an \emph{unmatched} token results in a \emph{meaningless} account which corresponds to an unregistered (or non-existing) user, and the RP will imperceptively treat it as a newly-registered user.
-We discuss the impact of leaked user identities in Section \ref{sec:discussion}.
 
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  
@@ -126,7 +118,7 @@ Thus, on receiving an identity-token request, the IdP web server checks the \ver
 
 The RP script is responsible for preparing $ID_{RP}$ and $Enpt_{RP}$ for the IdP script, through an RP certificate issued by the IdP. %It binds the RP's identity and endpoint. %(i.e., $ID_{RP}$ and $Enpt_{RP}$).
 In each login, the RP script sends the certificate to the IdP script, which then verifies it and extracts $ID_{RP}$ and $Enpt_{RP}$.
-Like in widely-adopted SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}, in \usso\ a user does not need to configure anything locally for the IdP's public key is already set in the IdP script.
+Like in widely-adopted SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}, in \usso\ a user configures \emph{nothing locally} for the IdP's public key is already set in the IdP script.
 
 After receiving an identity token from the IdP, the IdP script needs to ensure the RP script will forward the token to $Enpt_{RP}$ %, which is bound with $ID_{RP}$
 specified in the RP certificate.
@@ -139,11 +131,11 @@ Only the script downloaded from this targetOrigin is considered as a legitimate 
 %That is, the IdP script derives the RP's $ID_{RP}$ and origin from the RP certificate, while the $PID_{RP}$ is generated with this $ID_{RP}$. Thus, the IdP script always knows the targeting RP of identity proof, therefore, the \verb+postMessage+ mechanism can guarantee that the identity proof would not be sent to the adversary.
 
 As discussed in Section \ref{subsec:overview}, a user calculates $PID_{RP} = [t]ID_{RP}$ based on $ID_{RP}$ extracted from the RP certificate. Thus, this function should be implemented by an \emph{honest} script that does not leak $t$ to the IdP, from which it could calculate $ID_{RP} = [t^{-1}\bmod n]PID_{RP}$. In \usso, we consider the IdP script honest; otherwise, it could straightforwardly leak the RP's domain to the IdP.
-To avoid this assumption, we can implement the user agent with trusted browser extensions, which need to be installed by users before visiting RPs.
+To eliminate this assumption, we can implement the user agent with trusted browser extensions, which are installed by users before visiting RPs.
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[height=0.52\textheight]{fig/process-js.pdf}
+  \includegraphics[height=0.455\textheight]{fig/process-js.pdf}
   \caption{The SSO login flow of \usso}
   \label{fig:process}
 \end{figure*}
@@ -163,7 +155,7 @@ This approach is specified by W3C \cite{referer_policy} and widely supported. We
 An IdP generates a key pair ($SK$, $PK$) to sign and verify identity tokens and RP certificates.
 %The IdP keeps $SK$ secret, and $PK$ is publicly known.
 
-\vspace{1.5mm}
+\vspace{1mm}
 \noindent\textbf{RP Registration.}
 %Each RP launches an initial registration operation to finish configurations.
 Each RP registers itself at the IdP to obtain $ID_{RP}$ and its RP certificate $Cert_{RP}$ as follows:
@@ -191,14 +183,15 @@ The RP verifies $Cert_{RP}$ using $PK$, and accepts $ID_{RP}$ and $Cert_{RP}$ if
 
 %\vspace{0.5mm}
 \noindent\textbf{User Registration.}
-Each user registers once at the IdP. She sets up her unique username and the corresponding credential.
-The IdP will then assign
-a unique random identity $ID_U = u \in [1, n)$ to the user.
-Note that $ID_U$ is used only by the IdP \emph{internally},
+%Each user registers once at the IdP. 
+Each user sets up her unique username and the corresponding credential at the IdP.
+The IdP will assign
+a unique random identity $ID_U = u \in \mathbb{Z}_n$ to the user.
+Note that $ID_U$ is different from her username and used only by the IdP \emph{internally},
  not enclosed in any token or message.
 
 
-\vspace{1.5mm}
+\vspace{1mm}
 \noindent\textbf{SSO Login.} A login %is typically launched through a browser,
 %when a user attempts to visit an RP. It
 involves four steps: script downloading, RP identity transformation, identity-token generation, and $Acct$ calculation. In Figure \ref{fig:process}, the IdP's and RP's operations are connected by two vertical lines, respectively. The user operations are split into two groups in different browser windows by two vertical lines, one communicating with the IdP and the other with the RP. Solid horizontal lines indicate messages exchanged between the user and the IdP (or the RP), while dotted lines represent a \verb+postMessage+ invocation between two scripts (or browser windows) within the browser.
@@ -234,11 +227,11 @@ The user and the RP negotiate $PID_{RP} = [t]{ID_{RP}}$.
 \setlength{\itemsep}{0pt}
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
-\item[2.1] The IdP script chooses a random number $t \in [1, n)$ and sends it to the RP script through \verb+postMessage+. The RP script then forwards $t$ to the RP.
-\item[2.2] The RP verifies if the received $t$ is an integer in $[1, n)$ and
+\item[2.1] The IdP script chooses a random number $t \in \mathbb{Z}_n$ and sends it to the RP script through \verb+postMessage+. The RP script then forwards $t$ to the RP.
+\item[2.2] The RP verifies if the received $t$ is an integer in $\mathbb{Z}_n$ and
 %Upon receiving $t$, the RP verifies $1 \leq t < n$ and %calculates $PID_{RP}$.
 %To acknowledge the negotiation of $PID_{RP}$, The RP
-replies with $Cert_{RP}$ and the scope of the requested user attributes. The reply is then transmitted through the RP script to the IdP script.  % through \verb+postMessage+.
+replies with $Cert_{RP}$ and the scope of the requested user attributes. The reply is then forwarded through the RP script to the IdP script.  % through \verb+postMessage+.
 \item[2.3] The IdP script verifies $Cert_{RP}$, extracts $ID_{RP}$ and $Enpt_{RP}$ from $Cert_{RP}$, and calculates $PID_{RP}=[t]{ID_{RP}}$.
 
 \end{itemize}
@@ -292,6 +285,14 @@ and calculates $Acct = [t^{-1}]{PID_U}$.
 If any verification fails, this flow will be terminated immediately.
 For example, the user halts it when receiving an invalid $Cert_{RP}$.
 The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token in Step 4.2 if the signature is invalid. 
+
+In Step 4.2, the RP does not check if $PID_{RP}$ in the received token is equal to $[t]{ID_{RP}}$ or not.
+Even if an honest RP accepts a token which is generated for some malicious RP in another login and binds $PID_{U'} = [u't'r']G$ and $PID_{RP'}=[t'r']G$,
+ a colluding user cannot find $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for any given victim with $Acct = [ur]G$,
+ due to the elliptic curve discrete logarithm problem (ECDLP) when user identities are kept secret (see Theorem \ref{thm-rp-designation}).
+Thus, an \emph{unmatched} token results in a \emph{meaningless} account which corresponds to an unregistered (or non-existing) user, and the RP will imperceptively treat it as a newly-registered user.
+We discuss the impact of leaked user identities in Appendix \ref{sp-leak-uid}.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。
 %or the enclosed $PID_{RP}$ is not equal to $[t]ID_{RP}$.
