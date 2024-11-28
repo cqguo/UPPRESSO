@@ -228,7 +228,7 @@ The user and the RP negotiate $PID_{RP} = [t]{ID_{RP}}$.
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
 \item[2.1] The IdP script chooses a random number $t \in \mathbb{Z}_n$ and sends it to the RP script through \verb+postMessage+. The RP script then forwards $t$ to the RP.
-\item[2.2] The RP verifies if the received $t$ is an integer in $\mathbb{Z}_n$ and
+\item[2.2] The RP verifies if the received $t$ is an integer in $\mathbb{Z}_n$, and
 %Upon receiving $t$, the RP verifies $1 \leq t < n$ and %calculates $PID_{RP}$.
 %To acknowledge the negotiation of $PID_{RP}$, The RP
 replies with $Cert_{RP}$ and the scope of the requested user attributes. The reply is then forwarded through the RP script to the IdP script.  % through \verb+postMessage+.

@@ -94,22 +94,22 @@ Thus, \usso\ is a secure SSO system.
 
 Let's assume totally $s$ users and $p$ RPs in \usso,
     whose identities are denoted as $\mathbf{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbb{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
-Therefore, there are accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ $(1 \leq i \leq s)$ automatically registered at each RP.
+Therefore, there are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ $(1 \leq i \leq s)$ automatically registered at each RP.
 Because $[r_j]G$ is also a generator on $\mathbb{E}$ of order $n$,
     at each RP $Acct_{i,j}=[u_i r_j]G$ is \emph{unique} for $u_i$ is unique in $\mathbb{Z}_n$.
-Accounts are publicly-known, but $u_{i}$ and $r_{j}$ are unknown to adversaries.
+Accounts are publicly-known, while $u_{i}$ and $r_{j}$ are unknown to adversaries.
 
 We prove that, in \usso\ 
 an identity token binding $PID_{RP} = [t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, which is requested by an authenticated user with $ID_U =u$ to visit an RP with $ID_{RP}$,
     satisfies RP designation and user identification.
 
-\vspace{-1.2mm}
+\vspace{-1mm}
 \begin{thm}[RP Designation]
 \emph{Given $u \in \mathbf{u}$ and $ID_{RP} \in \mathbb{ID}_{RP}$,
 from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$,
     any honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive $Acct = [u']ID_{RP'}$ where $u' \in \mathbf{u}$ and $ID_{RP'} \in \mathbb{ID}_{RP}$.}\label{thm-rp-designation}
 \end{thm}
-\vspace{-1.2mm}
+\vspace{-1mm}
 
 \noindent\textbf{\textsc{Proof.}} 
 A malicious user colluding with malicious RPs,
@@ -128,7 +128,7 @@ If $[t'^{-1}t]Acct_{i_1,r_a} = [t'^{-1}u_{i_1}tr_{a}]G = [u_{i_2}r_{b}]G = Acct_
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig/ecdlp_algorithm2.pdf}
+  \includegraphics[width=0.99\linewidth]{fig/ecdlp_algorithm2.pdf}
   \caption{The PPT algorithm $\mathcal{D}^*_A$ constructed based on the account-collision game to solve the ECDLP.}
   \label{fig:collision_account}
 \end{figure}
@@ -151,20 +151,20 @@ This violates the ECDLP assumption.
 Therefore, the probability that the adversary succeeds in $\mathcal{G}_A$ is negligible,
     and RP designation is ensured.
 \hfill $\square$
-\vspace{.75mm}
+\vspace{1mm}
 
 Because $TK$ works only at the ``implicitly'' designated RP and
     no meaningful user will be derived at any other RPs, % when $u_i$ and $r_j$ are kept unknown to adversaries,
  in Step 4.2 an RP does not check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
 
 
-\vspace{-1.2mm}
+\vspace{-1mm}
 \begin{thm}[User Identification] \emph{Given $u \in \mathbf{u}$ and $ID_{RP} \in \mathbb{ID}_{RP}$,
 from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$,
  the meaningful account derived at the honest RP with $ID_{RP}$ 
  is only $Acct = [u]ID_{RP}$.}\label{thm-user-id}
 \end{thm}
-\vspace{-1.2mm}
+\vspace{-1mm}
 
 \noindent\textbf{\textsc{Proof.}}
 Firstly, on receiving $t$,
@@ -191,17 +191,17 @@ The IdP does not obtain any information related to the target RP in each login (
 We prove in Theorem \ref{thm-idp-untraceability} that, from these $PID_{RP}$s in the identity-token requests,
  the IdP cannot (\emph{a}) associate multiple logins to the same RP, or (\emph{b}) distinguish a login to one RP from other logins to another RP, because to the IdP $PID_{RP}$ is \emph{indistinguishable} from a random variables on $\mathbb{E}$. So \usso\ prevents the honest-but-curious IdP from tracing a user's login activities.
 
-\vspace{-1.2mm}
+\vspace{-1mm}
 \begin{thm}[IdP Untraceability]
 \emph{In \usso, the IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$ and kept unknown to the IdP.}\label{thm-idp-untraceability}
 \end{thm}
-\vspace{-1.2mm}
+\vspace{-1mm}
 
 \noindent\textbf{\textsc{Proof.}}
 $\mathbb{E}$ is a finite cyclic group, and the number of points on $\mathbb{E}$ is $n$.
 Because $G$ is a generator of order $n$, $ID_{RP} = [r]G$ is also a generator on $\mathbb{E}$ of order $n$.
 When $t$ is randomly chosen in $\mathbb{Z}_n$ and unknown to the IdP, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is randomly chosen on $\mathbb{E}$ \cite{oprf-proved,voprf-proved}. \hfill $\square$
-\vspace{.75mm}
+\vspace{1mm}
 
 This property of obliviousness actually has been proved in OPRFs \cite{oprf-proved,voprf-proved}, where the OPRF server works similarly to the IdP and learns \emph{nothing} about a client's inputs or outputs of the evaluated pseudo-random function.
 
@@ -219,7 +219,7 @@ Next, we prove in Theorem \ref{thm-rp-unlinkability} that, even if malicious RPs
 
 
 With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be easily transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa.
-So we denote all the information that an RP learns in a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=(ID_{RP}, t, [ID_{U}]ID_{RP})=([r]G, t, [ur]G)$.
+So we denote all the information that an RP learns in a login as a tuple $L$, where $L =(ID_{RP}, t, Acct)=([r]G, t, [ur]G)$.
 
 When $c$ malicious RPs collude with each other, they create a shared view of all their logins, denoted as $\mathbb{L}$.
 When they collude further with $v$ malicious users, the logins initiated by these malicious users are picked out of $\mathbb{L}$ and linked together as
@@ -239,20 +239,20 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbb{L}$ for $1 \le i \le 
 \end{figure}
 
 
-%\vspace{-1.2mm}
+%\vspace{-1mm}
 \begin{thm}[RP Unlinkability]
 \emph{In \usso, given $\mathbb{L}$ and $\mathfrak{L}^m$, $c$ malicious RPs and $v$ malicious users cannot link any login from an honest user to some malicious RP to any subset of logins from honest users to any other malicious RPs.}\label{thm-rp-unlinkability}
 \end{thm}
-\vspace{-1.2mm}
+\vspace{-1mm}
 
-\noindent\textbf{\textsc{Proof.}} From the logins in $\mathbb{L}$,
- we randomly choose one login $L' \neq L^m_{i,j}$ $(1 \le i \le v, 1 \le j \le c)$,
+\noindent\textbf{\textsc{Proof.}} Out of $\mathbb{L}$
+ we randomly choose a login $L' \neq L^m_{i,j}$ $(1 \le i \le v, 1 \le j \le c)$,
  which is initiated by an (unknown) honest user with $ID_{U'}=u'$ to a malicious $RP_{a}$ where $a \in [1,c]$.
 Then, we randomly choose another malicious $RP_{b}$, where $b \in [1,c]$ and $b \neq a$.
 Consider any subset $\mathbb{L}'' \subset \mathbb{L}$ of $w$ logins visiting $RP_{b}$ by unknown honest users,
- we denote the identities of the honest users who initiate these logins as $\mathbf{u}^w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
+ and denote the identities of the users who initiate these logins as $\mathbf{u}^w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
 Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}^w$ or randomly selected from the universal user set.
-This indicates that the colluding adversaries cannot link $L'$ to another login (or a subset of logins) visiting $RP_{b}$.
+This indicates the adversaries cannot link $L'$ to another login (or a subset of logins) visiting $RP_{b}$.
 
 
 We define an RP-based linkage game $\mathcal{G}_R$ between an adversary and a challenger, which describes this login linkage threat: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger and outputs $e$, where (\emph{a}) $e = 1$ if it decides $u'$ is in $\mathbf{u}^w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$

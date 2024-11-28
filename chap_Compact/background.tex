@@ -125,7 +125,8 @@ that binds user attributes and a verification key. Using the signing key, the us
 PseudoID \cite{PseudoID} introduces a service in addition to the IdP,
  to blindly sign \cite{blind-sign}
 an access token that binds a pseudonym and a user secret.
-The user then unblinds this token and uses the secret to log into an RP. Approaches based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential} have been proposed to implement privacy-preserving identity federation (PP-IDF) \cite{hyperledge-idemix, Opaak, uprov, UnlimitID, ELPASSO}. For instance, the IdP signs anonymous credentials in Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, EL PASSO \cite{ELPASSO}, and U-Prove \cite{uprov}, and binds them with non-ephemeral user secrets. %, with which users can authenticate to an RP.
+The user then unblinds this token and uses the secret to log into an RP.
+Privacy-preserving identity federation (PP-IDF) \cite{hyperledge-idemix, Opaak, uprov, UnlimitID, ELPASSO} is proposed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}. For instance, the IdP signs anonymous credentials in Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, EL PASSO \cite{ELPASSO}, and U-Prove \cite{uprov}, and binds them with non-ephemeral user secrets. %, with which users can authenticate to an RP.
 Then the users prove ownership of the anonymous credentials using the secrets and disclose IdP-confirmed attributes in the credentials in most schemes except Opaak.
 Similarly, Fabric \cite{hyperledge-idemix} integrates Idemix anonymous credentials \cite{idemix} for completely-unlinkable pseudonyms and IdP-confirmed attribute disclosure.
 
