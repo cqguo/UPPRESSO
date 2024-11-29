@@ -39,7 +39,7 @@ otherwise, it implies two colluding RPs could link a user's accounts across thes
 When the IdP script forwards identity tokens to the RP script, the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} is used to restrict the recipient of the tokens, to ensure that the tokens will be sent to the intended $Enpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
 The RP script's origin must accurately match the targetOrigin to receive the tokens.
 
-The targetOrigin mechanism does not check the whole URL path in $Enpt_{RP}$, but it introduces {\em no additional} risk.
+The targetOrigin mechanism does not check the whole URL path in $Enpt_{RP}$, but it introduces no {\em additional} risk.
 %This assumes only one RP runs on a domain.
 Consider two RPs in the same domain but receiving tokens through two different endpoints,
  e.g., \verb+https://RP.com/honest/tk+ and \verb+https://RP.com/malicious/tk+.
@@ -56,14 +56,14 @@ Because a COTS browser controls access to web resources with the same-origin pol
 %  such as stealing cookies using the script \verb+window.open('https://RP.com/honest').document.cookie+,
 %  even if it restricts that only HTTP requests to specific paths carry its cookies.
 %
- So, this risk is caused by the SOP model but not our designs.
+So, this risk is caused by the SOP model but not our designs.
 
 %\vspace{0.75mm}
-\noindent \textbf{Support for the authorization code flow.} In OIDC authorization code flow \cite{OpenIDConnect}, the IdP does not directly return identity tokens.
+\noindent \textbf{Support for the authorization code flow.} In the authorization code flow of OIDC \cite{OpenIDConnect}, the IdP does not directly return identity tokens.
 Instead, it sends an authorization code to the RP, which uses this code to request identity tokens. The identity-transformation algorithms, namely $\mathcal{F}_{PID_{U}}$, $\mathcal{F}_{PID_{RP}}$, and $\mathcal{F}_{Acct}$, can be integrated into this flow as below.
 
 The IdP script can forward an authorization code to the RP script, and then to the RP.
-The code only serves as an index to retrieve identity tokens from the IdP and does not reveal any more information about the user.
+This code only serves as an index to retrieve identity tokens from the IdP and does not disclose any more information about the user.
 After receiving an authorization code, an RP uses it along with a secret credential issued by the IdP during the initial registration \cite{OpenIDConnect} to retrieve identity tokens from the IdP. However, to protect the RP identities from the IdP, anonymous tokens (e.g., ring or group signatures \cite{ring-sig,chaum1991group} and TrustToken \cite{trusttoken}) and anonymous communications (e.g., Tor \cite{tor} and oblivious proxies \cite{ODoH}) need to be adopted for RPs in the retrieval of identity tokens.
 
 %\vspace{0.75mm}

@@ -33,20 +33,20 @@ For example, a malicious RP could collude with malicious users to impersonate a 
 
 We do \emph{not} consider the collusion of the IdP and RPs.
 In this case, a user would have to complete login flows \emph{entirely} with malicious entities. 
-In principle, it would require a long-term user secret to protect permanent accounts across these RPs.
+In principle, it would require a long-term user secret to protect permanent accounts across RPs.
 %This secret should be held \emph{only} by the user; otherwise, colluding adversaries could eventually link these accounts.
-If the relationship of these accounts is not masked by the user secret or in extra trusted servers \cite{miso},
- the colluding IdP and RPs can eventually find a way to link them.
+If the relationship of these accounts is not masked by the user secret or in extra fully-trusted servers \cite{miso},
+ the colluding IdP and RPs will eventually find a way to link them.
 Privacy-preserving approaches in identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, Opaak, uprov} prevent IdP-RP collusive attacks;
 however, they require (\emph{a}) a long-term secret that is held only by the user and verified by the RPs and (\emph{b}) user-managed accounts for each user at different RPs.\footnote{While these accounts can be derived from an RP's domain and the user's secret \cite{ELPASSO, UnlimitID, Opaak, uprov,idemix},
  they still cause inconvenience to users.
 For example, a user needs to pre-install a browser extension to handle the long-term secret.}
-If the secret is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
+Moreover, if this secret is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
 % on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
 Unlike these schemes, \usso\ is not designed to prevent such collusive attacks,
  because a user is authenticated only \emph{once} in the login flow.
 In \usso\ a user's identity at the IdP is obliviously transformed into accounts at RPs,
- which are not related to any user credentials such as passwords, one-time passwords, %smart cards,
+ which are not related to any user secrets or credentials such as passwords, one-time passwords, 
   and FIDO devices.
 
 %Finally, the security and privacy properties of \usso\ are guaranteed against different combinations of the above adversaries.
