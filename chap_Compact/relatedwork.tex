@@ -11,14 +11,13 @@ Then, the IdP uses the user's permanent identity $u$ to calculate $PID_U = [u]PI
 which is similar to token signing by the token server in PrivacyPass/TrustToken. Hence, \usso\ provides the \emph{IdP-untraceability} property, i.e., the IdP cannot link $ID_{RP}$ and $[t_i]ID_{RP}$, which roughly corresponds to the {\em unlinkability of token signing-redemption} in PrivacyPass/TrustToken, i.e., the token server cannot link $T_i$ and $[e_i]T_i$ (or $[k]T_i$ and $[ke_i]T_i$). %($[e_i]T_i, [ke_i]T_i$) and  ($T_i, [k]T_i$).
 
 To provide privacy-preserving SSO services, \usso\ works among three parties, unlike the two-party OPRF and PrivacyPass/TrustToken protocols.
-It leverages this cryptographic technique in different ways. %, unlike the completely anonymous service in PrivacyPass/TrustToken.
-%This also requires extending the two-party OPRF protocol to work for three parties in SSO services.
+It leverages this cryptographic technique in different ways.
 First, \usso\ securely shares the user-selected random number $t_i$ with the target RP,
 enabling it to independently derive the user's unique account, i.e., $Acct = [t_i^{-1}]PID_{U}$. This account is ``obliviously'' determined by the IdP when it calculates the user's pseudo-identity based on the ``blinded'' input (i.e., the visited RP's pseudo-identity). Second, $u$ and $ID_{RP}$, which roughly correspond to $k$ and $T_i$ in PrivacyPass/TrustToken, are designed as the permanent identities of the user and the RP, respectively, to establish the relationships between identities obliviously.
 This is very different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as the server's secret key.
 The integration of SSO (pseudo-)identities  and OPRF variables requires a deep understanding of both SSO and OPRF protocols.
 Finally, \usso\ leverages randomness of OPRF to provide \emph{RP unlinkability}, and this property is not utilized in PrivacyPass/TrustToken.
-It ensures colluding RPs cannot link any logins across RPs, %i.e., ($ID_{RP}, t, [u]ID_{RP}$) and ($ID_{RP'}, t', [u']ID_{RP'}$),
+It ensures colluding RPs cannot link any logins across RPs,
 even by sharing their knowledge about pseudo-identities and permanent accounts.
 This property offers desirable indistinguishability of \emph{different users} logging into colluding RPs.
 It corresponds to the indistinguishability of \emph{different private keys} for signing anonymous tokens, not considered in PrivacyPass/TrustToken. 
@@ -27,7 +26,7 @@ Although \usso\ mathematically employs the same technique in its identity transf
 \usso\ essentially depends on the \emph{obliviousness} property to ensure IdP untraceability, 
 the \emph{deterministicness} property of \emph{pseudo-random} functions to derive a permanent account for any $t$, and the \emph{randomness} property to provide RP unlinkability. 
 In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} actually depend on only the properties of obliviousness and deterministicness.
-Besides, \usso\ needs an extra property for security in the case of leaked user identities,
+Besides, \usso\ needs an extra property for security in the case of user identity leakage,
      \emph{collision-freeness} of $PID_{RP}$ (see Appendix \ref{proof-rp-collision}).
 So an OPRF protocol is not always ready for identity transformations in \usso, unless no collision exists in the blinded inputs of the pseudo-random function \cite{oprf-proved,voprf-proved}.
 This property is not explicitly required in OPRF-based solutions.

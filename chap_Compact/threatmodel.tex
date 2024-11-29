@@ -5,14 +5,12 @@
 
 \subsection{Threat Model}
 \label{subsec:threatmodel}
-The system consists of an honest-but-curious IdP as well as several honest or malicious RPs and users. % or even collude with each other.
-This threat model is in line with widely-used SSO services \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
+The system consists of an honest-but-curious IdP as well as several honest or malicious RPs and users. This threat model is in line with widely-used SSO services \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
 
 %\vspace{0.5mm}
 \noindent \textbf{Honest-but-curious IdP.} The IdP strictly follows the protocols,
  while remaining interested in learning about user activities.
 For example, it could store received messages to infer the relationship between $ID_U$, $ID_{RP}$, $PID_{U}$, and $PID_{RP}$.
- % to track a user's login activities.
 It never actively violates the protocols, so a script downloaded from the IdP also strictly follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
 The IdP maintains the private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
 which prevents adversaries from forging such messages.
@@ -31,8 +29,7 @@ For example, they could manipulate $PID_{RP}$ and $t$ in a login, attempting to 
 \noindent \textbf{Colluding users and RPs.}
 Malicious users and RPs could collude,
  attempting to break the security or privacy guarantees for honest users and RPs.
-For example, a malicious RP could collude with malicious users to %steal another user's identity token and
- impersonate a victim at honest RPs or link an honest user's logins visiting colluding RPs.
+For example, a malicious RP could collude with malicious users to impersonate a victim at honest RPs or link an honest user's logins visiting colluding RPs.
 
 We do \emph{not} consider the collusion of the IdP and RPs.
 In this case, a user would have to complete login flows \emph{entirely} with malicious entities. 

@@ -1,7 +1,7 @@
 \subsection{Identity-Transformation Algorithms}
 \label{subsec:overview}
 
-We design identity-transformation algorithms %  $\mathcal{F}_{PID_{RP}}$, $\mathcal{F}_{PID_{U}}$ and $\mathcal{F}_{Acct}$,
+We design identity-transformation algorithms 
 on an elliptic curve $\mathbb{E}$.
 Table \ref{tbl:notations-protocol} lists the notations.
 %The subscript $j$ and/or superscript $i$ may be omitted if there is no ambiguity.
@@ -22,10 +22,8 @@ Table \ref{tbl:notations-protocol} lists the notations.
     {$PID_{U,j}^i$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the user's pseudo-identity, in the user's $i$-th login to the $j$-th RP.} \\ \hline
      {$Acct_j$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the user's account at the $j$-th RP, publicly known.} \\ \hline
     {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
-%    {$T$} & {The trapdoor to derive $Account$: $T=N_U^{-1} \bmod n$.} \\ \hline
     {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens.} \\ \hline
     {$Cert_{RP_j}$} & {The IdP-signed RP certificate binding $ID_{RP_j}$ and $Enpt_{RP_j}$.} \\ \hline
-%    {$PEnpt_{U,j}^i$} & {A user-generated random "pseudo-endpoint'', in the user's $i$-th login to the $j$-th RP.} \\ \hline
     \end{tabular}
     \label{tbl:notations-protocol}
 \end{table}
@@ -70,15 +68,12 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 \end{equation}
 
 
-With the help of $t$, the RP derives a \emph{unique} account from different tokens for the same user in her different logins. This is the user's \emph{permanent} account at this RP. %, which is \emph{unique} among all accounts at the same RP. 
+With the help of $t$, the RP derives a \emph{unique} account from different tokens for the same user in her different logins. This is the user's \emph{permanent} account at this RP.
 A user's accounts at different RPs are inherently different and unlinkable.
-% (see Section \ref{sec:analysis} for detailed proofs).
 
 A user's identity $u$ is kept secret from all entities except the honest IdP. Otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link these accounts.
 Meanwhile, $ID_{RP} = [r]G$ is publicly-known but $r$ is unknown to RPs.
-%The IdP never discloses $r$ to RPs.
 Otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j = [r]Acct_{j'}$ holds.
-%enumerate the user's accounts by calculating  and link them.
 
 %However, if $u$ is publicly known, in this case, a malicious user could request tokens with $PID_{RP} = $ but send $t'$ to the RP, to login as .
  
@@ -111,8 +106,6 @@ However, in \usso, the IdP does not know about the visited RPs, requiring a user
 
 The IdP script is necessary because the RP script could leak its origin to the IdP web server due to the automatic inclusion of an HTTP \verb+referer+ header in all HTTP requests it sends.
 Besides, the IdP script is trusted to interact with the users for attribute authorization,
- %and ensure the confidentiality of identity tokens, i.e., a token is sent to only the designated RP,
-%% 机密性这一句没有必要写，因为“如果RP是malicious，则RP总是可以将token泄露出去”。
   while the RP (and its script) could be malicious.
 Thus, on receiving an identity-token request, the IdP web server checks the \verb+referer+ header to ensure it is sent by the IdP script.
 
@@ -291,7 +284,7 @@ Even if an honest RP accepts a token which is generated for some malicious RP in
  a colluding user cannot find $t$ satisfying $[t^{-1}]PID_{U'} = Acct$ for any given victim with $Acct = [ur]G$,
  due to the elliptic curve discrete logarithm problem (ECDLP) when user identities are kept secret (see Theorem \ref{thm-rp-designation}).
 Thus, an \emph{unmatched} token results in a \emph{meaningless} account which corresponds to an unregistered (or non-existing) user, and the RP will imperceptively treat it as a newly-registered user.
-We discuss the impact of leaked user identities in Appendix \ref{sp-leak-uid} with details.
+We discuss the impact of user identity leakage in Appendix \ref{sp-leak-uid} with details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。
@@ -312,10 +305,8 @@ We discuss the impact of leaked user identities in Appendix \ref{sp-leak-uid} wi
 
 Both \usso\ and OIDC work with COTS browsers. %Among the four steps of the login flow
 In \usso, the \emph{script downloading} step prepares the user agent, which assists the communications with the IdP and RP servers. \usso\ employs web scripts to hide the RP's endpoint from the IdP, while securely forwarding identity tokens to the RP through $Enpt_{RP}$ extracted from the signed RP certificate.
-% that protects the identity token from being sent to adversaries. 这句话与Compatibility无关
 Thus, the IdP does not set \verb+redirect_uri+ in the HTTP responses, which is different from OIDC where HTTP redirections are used to implement these communications. Most operations in the \emph{RP identity transformation} step take place within browsers,
 except that the RP receives $t$ and responds with $Cert_{RP}$,
-%The calculation of $PID_{RP}$ is viewed as the operation to prepare an RP identity in OIDC,
 which can be viewed as a supplementary message to users.
 %The operations in the $PID_{RP}$ registration are almost identical to those in the RP Dynamic Registration of OIDC \cite{DynamicRegistration}, except that in OIDC the IdP assigns the RP's identity  while in UPPRESSO this (pseudo-)identity is generated by the registered entity. Besides, the $PID_{RP}$ registration has a validity period.
 Consequently, compared to the original OIDC protocol, \usso\ simplifies the IdP's operations in these two steps, while allowing ``dynamic'' RP pseudo-identities.

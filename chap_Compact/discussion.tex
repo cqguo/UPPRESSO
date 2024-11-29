@@ -27,7 +27,7 @@ An alternative method for binding $ID_{RP}$ and $Enpt_{RP}$ is
  to design a \emph{deterministic} scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
 This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the discrete logarithm of the output. It generates a point on the elliptic curve $\mathbb{E}$ as $ID_{RP}$ to ensure the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
 
-In this case, the RP script sends only the endpoint but not its RP certificate in Step 2.2, and the IdP script calculates $ID_{RP}$ by itself. %This elimination of RP certificates improves the downloading of scripts, and on average \textcolor[rgb]{1,0,0}{xxx} ms are saved.
+In this case, the RP script sends only the endpoint but not its RP certificate in Step 2.2, and the IdP script calculates $ID_{RP}$ by itself. 
 However, if the RP changes its domain, such as from  \verb+https://theRP.com+ to \verb+https://RP.com+, the account (i.e., $Acct = [ID_U]ID_{RP}$) will inevitably change.
 As a result, the user is required to perform special operations to migrate her account to the updated RP system.
 It is worth noting that the user operations cannot be eliminated in the migration from an RP to the updated one;
@@ -73,7 +73,7 @@ In the future, we will investigate alternative algorithms for quantum-secure ser
 We plan to adopt a quantum-resistant public-key algorithm to sign identity tokens and RP certificates,
     and study quantum-resistant OPRFs \cite{ideal-lattice-oprf,isogency-oprf}
  to investigate if they support collision-free $PID_{RP}$s (i.e., no collision exists in the blinded inputs of evaluated pseudo-random functions; see Appendix \ref{proof-rp-collision}).
-%As discussed in Section \ref{sec:related}, such OPRF designs can be utilized to implement the \usso\ protocol.
+
 
 %%%%%%%%%%%%%%%%%%%%% 几个方面的扩展
 % 1. 解决IdP数据泄露

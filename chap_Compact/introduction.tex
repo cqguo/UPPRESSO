@@ -35,15 +35,13 @@ In Section \ref{subsec-solutions}, we analyze existing privacy-preserving soluti
 
 
 This paper presents \usso, an Untraceable and Unlinkable Privacy-PREserving Single Sign-On protocol.
- %for privacy-preserving SSO services. % 注释这几个词，一下子减少不少篇幅
 It proposes {\em identity transformations} and integrates them into the SSO login flow compatibly.
 In \usso, an RP and a user firstly transform $ID_{RP}$ into ephemeral $PID_{RP}$, which is then sent to a trusted IdP to transform $ID_U$ into an ephemeral user pseudo-identity $PID_U$.
 The identity token issued by the IdP then binds only $PID_U$ and $PID_{RP}$, instead of $ID_U$ and $ID_{RP}$. When the RP receives the identity token, % with a matching $PID_{RP}$,
  it transforms $PID_U$ into an account that is unique at each RP but identical across multiple logins to this RP.
 
 
-\usso\ prevents %two privacy risks,
- both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO systems address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, FirefoxAccount,save-flow} or an extra server is fully trusted \cite{miso}.
+\usso\ prevents both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO systems address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, FirefoxAccount,save-flow} or an extra server is fully trusted \cite{miso}.
 Meanwhile, \usso\ works compatibly with widely-used SSO protocols \cite{OpenIDConnect, rfc6749, SAML, NIST2017draft}, providing all the desirable features of secure SSO services.
 % and then offers a comprehensive privacy-preserving SSO solution.
 In contrast, privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix} supports some but not all of these features.
