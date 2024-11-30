@@ -15,7 +15,7 @@ This request is redirected to the IdP. Once the IdP authenticates the user, it i
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.98\linewidth]{fig/OIDC.pdf}
+  \includegraphics[width=0.885\linewidth]{fig/OIDC.pdf}
   \caption{The implicit SSO login flow of OIDC}
   \label{fig:OpenID}
 \end{figure}
@@ -68,7 +68,7 @@ Such a non-anonymous SSO system is much more desirable in various scenarios than
 
 \noindent\textbf{User authentication only to the IdP.}
 RPs only verify the identity tokens issued by an IdP, and the authentication between a user and the IdP is typically conducted \emph{independently} of the steps that deal with identity tokens.
-This offers advantages. First, the IdP authenticates users by any appropriate means such as passwords, one-time passwords, or multi-factor authentication.
+This offers advantages. First, the IdP authenticates users by any appropriate means such as passwords, one-time passwords, or multi-factor authentication (MFA).
 Meanwhile, a user only maintains her credential at the IdP; and if it is lost or leaked, the user only needs to renew it at the IdP.
 However, if a user proves a \emph{non-ephemeral} secret to RPs that is valid across multiple logins, she will have to notify each RP in the events of loss or leakage, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.
 
@@ -109,18 +109,18 @@ It protects a user's online profile against even collusive attacks by the IdP an
 
 Other privacy-preserving SSO schemes prevent IdP-based login tracing but leave users vulnerable to RP-based identity linkage, due to the unique user identities enclosed in identity tokens.
 For example, in BrowserID \cite{BrowserID} 
-the IdP %(called the primary identity authority in BrowserID)
+an IdP %(called the primary identity authority in BrowserID)
 issues a ``user certificate'' token that binds a user identity to an \emph{ephemeral} public key. The user then signs a subsidiary ``identity assertion'' token that binds the target RP's identity and sends both tokens to the RP.
 The RP creates a one-time tag (or pseudo-identity) for each login in SPRESSO \cite{SPRESSO}, 
  or a user sends an identity-token request with a hash commitment on the RP identity in POIDC \cite{POIDC,save-flow},
         which are enclosed in identity tokens along with the user's unique identity.
 Besides, another version of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
-        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a server \cite{zkp-benchmark},
+        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{zkp-benchmark,ZKP-BINF},
         which is really impracticable for a user agent.
 
 \noindent\textbf{Privacy-preserving identity federation.}
-In PRIMA \cite{prima}, the IdP signs a credential
-that binds user attributes and a verification key. Using the signing key, the user selectively provides attributes to the RPs. This verification key works as the user's identity but exposes her to RP-based identity linkage.
+In PRIMA \cite{prima}, an IdP signs a credential
+that binds user attributes and a verification key. Using the signing key, the user selectively provides attributes to RPs. This verification key works as the user's identity but exposes her to RP-based identity linkage.
 
 PseudoID \cite{PseudoID} introduces a service in addition to the IdP,
  to blindly sign \cite{blind-sign}

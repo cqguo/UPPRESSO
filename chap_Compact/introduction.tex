@@ -8,9 +8,10 @@ For instance, in an OIDC system, the user sends a login request to an RP,
 which constructs an identity-token request with its identity (denoted as $ID_{RP}$) and redirects it to a trusted IdP. After authenticating the user, the IdP issues an identity token binding the identities of both the user and the RP (i.e., $ID_U$ and $ID_{RP}$), which is returned to the user and then forwarded to the RP.
 Finally, the RP verifies the identity token to determine if the token holder is authorized to log in. Thus, a user keeps only one credential for the IdP, instead of multiple credentials for different RPs.
 
-SSO services provide a comprehensive solution for identity management and authentication,
- by enabling an IdP to enclose more user attributes in identity tokens, in addition to the authenticated user's identity.
-These attributes (e.g., age, hobby, and nationality) are maintained at the IdP and can be enclosed in identity tokens with user authorization \cite{OpenIDConnect,rfc6749}.
+SSO also provides comprehensive services for identity management,
+ by enabling an IdP to enclose more user attributes in identity tokens, along with the authenticated user's identity.
+The attributes (e.g., age, hobby, and location) are maintained at the IdP and enclosed in tokens with user authorization \cite{OpenIDConnect,rfc6749}.
+User operations including authentication and authorization, are conducted through a \emph{user agent} (or browser typically).
 
 The wide adoption of SSO raises concerns on user privacy, because it facilitates the tracking of a user's login activities by interested parties \cite{NIST2017draft, SPRESSO, BrowserID, maler2008venn}.
 To issue identity tokens, an IdP should know the target RP to be accessed by a user and the login time.

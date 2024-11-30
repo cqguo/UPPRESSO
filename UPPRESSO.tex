@@ -84,18 +84,18 @@
 \title{\Large \bf \usso: Untraceable and Unlinkable Privacy-PREserving\\Single Sign-On Services}
 
 
-% Chengqian Guo, Jingqiang Lin, Quanwei Cai, Fengjun Li, Wentian Zhu, Wei Wang, Jiwu Jing, Qiongxiao Wang, Bin Zhao
+% Chengqian Guo, Jingqiang Lin, Quanwei Cai, Wentian Zhu, Wei Wang, Jiwu Jing, Qiongxiao Wang, Bin Zhao, Fengjun Li
 
 %\author{
-%{\rm Chengqian Guo$^{\sharp\nabla}$, \ \ Jingqiang Lin$^{\ddag}$, \ \ Quanwei Cai$^{\P}$, \ \ Fengjun Li$^{\S}$, \ \ Wentian Zhu$^{\ddag}$, \ \ Wei Wang$^{\nabla}$,}\\
-%{\rm Jiwu Jing$^{\diamondsuit}$, \ \ Qiongxiao Wang$^{\nabla}$, \ \ Bin Zhao$^{\triangle}$}\\
+%{\rm Chengqian Guo$^{\sharp}$, \ \ Jingqiang Lin$^{\ddag}$, \ \ Quanwei Cai$^{\P}$, \ \ Wentian Zhu$^{\ddag}$, \ \ Wei Wang$^{\ddag}$,}\\
+%{\rm Jiwu Jing$^{\diamondsuit}$, \ \ Qiongxiao Wang$^{\nabla}$, \ \ Bin Zhao$^{\triangle}$, \ \ Fengjun Li$^{\S}$}\\
 %$\sharp$ Shenyang Aircraft Design \& Research Institute, China\\
 %$\ddag$ School of Cyber Security, University of Science and Technology of China\\
 %$\P$ Beijing Zitiao Network Technology Co., Ltd, China\\
-%$\S$  Department of Electrical Engineering \& Computer Science, the University of Kansas, USA\\
 %${\diamondsuit}$ School of Computer Science \& Technology, University of Chinese Academy of Sciences\\
-%$\nabla$ Institute of Information Engineering, CAS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
-%$\triangle$ JD.com Silicon Valley R\&D Center, USA}
+%${\nabla}$ Beijing Certification Authority Co., Ltd, China\ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+%$\triangle$ JD.com Silicon Valley R\&D Center, USA\\
+%$\S$  Department of Electrical Engineering \& Computer Science, the University of Kansas, USA}
 
 
 
@@ -103,16 +103,16 @@
 \begin{abstract}
 Single sign-on (SSO) allows a user to maintain only the credential at an identity provider (IdP) to log into multiple relying parties (RPs).
 However, SSO introduces privacy threats, as ({\em a}) a curious IdP could track a user's visits to all RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
-This paper presents a privacy-preserving SSO protocol, called \usso, to protect a user's online profile against (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs and users who could collude.
+This paper presents a privacy-preserving SSO protocol, called \usso, to protect an honest user's online profile against (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs colluding with other users.
 \usso\ proposes an identity-transformation approach to generate untraceable \emph{ephemeral pseudo-identities} for an RP and a user (denoted as $PID_{RP}$ and $PID_U$, respectively) from which the target RP derives a \emph{permanent account} for the user (denoted as $Acct$), while the transformations provide unlinkability.
-This approach protects the unique identities of the user and the RPs that she requests to log into while working compatibly with widely-deployed SSO services and satisfying all the security requirements.
+This approach protects the unique identities of the user and the RPs that she requests to log into while working compatibly with widely-deployed SSO services and satisfying all security requirements.
 %Compared with existing SSO protocols, \usso\ is among the first to prevent both types of privacy threats. Compared with existing privacy-preserving identity federation schemes, \usso\ supports all the desired SSO features while providing sufficient privacy protections.  % 省去，放到Introduction即可
 % \usso\ proposes a novel identity-transformation approach. In each SSO login, an \emph{ephemeral pseudo-identity} of an RP, denoted as $PID_{RP}$, is negotiated between a user and the RP. $PID_{RP}$ is sent to the IdP and designated in the identity token, so that the IdP is not aware of the visited RP.
 % The IdP then uses $PID_{RP}$ to transform the user's permanent identity $ID_U$, into an ephemeral user pseudo-identity $PID_U$, in the token.
 % On receiving the identity token, %%%% the RP just waits for it.
 % the RP transforms $PID_U$ into a \emph{permanent account} of the user, denoted as $Acct$. Given a user, the account at each RP is unique and different from $ID_U$, %%%% for different users, the accounts may be the same.
 %so colluding RPs cannot link a user's identities across RPs.
-We have built a prototype of \usso\ on top of MITREid Connect, an open-source SSO system. The extensive evaluations show that it fulfills the security and privacy requirements of SSO
+We built a prototype of \usso\ on top of MITREid Connect, an open-source SSO system. The extensive evaluations show that it fulfills the security and privacy requirements of SSO
 with reasonable overheads.
 \end{abstract}
 
@@ -120,7 +120,7 @@ with reasonable overheads.
 %Single sign-on, security, privacy. %, trace, linkage
 %\end{IEEEkeywords}
 
-%\footnotetext[1]{Chengqian Guo participated in this work since his PhD study in Institute of Information Engineering, Chinese Academy of Sciences (CAS).}
+%\footnotetext[1]{Chengqian Guo participated in this work since his PhD study in Institute of Information Engineering, Chinese Academy of Sciences.}
 
 \setcounter{footnote}{0}
 \renewcommand{\thefootnote}{\arabic{footnote}}

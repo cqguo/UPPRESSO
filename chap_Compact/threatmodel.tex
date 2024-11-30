@@ -33,21 +33,23 @@ For example, a malicious RP could collude with malicious users to impersonate a 
 
 We do \emph{not} consider the collusion of the IdP and RPs.
 In this case, a user would have to complete login flows \emph{entirely} with malicious entities. 
-In principle, it would require a long-term user secret to protect permanent accounts across RPs.
+In principle it would require a long-term user secret to protect the accounts across RPs.
 %This secret should be held \emph{only} by the user; otherwise, colluding adversaries could eventually link these accounts.
 If the relationship of these accounts is not masked by the user secret or in extra fully-trusted servers \cite{miso},
- the colluding IdP and RPs will eventually find a way to link them.
-Privacy-preserving approaches in identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, Opaak, uprov} prevent IdP-RP collusive attacks;
-however, they require (\emph{a}) a long-term secret that is held only by the user and verified by the RPs and (\emph{b}) user-managed accounts for each user at different RPs.\footnote{While these accounts can be derived from an RP's domain and the user's secret \cite{ELPASSO, UnlimitID, Opaak, uprov,idemix},
+ the colluding IdP and RPs will eventually link them.
+Privacy-preserving approaches in identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prevent IdP-RP collusive attacks,
+but they require (\emph{a}) a long-term secret that is held only by the user and verified by the RPs and (\emph{b}) user-managed accounts at different RPs.\footnote{While these accounts can be derived from an RP's domain and the user's secret \cite{ELPASSO, UnlimitID, Opaak, uprov,idemix},
  they still cause inconvenience to users.
 For example, a user needs to pre-install a browser extension to handle the long-term secret.}
-Moreover, if this secret is lost or leaked, the user must notify all the RPs to update her accounts derived from the secret.
+If this secret is lost or leaked, the user must notify all RPs to update her accounts derived from the secret.
 % on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
+%
 Unlike these schemes, \usso\ is not designed to prevent such collusive attacks,
- because a user is authenticated only \emph{once} in the login flow.
-In \usso\ a user's identity at the IdP is obliviously transformed into accounts at RPs,
- which are not related to any user secrets or credentials such as passwords, one-time passwords, 
-  and FIDO devices.
+ so that a user is authenticated only \emph{once} in the login flow.
+In \usso\ a user's identity at the IdP is %obliviously 
+transformed into accounts at RPs,
+which are not related to any user secrets or credentials such as passwords, one-time passwords, and MFA devices.
+Thus, a commercial-off-the-shelf (COTS) browser may work as a user agent.
 
 %Finally, the security and privacy properties of \usso\ are guaranteed against different combinations of the above adversaries.
 %It implements secure SSO services against colluding users and RPs, while preventing (\emph{a}) IdP-based login tracing by an honest-but-curious IdP and (\emph{b}) RP-based identity linkage by colluding RPs and users.

@@ -54,9 +54,9 @@ Regarding identity-token requesting, %the user browser loads the RP's webpage an
 the RP of MITREid Connect immediately constructs an identity-token request. %MITREid Connect only needs 10 ms but UPPRESSO requires 271 ms.
 In SPRESSO the RP needs to obtain information about the IdP % 's public key %(SPRESSO allows a user to assign any IdPs before login without initial registrations)
 and encrypt its domain using an ephemeral key, resulting in extra overheads.
-In contrast, \usso\ incurs extra overheads in opening a new browser window and downloading scripts. This download overhead may be reduced %by silently conducting these operations when the user visits the RP website, or
+In contrast, \usso\ incurs extra overheads in opening a new browser window and downloading the scripts.\footnote{This download overhead can be reduced %by silently conducting these operations when the user visits the RP website, or
 by implementing a user agent with browser extensions.
-We have implemented such a browser extension while keeping the IdP and RPs unmodified, and the supplemental experiments showed a reduction of (\emph{a}) about 90 ms in the virtual private cloud setting and (\emph{b}) 260 ms when accessed remotely.
+We have implemented such a browser extension while keeping the IdP and RPs unmodified, and the supplemental experiments showed a reduction of (\emph{a}) about 90 ms in the virtual private cloud setting and (\emph{b}) 260 ms when accessed remotely.}
 
 \usso\ requires the least time for identity token generation since it retrieves the token from the IdP without any additional processing.
 In contrast,

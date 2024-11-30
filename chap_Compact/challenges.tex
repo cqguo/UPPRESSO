@@ -41,7 +41,7 @@ These requirements are satisfied through \emph{transformed identities} in the id
 and the subscript $j$ and/or the superscript $i$ may be ignored if it does not cause ambiguity.
 
 
-In an SSO login flow, a user initiates the process by negotiating an \emph{ephemeral} pseudo-identity $PID_{RP}$  with the target RP and sending an identity-token request that encloses $PID_{RP}$ to the IdP.
+In an SSO login flow, a user initiates the process by negotiating an \emph{ephemeral} pseudo-identity $PID_{RP}$  with the target RP and sending an identity-token request that encloses $PID_{RP}$ to an IdP.
 After successfully authenticating the user as $ID_U$, the IdP calculates an \emph{ephemeral} $PID_U$ based on $ID_U$ and $PID_{RP}$ and issues an identity token that binds $PID_U$ and $PID_{RP}$. Upon receiving a valid token, the RP calculates the user's \emph{permanent} $Acct$ and authorizes the token holder to log in.
 The relationships among the identities are depicted in Figure \ref{fig:IDCorrelation}.
 \emph{Red} and \emph{green} blocks represent \emph{permanent} and \emph{ephemeral} (pseudo-)identities, respectively, and 
