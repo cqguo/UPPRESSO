@@ -12,8 +12,8 @@ SSO services provide a comprehensive solution for identity management and authen
  by enabling an IdP to enclose more user attributes in identity tokens, in addition to the authenticated user's identity.
 These attributes (e.g., age, hobby, and nationality) are maintained at the IdP and can be enclosed in identity tokens with user authorization \cite{OpenIDConnect,rfc6749}.
 
-The wide adoption of SSO raises concerns about user privacy because it facilitates the tracking of a user's login activities by interested parties \cite{NIST2017draft, SPRESSO, BrowserID, maler2008venn}.
-To issue identity tokens, an IdP should know the RP to be accessed by a user and the login time.
+The wide adoption of SSO raises concerns on user privacy, because it facilitates the tracking of a user's login activities by interested parties \cite{NIST2017draft, SPRESSO, BrowserID, maler2008venn}.
+To issue identity tokens, an IdP should know the target RP to be accessed by a user and the login time.
 Thus, a curious IdP could potentially track a user's login activities over time
  \cite{BrowserID, SPRESSO},
 called {\em IdP-based login tracing} in this paper.
@@ -30,7 +30,8 @@ They typically offer the following features:
 which eliminates the need for authentication between a user and an RP and requires maintaining only the credential for the IdP,
 and (\emph{c}) \emph{provision of IdP-confirmed user attributes},
  where a user's attributes are maintained at a trusted IdP and provided to RPs with the user's authorization.
-Meanwhile, the privacy threats posed by different adversaries are considered, including \emph{an honest-but-curious IdP}, \emph{colluding RPs}, and \emph{the honest-but-curious IdP colluding with some RPs}.
+Meanwhile, the privacy threats posed by different adversaries are considered, including \emph{an honest-but-curious IdP}, \emph{colluding RPs}, and \emph{colluding attackers of all servers}.
+Note that some system consists of an IdP, RPs, and extra servers \cite{SPRESSO,PseudoID,miso}.
 In Section \ref{subsec-solutions}, we analyze existing privacy-preserving solutions for SSO and also identity federation in light of these privacy threats.
 
 

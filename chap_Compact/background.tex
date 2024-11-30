@@ -111,7 +111,7 @@ Other privacy-preserving SSO schemes prevent IdP-based login tracing but leave u
 For example, in BrowserID \cite{BrowserID} 
 the IdP %(called the primary identity authority in BrowserID)
 issues a ``user certificate'' token that binds a user identity to an \emph{ephemeral} public key. The user then signs a subsidiary ``identity assertion'' token that binds the target RP's identity and sends both tokens to the RP.
-The RP creates a one-time pseudo-identity for each login in SPRESSO \cite{SPRESSO}, 
+The RP creates a one-time tag (or pseudo-identity) for each login in SPRESSO \cite{SPRESSO}, 
  or a user sends an identity-token request with a hash commitment on the RP identity in POIDC \cite{POIDC,save-flow},
         which are enclosed in identity tokens along with the user's unique identity.
 Besides, another version of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,

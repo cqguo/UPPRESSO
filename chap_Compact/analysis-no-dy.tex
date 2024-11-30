@@ -178,14 +178,14 @@ Therefore, when $u_{i; 1\leq i \leq s}$ are unknown, the probability that $[t'^{
 because $u_i$ is randomly selected in $\mathbb{Z}_n$ by the IdP.
 
 This probability becomes negligible, when $n$ is sufficiently large.
-As a result, $[t'^{-1}]PID_U$ $(t' \neq t)$ does not result in any meaningful account at the designated RP. 
+As a result, $[t'^{-1}]PID_U$ $(t' \neq t)$ results in no meaningful account at the designated RP. 
 \hfill $\square$
 
 \subsection{Privacy against IdP-based Login Tracing}
 \label{subsec:IdP-privacy}
 
 In \usso\ the \emph{curious} IdP would attempt to infer the RP's identities visited by a user. Since the IdP is considered \emph{honest}, it only collects information from the identity-token requests, 
- but does not deviate from the protocol or collude with others.
+ but does not deviate from the protocol or collude with other entities.
 
 The IdP does not obtain any information related to the target RP in each login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except its \emph{ephemeral} pseudo-identity $PID_{RP}$.
 We prove in Theorem \ref{thm-idp-untraceability} that, from these $PID_{RP}$s in the identity-token requests,
@@ -251,12 +251,12 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbb{L}$ for $1 \le i \le 
 Then, we randomly choose another malicious $RP_{b}$, where $b \in [1,c]$ and $b \neq a$.
 Consider any subset $\mathbb{L}'' \subset \mathbb{L}$ of $w$ logins visiting $RP_{b}$ by unknown honest users,
  and denote the identities of the users who initiate these logins as $\mathbf{u}^w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\}$.
-Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}^w$ or randomly selected from the universal user set.
+Next, we prove that the colluding adversaries cannot decide if $u'$ is in $\mathbf{u}^w$ or randomly selected from the universal set $\mathbb{Z}_n$.
 This indicates the adversaries cannot link $L'$ to another login (or a subset of logins) visiting $RP_{b}$.
 
 
 We define an RP-based linkage game $\mathcal{G}_R$ between an adversary and a challenger, which describes this login linkage threat: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbb{L}''$ from the challenger and outputs $e$, where (\emph{a}) $e = 1$ if it decides $u'$ is in $\mathbf{u}^w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$
-or (\emph{b}) $e=0$ if it believes $u'$ is randomly chosen from the universal user set.
+or (\emph{b}) $e=0$ if it believes $u'$ is randomly chosen from the universal set $\mathbb{Z}_n$.
 Thus, the adversary succeeds in $\mathcal{G}_R$ with an advantage $\mathbf{Adv}$:
 \begin{align*}
 &{\rm Pr}_1={\rm Pr}(\mathcal{G}_R(\mathfrak{L}^m, L', \mathbb{L}'')=1 \;| \; u' \in \mathbf{u}^w)  \\

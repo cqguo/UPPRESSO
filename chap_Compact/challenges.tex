@@ -26,8 +26,8 @@ An honest RP checks the RP's identity in the token before accepting it and autho
     {\textbf{Notation}} & {\textbf{Description}} & {\textbf{Lifecycle}} \\ \hline
     {$ID_U$} & {The user's unique identity at the IdP.} & {Permanent} \\ \hline
     {$ID_{RP_j}$} & {The $j$-th RP's unique identity at the IdP.} & {Permanent} \\ \hline
-    {$PID_{U,j}^i$} & {The user's pseudo-identity in her $i$-th login to the $j$-th RP.} & {Ephemeral} \\ \hline
-    {$PID_{RP_j}^i$} & {The $j$-th RP's pseudo-identity in the user's $i$-th login to this RP.} & {Ephemeral} \\ \hline
+    {$PID_{U,j}^k$} & {The user's pseudo-identity in her $k$-th login to the $j$-th RP.} & {Ephemeral} \\ \hline
+    {$PID_{RP_j}^k$} & {The $j$-th RP's pseudo-identity in the user's $k$-th login to this RP.} & {Ephemeral} \\ \hline
     {$Acct_j$} & {The user's identity (or account) at the $j$-th RP.} & {Permanent} \\ \hline
     \end{tabular}
     \label{tbl:notations-dilemma}
@@ -55,11 +55,11 @@ labeled arrows denote the transformations of (pseudo-)identities.
 \end{figure}
 
 For RP designation, $PID_{RP}$ should be associated \emph{uniquely} with the target RP.
-For user identification, with \emph{ephemeral} $PID_{U}^i$ in each login, the designated RP should be able to derive a unique \emph{permanent} account  (i.e., $Acct$) of the user at this RP.
-To prevent IdP-based login tracing, it is essential to ensure that the IdP does not obtain any information about $ID_{RP}$ from any $PID_{RP}^i$.
+For user identification, with \emph{ephemeral} $PID_{U}^k$ in each login, the designated RP should be able to derive a unique \emph{permanent} account  (i.e., $Acct$) of the user at this RP.
+To prevent IdP-based login tracing, it is essential to ensure that the IdP does not obtain any information about $ID_{RP}$ from any $PID_{RP}^k$.
 Thus, in a user's multiple logins to one RP,
-independent $PID_{RP}^i$s\footnote{The IdP should not be able to link multiple logins visiting a given RP, while the RP's identity is unknown to the IdP.} 
-and independent $PID_U^i$s\footnote{If $PID_U^i$ is not completely independent of each other, it implies that there is a possibility for the IdP to link multiple logins visiting a certain RP.} should be generated.
+independent $PID_{RP}^k$s\footnote{The IdP should not be able to link multiple logins visiting a given RP, while the RP's identity is unknown to the IdP.} 
+and independent $PID_U^k$s\footnote{If $PID_U^k$ is not completely independent of each other, it implies that there is a possibility for the IdP to link multiple logins visiting a certain RP.} should be generated.
 Finally, to prevent RP-based identity linkage,
 % the IdP does not enclose $ID_U$ in identity tokens.
 %a user pseudo-identity (i.e., $PID_U$) is bound instead:
@@ -87,7 +87,7 @@ $\mathcal{F}_{Acct}(PID_{U}, PID_{RP}) = Acct$, calculated by the target RP.
 Given $ID_U$ and $ID_{RP}$, $Acct$ is %\emph{permanent} and
 \emph{unique} to other accounts at this RP.
 That is, in a user's two different logins to the RP,
- $\mathcal{F}_{Acct}(PID_{U}^i, PID_{RP}^i) = \mathcal{F}_{Acct}(PID_{U}^{i'}, PID_{RP}^{i'})$.
+ $\mathcal{F}_{Acct}(PID_{U}^k, PID_{RP}^k) = \mathcal{F}_{Acct}(PID_{U}^{k'}, PID_{RP}^{k'})$.
 \end{itemize}
 
 
