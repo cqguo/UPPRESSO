@@ -6,7 +6,7 @@ SSO allows a user to log into a website,
 An RP delegates its user identification and authentication to the IdP, which issues an \emph{identity token} (such as ``id token'' in OIDC and ``identity assertion'' in SAML) for a user to visit the RP.
 For instance, when an OIDC user initiates a login to visit an RP,
 the target RP constructs an identity-token request with its identity (denoted as $ID_{RP}$) and redirects it to a trusted IdP.
-After authenticating this user, the IdP issues an identity token binding the identities of the authenticated user and the target RP (i.e., both $ID_U$ and $ID_{RP}$), which is returned to the user and then forwarded to the RP.
+After authenticating this user, the IdP issues an identity token binding the identities of the authenticated user and the target RP (i.e., $ID_U$ and $ID_{RP}$), which is returned to the user and then forwarded to the RP.
 Finally, the RP verifies the identity token to determine whether the token holder is allowed to log in. Thus, a user maintains only one credential for user authentication to the IdP, instead of multiple credentials for visiting different RPs.
 
 %OIDC also provides comprehensive services of identity management, by enabling an IdP to enclose more user attributes in identity tokens, along with the authenticated user's identity. The attributes (e.g., age and hobby) are maintained at the IdP and enclosed in identity tokens after a user's authorization \cite{OpenIDConnect,rfc6749}.

@@ -27,7 +27,7 @@ were deployed in the same virtual private cloud and connected to one vSwitch, wh
 %In both settings, the IdP server never directly communicated with RPs.
 
 \noindent {\bf Comparisons.} We split the login flow into three phases for detailed comparisons: (1)
-{\em identity-token requesting} (Steps 1 and 2 in Figure \ref{fig:process}), to construct an identity-token request and send it to the IdP server; (2) {\em identity-token generation} (Step 3 of UPPRESSO), to generate an identity token at the IdP server, while the user authentication and the user-attribute authorization are excluded; and (3) {\em identity-token acceptance} (Step 4), where the RP receives, verifies, and parses the identity token.
+{\em identity-token requesting} (Step 1 in Figure \ref{fig:process}), to construct an identity-token request and send it to the IdP server; (2) {\em identity-token generation} (Step 2 of UPPRESSO), to generate an identity token at the IdP server, while the user authentication and the user-attribute authorization are excluded; and (3) {\em identity-token acceptance} (Step 3), where the RP receives, verifies, and parses the identity token.
 
 In the identity-token requesting phase of UPPRESSO a browser downloads the two scripts,
     as described in Section \ref{sec:web-design}.

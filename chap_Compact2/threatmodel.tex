@@ -64,10 +64,10 @@ for example, to impersonate an honest victim user at honest RPs or link an hones
 \subsection{Assumptions}
 We assume secure communications between honest entities, and the cryptographic primitives are secure. The software stack of an honest entity (e.g., a browser) is correctly implemented to transmit messages to receivers as expected.
 These communication assumptions are realized by the commonly-used mechanisms in popular SSO services
- (e.g., HTTPS/TLS, HTTP session maintenance, and the \verb+postMessage+ HTML5 API in COTS browsers).
+ (e.g., HTTPS/TLS, HTTP session maintenance, and the \verb+postMessage+ HTML5 API in COTS browsers) \cite{OpenIDConnect, rfc6749, SAML,GoogleIdIntegrate,de2014oauth,FettKS14,BrowserID,uber}.
 
 While $PID_{RP}$ but not $ID_{RP}$ is processed by the IdP,
-it requires that no other information about the visited RP is leaked to the IdP,
+it further requires that no other information about the visited RP is leaked to the IdP,
  in the requesting, receiving and forwarding of identity tokens.
 We realize this assumption by specific designs in Section \ref{sec:web-design}.
 Moreover, our work focuses only on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by network traffic analysis or crafted web pages, as they can be prevented by other defenses.

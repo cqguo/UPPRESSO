@@ -79,8 +79,10 @@ From $TK$ the designated honest RP derives \emph{only} the meaningful account be
 
 %We prove that identity tokens in UPPRESSO and the enclosed pseudo-identities satisfy four properties, namely, \emph{RP designation}, \emph{user identification}, \emph{token confidentiality}, and \emph{token integrity}, which together ensure the security of UPPRESSO in the first adversarial scenario.
 
-As mentioned in Section \ref{implementations}, an (honest) RP derives accounts based on \emph{any} signed identity tokens.
-The following proofs of user identification and RP designation assume \emph{malicious} RPs colluding with users,
+As mentioned in Section \ref{implementations}, an (honest) RP directly derives accounts based on \emph{any} signed identity tokens.
+Such operations do not break user identification or RP designation,
+    as proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}.
+The following proofs assume \emph{malicious RPs colluding with users},
                 which attempt to break the security guarantees of UPPRESSO,
 by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 % That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
@@ -89,7 +91,7 @@ by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 Let's assume totally $s$ users and $p$ RPs in UPPRESSO,
     whose identities are denoted as $\mathbbm{ID}_U = \mathbbm{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbbm{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
 There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
-$Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, but $u_{i}$ and $r_{j}$ are kept unknown to adversaries.
+$Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept unknown to adversaries.
 
 
 %\vspace{-0.5mm}
@@ -100,7 +102,8 @@ $Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, but $u_{i}$ and $r_{j}$ are kep
 
 We prove user identification by showing that,
     at any RP designated by $TK$,
-        a meaningless account not belonging to the initiating user will never be derived.
+        a meaningless account not belonging to the initiating user will never be derived,
+         under an adversarial scenario involving malicious adversaries.
 
 \begin{thm}[User Identification] Given unknown $\mathbbm{ID}_U$ and known $\mathbbm{A}cct$,
 for any known $ID_{RP} \in \mathbbm{ID}_{RP}$, 
@@ -122,7 +125,8 @@ When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic cu
 
 Next,
 we prove RP designation by showing that,
-    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
+    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$,
+         under an adversarial scenario involving malicious adversaries.
 
 %\emph{Given $u \in \mathbbm{u}$ and $ID_{RP} \in \mathbbm{ID}_{RP}$, from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, an honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive any $Acct = [u']ID_{RP'}$ where $u' \in \mathbbm{u}$ and $ID_{RP'} \in \mathbbm{ID}_{RP}$.}\label{thm-rp-designation}
 
@@ -279,7 +283,7 @@ Because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b
 \subsection{Account Synchronization}
 \label{account-syn}
 If new users are allowed to register after the initialization,
-in order to distinguish meaningful accounts from meaningless ones,
+in order to distinguish meaningful accounts from meaningless ones in Section 3.3,
  an RP needs to regularly synchronize its accounts from the IdP.
 For example,
     when an account is derived but not in the visited RP's local account list,

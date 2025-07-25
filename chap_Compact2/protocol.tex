@@ -259,7 +259,7 @@ because it is \emph{only} used to calculate $PID_{U}$ as the IdP is signing an i
 \noindent\textbf{Account Synchronization.} 
 % An account belonging to some registered user is \emph{meaningful}, while \emph{meaningless} accounts at an RP do not belong to any registered user.
 Every RP regularly synchronizes all accounts at it from the IdP,
-    and maintains an up-to-date local list of meaningful accounts.
+    and then locally maintains an up-to-date list of meaningful accounts.
 We discuss account synchronization in Section \ref{account-syn}.
 
 \vspace{1mm}
@@ -334,14 +334,18 @@ The RP verifies the signature and the validity period of the token
 %Then, the RP extracts $PID_{RP}$ from the token, checks if it equals $[t]ID_{RP}$,
 and calculates $Acct = [t^{-1}]{PID_U}$.
 
-\item[3.3] Only if it is meaningful in its account list, the RP allows the user to log in as $Acct$.
+\item[3.3] Only if it is meaningful in its local account list, the RP allows the user to log in as $Acct$.
 
 \end{itemize}
 
-
 If any verification fails, this login flow will be terminated immediately.
 For example, the user halts it when receiving an invalid $Cert_{RP}$.
-The IdP rejects an identity-token request in Step 3.3 if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects the token holder if the identity token is invalid or the derived account is meaningless. 
+The IdP rejects an identity-token request if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects the token holder if the identity token is invalid or the derived account is meaningless. 
+
+In Step 3.2, an RP does not check whether $PID_{RP}$ enclosed in the received token is equal to $[t]ID_{RP}$ or not,
+    and this efficient design does not result in attacks, which is proved in Section \ref{analysis-security}.
+Step 3.3 requires the RP to locally maintain an up-to-date account list,
+    and account synchronization is explained in Section \ref{account-syn}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。
