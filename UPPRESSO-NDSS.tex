@@ -1,0 +1,173 @@
+\documentclass[conference]{IEEEtran}
+ % NDSS 2026
+
+
+\usepackage{aligned-overset}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{enumerate}
+\usepackage{bbm}
+\usepackage{latexsym}
+\usepackage{wasysym}
+\usepackage{subfigure}
+\usepackage{amssymb}
+\usepackage{enumitem}
+
+\newcommand\noarxiv[1]{#1}
+
+\newtheorem{thm}{\textbf{\textsc{Theorem}}}
+
+% correct bad hyphenation here
+\hyphenation{target-Origin js-rsa-sign op-tical net-works semi-conduc-tor}
+
+\begin{document}
+
+
+\title{UPPRESSO: Untraceable and Unlinkable Privacy-PREserving Single Sign-On Services}
+
+
+% Chengqian Guo, Jingqiang Lin, Quanwei Cai, Wentian Zhu, Wei Wang, Jiwu Jing, Qiongxiao Wang, Bin Zhao, Fengjun Li
+
+%\author{
+%{\rm Chengqian Guo$^{\sharp}$, \ \ Jingqiang Lin$^{\ddag}$, \ \ Quanwei Cai$^{\P}$, \ \ Wentian Zhu$^{\ddag}$, \ \ Wei Wang$^{\ddag}$,}\\
+%{\rm Jiwu Jing$^{\diamondsuit}$, \ \ Qiongxiao Wang$^{\nabla}$, \ \ Bin Zhao$^{\triangle}$, \ \ Fengjun Li$^{\S}$}\\
+%$\sharp$ Yuncheng University, China\\
+%$\ddag$ School of Cyber Security, University of Science and Technology of China\\
+%$\P$ Beijing Zitiao Network Technology Co., Ltd, China\\
+%${\diamondsuit}$ School of Computer Science \& Technology, University of Chinese Academy of Sciences\\
+%${\nabla}$ Beijing Certification Authority Co., Ltd, China\ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+%$\triangle$ JD.com Silicon Valley R\&D Center, USA\\
+%$\S$  Department of Electrical Engineering \& Computer Science, the University of Kansas, USA}
+
+
+\IEEEoverridecommandlockouts
+\makeatletter\def\@IEEEpubidpullup{6.5\baselineskip}\makeatother
+\IEEEpubid{\parbox{\columnwidth}{
+		Network and Distributed System Security (NDSS) Symposium 2025\\
+		24-28 February 2025, San Diego, CA, USA\\
+		ISBN 979-8-9894372-8-3\\
+		https://dx.doi.org/10.14722/ndss.2025.[23$|$24]xxxx\\
+		www.ndss-symposium.org
+}
+\hspace{\columnsep}\makebox[\columnwidth]{}}
+
+
+
+
+% make the title area
+\maketitle
+
+
+\begin{abstract}
+Single sign-on (SSO) protocols such as OpenID Connect (OIDC),
+allow a user to maintain only the credential for an identity provider (IdP) to log into multiple relying parties (RPs).
+However, SSO introduces privacy threats, as ({\em a}) a curious IdP could trace a user's visits to RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
+This paper presents a privacy-preserving SSO scheme, called UPPRESSO, to protect a user's online profile against both (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs colluding with other users.
+An identity-transformation approach is proposed to generate untraceable ephemeral pseudo-identities for an RP and a user in a login, %(denoted as $PID_{RP}$ and $PID_U$, respectively)
+ from which the visited RP derives a permanent account for the user, %(denoted as $Acct$),
+  while these identity transformations provide unlinkability among the logins visiting different RPs.
+We built the UPPRESSO prototype providing OIDC-compatible SSO services, accessed from a commercial-off-the-shelf browser without plug-ins or extensions.
+%Moreover, this approach protects the identities of a user and the visited RP,
+%We built a prototype of UPPRESSO on top of MITREid Connect, an open-source SSO system.
+The extensive evaluations show that it fulfills the security and privacy requirements of SSO with reasonable overheads.
+%Compared with existing SSO protocols, UPPRESSO is among the first to prevent both types of privacy threats. Compared with existing privacy-preserving identity federation schemes, UPPRESSO supports all the desired SSO features while providing sufficient privacy protections.  % 省去，放到Introduction即可
+% UPPRESSO proposes a novel identity-transformation approach. In each SSO login, an \emph{ephemeral pseudo-identity} of an RP, denoted as $PID_{RP}$, is negotiated between a user and the RP. $PID_{RP}$ is sent to the IdP and designated in the identity token, so that the IdP is not aware of the visited RP.
+% The IdP then uses $PID_{RP}$ to transform the user's permanent identity $ID_U$, into an ephemeral user pseudo-identity $PID_U$, in the token.
+% On receiving the identity token, %%%% the RP just waits for it.
+% the RP transforms $PID_U$ into a \emph{permanent account} of the user, denoted as $Acct$. Given a user, the account at each RP is unique and different from $ID_U$, %%%% for different users, the accounts may be the same.
+%so colluding RPs cannot link a user's identities across RPs.
+\end{abstract}
+
+
+\IEEEpeerreviewmaketitle
+
+%\begin{IEEEkeywords}
+%Single sign-on, security, privacy. %, trace, linkage
+%\end{IEEEkeywords}
+
+%\footnotetext[1]{Chengqian Guo participated in this work since his PhD study in Institute of Information Engineering, Chinese Academy of Sciences.}
+
+
+\setcounter{footnote}{0}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+
+\input{chap_Compact2/introduction.tex}
+\input{chap_Compact2/background.tex}
+\input{chap_Compact2/challenges.tex}
+\input{chap_Compact2/threatmodel.tex}
+\input{chap_Compact2/protocol.tex}
+\input{chap_Compact2/analysis-no-dy.tex}
+
+%\input{chap_Compact/uid.tex}
+
+\input{chap_Compact2/implementation.tex}
+\input{chap_Compact2/evaluation.tex}
+\input{chap_Compact2/discussion.tex}
+\input{chap_Compact2/conclusion.tex}
+
+
+
+
+% conference papers do not normally have an appendix
+
+
+% use section* for acknowledgement
+%\section*{Acknowledgment}
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtranS}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+%\begin{thebibliography}{1}
+
+
+%\input{chap_Compact/ethics.tex}
+
+
+%\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{ref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\noarxiv{\input{chap_Compact/appendix-rp-collision.tex}}
+
+%\input{chap_Compact/appendix.tex}
+
+
+% that's all folks
+\end{document}
+
+
+
+
+%几点思考：
+%1. PID_RP完全由RP来决定，是不是可行？应该是不可行的，因为RP可能是恶意的，此时PID_RP并不是算出来，而是来自于另一个会话、就可以把这个Token拿到另一个会话。相当于，在我们的模型中，PID_RP = [t]ID_RP，必须是这样的一个计算步骤，否则各种证明并不成立。这个计算步骤，需要由honest程序来执行。
+%相当于，恶意用户与honest RP登录（会话A），将其PID_RP拿去给另一个会话：恶意RP与honest用户的会话B；然后，把会话B的authorization code拿给会话A的恶意用户、恶意用户传给honest RP，登录结果就是有问题的：恶意用户以honest用户的名义、登录了honest RP。
+%2. PID_RP不让用户知道，行不行？因为上面的攻击中，前提：需要会话A的恶意用户拿到PID_RP。
+%如果用户不知道，RP单独与IdP联系、在拿到authorization code之后、RP再发送PID_RP去取Token。
+%则有如下攻击：恶意用户与honest RP登录（会话A）、honest用户与恶意RP（会话B）
+%终究IdP在给RP发送Token的时候，Honest RP还是应该比较一下PID_RP？否则，就是乱用了。

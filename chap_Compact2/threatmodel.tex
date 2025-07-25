@@ -1,31 +1,30 @@
-\section{The Designs of \usso}
+\section{The Designs of UPPRESSO}
 \label{sec:UPPRESSO}
 
-%This section presents the threat model and assumptions, the identity-transformation algorithms, and finally the \usso\ protocol with designs specific for web applications.
+%This section presents the threat model and assumptions, the identity-transformation algorithms, and finally the UPPRESSO protocol with designs specific for web applications.
 
 \subsection{Threat Model}
 \label{subsec:threatmodel}
-The system consists of an honest-but-curious IdP, as well as several honest or malicious RPs and users. This threat model is in line with widely-used SSO services \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
+The system consists of an honest-but-curious IdP, as well as several honest or malicious RPs and users. This threat model is in line with widely-used SSO services in the Internet \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
 
 %\vspace{0.5mm}
 \noindent \textbf{Honest-but-curious IdP.} The IdP strictly follows the protocols,
- while remaining interested in learning about user activities.
-For example, it could store received messages to infer the relationship between $ID_U$, $ID_{RP}$, $PID_{U}$, and $PID_{RP}$.
+ while remaining interested in learning about a user's login activities.
+For example, it could store received messages to infer the relationship among $ID_U$, $ID_{RP}$, $PID_{U}$, and $PID_{RP}$.
 It never actively violates the protocols.
 % so a script downloaded from the IdP also strictly follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
-We discuss malicious IdPs in Section \ref{sec:discussion}.
 
 The IdP maintains the private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
-and adversaries cannot forge such messages.
+and adversaries cannot forge such signed messages.
 
 %\vspace{0.5mm}
-\noindent \textbf{Malicious users.} Adversaries could control a set of users by stealing their credentials or registering Sybil users in \usso.
- Their objective \cite{SPRESSO, FettKS14} is to (\emph{a}) impersonate a victim user at honest RPs or (\emph{b}) entice an honest user to log into an honest RP under another user's account.
-A malicious user could modify, insert, drop, or replay messages or even behave arbitrarily in login flows.
+\noindent \textbf{Malicious users.} Adversaries could control a set of users by stealing their credentials or registering Sybil users in UPPRESSO.
+ Their objective is to (\emph{a}) impersonate a victim user at honest RPs or (\emph{b}) entice an honest user to log into an honest RP under another user's account  \cite{SPRESSO, FettKS14}.
+A malicious user could modify, insert, drop, or replay messages or even behave arbitrarily.
 
 \noindent \textbf{Malicious RPs.}
 Adversaries could control a set of RPs by registering at the IdP as an RP or exploiting vulnerabilities to compromise some RPs.
-Malicious RPs could behave arbitrarily, attempting to compromise the security or privacy guarantees of \usso.
+Malicious RPs could behave arbitrarily, attempting to compromise the security or privacy guarantees of UPPRESSO.
 For example, they could manipulate $PID_{RP}$ and $t$ in a login, attempting to (\emph{a}) entice honest users to return an identity token that could be accepted by some honest RP or (\emph{b}) affect the generation of $PID_U$ to further analyze the relationship between $ID_U$ and $PID_U$.
 
 %\vspace{0.5mm}
@@ -48,26 +47,34 @@ for example, to impersonate an honest victim user at honest RPs or link an hones
 %This secret should be held \emph{only} by the user; otherwise, colluding adversaries could eventually link these accounts.
 %If the relationship of these accounts is not masked by the user secret or in extra fully-trusted servers \cite{miso},
 % the colluding IdP and RPs will eventually link them.
-%Privacy-preserving identity federation depends on a long-term user secret and then a user needs to install a browser extension or plug-in to process this secret. \usso\ is not designed to prevent such collusive attacks,
+%Privacy-preserving identity federation depends on a long-term user secret and then a user needs to install a browser extension or plug-in to process this secret. UPPRESSO is not designed to prevent such collusive attacks,
  %and a user is authenticated only \emph{once} in the login flow (see Section \ref{subsec-solutions}).
 %A user's identity %at the IdP %obliviously 
 %is transformed into accounts at RPs,  %which are 
 %not related to any user secrets or credentials such as passwords, one-time passwords, and MFA devices.
-%so that \emph{a COTS browser works well as the user agent in \usso\ where the IdP is the only trusted entity}.
+%so that \emph{a COTS browser works well as the user agent in UPPRESSO where the IdP is the only trusted entity}.
 
 
 % on the other hand, MISO protects user privacy against the IdP-RP collusive attack, but introducing an extra fully-trusted mixer server in the identity-token generation.
 %
 
-%Finally, the security and privacy properties of \usso\ are guaranteed against different combinations of the above adversaries.
+%Finally, the security and privacy properties of UPPRESSO are guaranteed against different combinations of the above adversaries.
 %It implements secure SSO services against colluding users and RPs, while preventing (\emph{a}) IdP-based login tracing by an honest-but-curious IdP and (\emph{b}) RP-based identity linkage by colluding RPs and users.
 
 \subsection{Assumptions}
-We assume secure communications between honest entities (e.g., HTTPS), and the cryptographic primitives are secure. The software stack of an honest entity (e.g., a browser) is correctly implemented to transmit messages to receivers as expected.
+We assume secure communications between honest entities, and the cryptographic primitives are secure. The software stack of an honest entity (e.g., a browser) is correctly implemented to transmit messages to receivers as expected.
+These communication assumptions are realized by the commonly-used mechanisms in popular SSO services
+ (e.g., HTTPS/TLS, HTTP session maintenance, and the \verb+postMessage+ HTML5 API in COTS browsers).
 
-\usso\ is designed for users who value privacy,
-        or provides an option for such users.
+While $PID_{RP}$ but not $ID_{RP}$ is processed by the IdP,
+it requires that no other information about the visited RP is leaked to the IdP,
+ in the requesting, receiving and forwarding of identity tokens.
+We realize this assumption by specific designs in Section \ref{sec:web-design}.
+Moreover, our work focuses only on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by network traffic analysis or crafted web pages, as they can be prevented by other defenses.
+%For example, FedCM \cite{FedCM} proposes to disable iframe and third-party cookies in SSO, which could be exploited to track users.
+
+
+UPPRESSO is designed for users who value privacy,
+        or provides an effective option for such users.
 So privacy leakages due to re-identification by distinctive attributes across RPs are out of our scope.
-In \usso\ a user never authorizes the IdP to enclose distinctive attributes, such as telephone number, Email address, etc., in tokens or sets such attributes at any RP.
-Meanwhile, our work focuses only on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by traffic analysis or crafted web pages, as they can be prevented by other defenses.
-For example, FedCM \cite{FedCM} proposes to disable iframe and third-party cookies in SSO, which could be exploited to track users.
+In UPPRESSO a user never authorizes the IdP to enclose distinctive attributes, such as telephone number, Email address, etc., in tokens or sets such attributes at any RP.

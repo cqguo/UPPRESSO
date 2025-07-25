@@ -1,3 +1,37 @@
+@inproceedings{up-sso,
+    title = {{UP-SSO: Enhancing the user privacy of SSO by integrating PPID and SGX}},
+    author = {C. Guo and F. Lang and Q. Wang and J. Lin},
+    booktitle = {International Conference on Advanced Computing and Endogenous Security (ICACES)},
+    year = {2021}}
+
+@inproceedings{websso-csf,
+  author    = {D. Fett and
+               R. K{\"{u}}sters and
+               G. Schmitz},
+    title = {{The Web SSO standard OpenID Connect: In-depth formal security analysis and security guidelines}},
+    booktitle = {30th IEEE Computer Security Foundations Symposium (CSF)},
+    year = {2017},
+    pages = {189-202}}
+
+
+@inproceedings{sok-oprf,
+    author = {S. Casacuberta and J. Hesse and A. Lehmann},
+    title = {{SoK: Oblivious pseudorandom functions}},
+    booktitle = {7th IEEE European Symposium on Security and Privacy (EuroS\&P)},
+    year = {2022}}
+
+@misc{uppresso-arxiv,
+    author = {C. Guo and J. Lin and Q. Cai and W. Wang and F. Li and Q. Wang and J. Jing and B. Zhao},
+    title = {{UPPRESSO: Untraceable and unlinkable privacy-preserving single sign-on services}},
+    howpublished = {\url{https://arxiv.org/abs/2110.10396}},
+    year = {2022}}
+
+@inproceedings{ARPSSO,
+    author = {J. He and L. Lei and Y. Wang and P. Wang and J. Jing},
+    title = {{ARPSSO: An OIDC-compatible privacy-preserving SSO scheme based on RP anonymization}},
+    booktitle = {29th European Symposium on Research in Computer Security (ESORICS)},
+    year = {2024}}
+
 @article{ODoH,
     author = {S. Singanamalla and S. Chunhapanya and J. Hoyland and M. Vavrusa and T. Verma and P. Wu and M. Fayed and K. Heimerl and N. Sullivan and C. Wood},
     title = {{Oblivious DNS over HTTPS (ODoH): A practical privacy enhancement to DNS}},
@@ -6,6 +40,13 @@
   number    = {4},
   pages     = {575-592},
   year      = {2021}}
+
+@inproceedings{ZKP-GPU,
+    title = {{GZKP: A GPU accelerated zero-knowledge proof system}},
+    author = {W. Ma and Q. Xiong and X. Shi and X. Ma and H. Jin and H. Kuang and M. Gao and Y. Zhang and H. Shen and W. Hu},
+    booktitle = {28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS)},
+    pages = {340-353},
+    year = {2023}}
 
 @inproceedings{POIDC,
     title = {{Privacy-preserving OpenID Connect}},
@@ -67,7 +108,10 @@
     author ={Z. Zhang and C. Xu and C. Jiang and K. Chen},
     title = {{TSAPP: Threshold single-sign-on authentication preserving privacy}},
     journal   = {IEEE Transactions on Dependable and Secure Computing},
-    volume = {Early Access}}
+    volume = {21},
+    number={4},
+    pages={1515-1527},
+    year = {2024}}
 
 @article{DPP-SSO,
     author = {O. Mir and M. Roland and R. Mayrhofer and D. Meghias},
@@ -462,13 +506,17 @@ note = {Accessed August 20, 2019}
   year      = {2015},
 }
 
+@misc{uber,
+    title={{OIDC Web SDK}},
+    note={Accessed April 10, 2025},
+    author={{Uber Developers}},
+    howpublished={\url{https://developer.uber.com/docs/consumer-identity/oidc/web}}}
 
-@Misc{Google,
-howpublished = {\url{https://developers.google.com/identity/}},
-title = {{Google Identity Platform}},
-note = {Accessed August 20, 2019},
-author = {{Google Developers Blog}}
-}
+@misc{GoogleIdIntegrate,
+    howpublished={\url{https://developers.google.com/identity/gsi/web/guides/integrate/}},
+title = {{Google Identity: Integration considerations}},
+note = {Accessed January 13, 2025},
+author = {{Google for Developers}}}
 
 @manual{DynamicRegistration,
   title={{OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1}},
@@ -476,6 +524,13 @@ author = {{Google Developers Blog}}
   organization={The OpenID Foundation},
   year={2014}
 }
+
+@misc{sri,
+    author = {{World Wide Web Consortium (W3C)}},
+    title = {Subresource Integrity},
+    howpublished = {\url{http://www.w3.org/TR/2016/REC-SRI-20160623/}},
+    note = {Accessed April 10, 2025}}
+
 
 @misc{sop,
     AUTHOR = {{W3C Web Security}},
@@ -586,7 +641,7 @@ author = {Mozilla Developer Network (MDN)}
 
 
 @manual{SAML,
-  title={{Profiles for the OASIS security assertion markup language (SAML) V2.0}},
+  title={{Profiles for the OASIS security assertion markup language (SAML) v2.0}},
   author={Hughes, J. and Cantor, S. and Hodges, J. and Hirsch, F. and Mishra, P. and Philpott, R. and Maler, E.},
   organization={OASIS},
   year={2005}
@@ -654,6 +709,7 @@ author = {Mozilla Developer Network (MDN)}
   organization={Internet Engineering Task Force},
   year      = {2012},
 }
+
 
 
 
@@ -748,7 +804,7 @@ title = {The top 500 sites on the web},
 @Misc{MITREid,
 author = {J. Richer},
 howpublished = {\url{http://mitreid-connect.github.io/index.html}},
-title = {{MITREid Connect}},
+title = {{MITREid Connect v1.3.3}},
 note = {Accessed August 20, 2021}
 }
 
@@ -1473,6 +1529,14 @@ author = {J. Eisinger and E. Stark},
   title     = {{RFC 6749: The OAuth 2.0 authorization framework}},
   organization={Internet Engineering Task Force},
   year      = {2012},
+}
+
+
+@manual{ohttp-rfc,
+  author    = {M. Thomson and C. Wood},
+  title     = {{RFC 9458: Oblivious HTTP}},
+  organization={Internet Engineering Task Force},
+  year      = {2024},
 }
 
 @inproceedings{zkp-benchmark,

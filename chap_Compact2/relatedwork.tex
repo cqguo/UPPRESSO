@@ -1,0 +1,32 @@
+\subsection{Account Synchronization}
+\
+If new users are allowed to register at a generalized UppreSSO system after the initialization,
+in order to distinguish meaningful accounts from meaningless ones,
+ an RP needs to regularly synchronize its accounts from the IdP,
+ especially when it does not check $PID_{RP}$ before accepting an identity token.
+For example,
+    when an account is derived but not in the visited RP's local account list,
+        the RP will contact the IdP to synchronize accounts.
+Then, after the instant account synchronization, 
+    the token holder will be rejected
+     if the derived account is still considered as meaningless (i.e., not in the RP's local account list).
+
+In this case, an RP cannot imperceptively treat the token holder with a derived account not in the list
+ as a newly-registered user.
+Although a malicious user cannot log into this RP as any meaningful account belonging to other users according to Theorems \ref{theorem-uid-wo-checking} and \ref{theorem-rp-wo-checking},
+ she could log into such an RP as an \emph{identical} meaningless account in several logins.
+For example, both $\hat{t}$ and $\check{t}$ ($\check{t} \neq \hat{t}$) are reused in these logins,
+    as analyzed in the proof of Theorem \ref{theorem-uid-wo-checking}.
+Then, this user actually owns multiple accounts at one RP.
+%\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
+
+
+This instant account synchronization can be alternatively finished by conditional $PID_{RP}$ checking as below.
+If an RP derives some account not in its local account list from a signed token without checking $PID_{RP}$,
+    it then checks $PID_{RP}$ in this case:
+     If $PID_{RP}$ enclosed in the token is equal to $\mathcal{BL}(x,t,\omega)$,
+                this account is asserted to belong to a newly-registered user
+                and the RP updates its account list locally;
+    otherwise, it rejects this token.
+
+

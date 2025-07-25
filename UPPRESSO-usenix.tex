@@ -54,10 +54,15 @@
 %\usepackage[compatible]{algpseudocode}
 
 
+
 \renewcommand{\thefootnote}{*}
 
 \newcommand\usso{\textsf{UPPRESSO}}
 \newcommand\dyu{{DYU}}
+
+%\newcommand\noarxiv[1]{}            % 删去相关内容，用于放到arxiv
+\newcommand\noarxiv[1]{#1}
+
 
 \newtheorem{theorem}{\textsc{Theorem}}
 \newtheorem{thm}{\textsc{Theorem}}
@@ -89,7 +94,7 @@
 %\author{
 %{\rm Chengqian Guo$^{\sharp}$, \ \ Jingqiang Lin$^{\ddag}$, \ \ Quanwei Cai$^{\P}$, \ \ Wentian Zhu$^{\ddag}$, \ \ Wei Wang$^{\ddag}$,}\\
 %{\rm Jiwu Jing$^{\diamondsuit}$, \ \ Qiongxiao Wang$^{\nabla}$, \ \ Bin Zhao$^{\triangle}$, \ \ Fengjun Li$^{\S}$}\\
-%$\sharp$ Shenyang Aircraft Design \& Research Institute, China\\
+%$\sharp$ Yuncheng University, China\\
 %$\ddag$ School of Cyber Security, University of Science and Technology of China\\
 %$\P$ Beijing Zitiao Network Technology Co., Ltd, China\\
 %${\diamondsuit}$ School of Computer Science \& Technology, University of Chinese Academy of Sciences\\
@@ -101,11 +106,14 @@
 
 \maketitle
 \begin{abstract}
-Single sign-on (SSO) allows a user to maintain only the credential at an identity provider (IdP) to log into multiple relying parties (RPs).
-However, SSO introduces privacy threats, as ({\em a}) a curious IdP could track a user's visits to all RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
-This paper presents a privacy-preserving SSO protocol, called \usso, to protect an honest user's online profile against (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs colluding with other users.
-\usso\ proposes an identity-transformation approach to generate untraceable \emph{ephemeral pseudo-identities} for an RP and a user (denoted as $PID_{RP}$ and $PID_U$, respectively) from which the target RP derives a \emph{permanent account} for the user (denoted as $Acct$), while the transformations provide unlinkability.
-This approach protects the unique identities of the user and the RPs that she requests to log into while working compatibly with widely-deployed SSO services and satisfying all security requirements.
+Single sign-on (SSO) allows a user to maintain only the credential for an identity provider (IdP) to log into multiple relying parties (RPs).
+However, SSO introduces privacy threats, as ({\em a}) a curious IdP could track a user's all visits to RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
+This paper presents a privacy-preserving SSO scheme, called \usso, to protect an honest user's online profile against (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs colluding with other users.
+\usso\ proposes an \emph{identity-transformation} approach to generate \emph{untraceable} \emph{ephemeral pseudo-identities} for an RP and a user %(denoted as $PID_{RP}$ and $PID_U$, respectively)
+ from which the target RP derives a \emph{permanent account} for the user, %(denoted as $Acct$),
+  while the transformations also provide \emph{unlinkability}.
+This approach protects the identities of the user and the target RPs in a login flow, while working compatibly with widely-deployed SSO protocols
+        and providing services accessed from a commercial-off-the-shelf browser without plug-ins or extensions. %and satisfying security requirements.
 %Compared with existing SSO protocols, \usso\ is among the first to prevent both types of privacy threats. Compared with existing privacy-preserving identity federation schemes, \usso\ supports all the desired SSO features while providing sufficient privacy protections.  % 省去，放到Introduction即可
 % \usso\ proposes a novel identity-transformation approach. In each SSO login, an \emph{ephemeral pseudo-identity} of an RP, denoted as $PID_{RP}$, is negotiated between a user and the RP. $PID_{RP}$ is sent to the IdP and designated in the identity token, so that the IdP is not aware of the visited RP.
 % The IdP then uses $PID_{RP}$ to transform the user's permanent identity $ID_U$, into an ephemeral user pseudo-identity $PID_U$, in the token.
@@ -127,7 +135,7 @@ with reasonable overheads.
 
 \input{chap_Compact/introduction.tex}
 \input{chap_Compact/background.tex}
-\input{chap_Compact/relatedwork.tex}
+\noarxiv{\input{chap_Compact/relatedwork.tex}}
 \input{chap_Compact/challenges.tex}
 \input{chap_Compact/threatmodel.tex}
 \input{chap_Compact/protocol.tex}
@@ -184,9 +192,21 @@ with reasonable overheads.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{chap_Compact/appendix-rp-collision.tex}
+%\noarxiv{\input{chap_Compact/appendix-rp-collision.tex}}
+
 %\input{chap_Compact/appendix.tex}
 
 
 % that's all folks
 \end{document}
+
+
+
+
+%几点思考：
+%1. PID_RP完全由RP来决定，是不是可行？应该是不可行的，因为RP可能是恶意的，此时PID_RP并不是算出来，而是来自于另一个会话、就可以把这个Token拿到另一个会话。相当于，在我们的模型中，PID_RP = [t]ID_RP，必须是这样的一个计算步骤，否则各种证明并不成立。这个计算步骤，需要由honest程序来执行。
+%相当于，恶意用户与honest RP登录（会话A），将其PID_RP拿去给另一个会话：恶意RP与honest用户的会话B；然后，把会话B的authorization code拿给会话A的恶意用户、恶意用户传给honest RP，登录结果就是有问题的：恶意用户以honest用户的名义、登录了honest RP。
+%2. PID_RP不让用户知道，行不行？因为上面的攻击中，前提：需要会话A的恶意用户拿到PID_RP。
+%如果用户不知道，RP单独与IdP联系、在拿到authorization code之后、RP再发送PID_RP去取Token。
+%则有如下攻击：恶意用户与honest RP登录（会话A）、honest用户与恶意RP（会话B）
+%终究IdP在给RP发送Token的时候，Honest RP还是应该比较一下PID_RP？否则，就是乱用了。
