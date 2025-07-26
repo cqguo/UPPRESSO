@@ -122,6 +122,7 @@ where $ID_{\hat{U}} \neq ID_{\check{U}}$.
 
 When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G}$.
 \hfill $\square$
+
 \vspace{1.5mm}
 
 Next,
@@ -149,6 +150,7 @@ If adversaries could find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$ and $t_2$ wh
 Or, the adversaries attempt to find $PID_{RP}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ satisfying that  $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
         but this cannot be solved due to unknown $ID_{U_{i}}$.
 \hfill $\square$
+
 %\vspace{1mm}
 
 \subsection{Privacy against IdP-based Login Tracing}
@@ -173,7 +175,9 @@ We prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on 
 \noindent\textbf{\textsc{Proof.}}
 %$\mathbb{E}$ is a finite cyclic group, and the number of points on $\mathbb{E}$ is $n$.
 As $G$ is a generator on $\mathbb{E}$ of order $n$, $ID_{RP} = [r]G$ is also a generator of order $n$.
-As $t$ is uniformly-random in $\mathbb{Z}_n$ and kept unknown, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is uniformly-random on $\mathbb{E}$. \hfill $\square$
+As $t$ is uniformly-random in $\mathbb{Z}_n$ and kept unknown, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is uniformly-random on $\mathbb{E}$.
+\hfill $\square$
+
 \vspace{1.5mm}
 
 \noarxiv{This property actually has been proved in the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved} as obliviousness, where the OPRF server works similarly to the IdP and learns nothing about a client's inputs or outputs of the evaluated pseudo-random function (i.e., $ID_{RP}$ or $Acct$ in UPPRESSO).}
@@ -295,7 +299,7 @@ Then, after the instant account synchronization,
 
 An RP cannot imperceptively treat the token holder with an account not in the list
  as a newly-registered user.
-Although a malicious user cannot log into this RP as any meaningful account belonging to other users according to Theorems \ref{thm-u-id} and \ref{thm-rp-designation},
+Although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorems \ref{thm-u-id} and \ref{thm-rp-designation},
  she could log into such an RP as a meaningless but identical account in multiple logins.
 For example, both $\hat{t}$ and $\check{t}$ ($\check{t} \neq \hat{t}$) are reused in these logins,
     as analyzed in the proof of Theorem \ref{thm-u-id}.

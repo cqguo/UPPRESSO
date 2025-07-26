@@ -15,7 +15,7 @@ unless $Acct_{i,j} = \mathcal{F}_{Acct\ast}(s_i,ID_{U_i}, ID_{RP_j})$ is adopted
 In this case,
     a browser extension or plug-in is required
             to handle such a user secret,
-             and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefer the strategy.
+             and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefer this strategy.
 Besides, if the user secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.
 Alternatively, MISO \cite{miso} introduces an \emph{extra fully-trusted mixer server} other than the IdP to keep such a long-term secret,
             to calculate user pseudo-identities (or accounts) in each login.
@@ -25,7 +25,7 @@ Then, in MISO the mixer server can track all users' login activities,
 On the contrary,
     UPPRESSO is designed to provide privacy-preserving SSO services accessed from COTS browsers without extra trusted servers,
         at the cost of user privacy vulnerable to IdP-RP collusive attacks.
-This strategy offers an options for some users.
+Our strategy offers an options for different users.
 
 
 %UPPRESSO assumes an honest IdP, and the user-i script downloaded from IdP servers is also honest; otherwise, it might directly disclose the identities of visited RPs to the IdP.
@@ -90,7 +90,7 @@ otherwise, it implies two colluding RPs could link a user's accounts across thes
 
 %\vspace{0.75mm}
 \noindent \textbf{Restriction of the user-r script's origin.}
-The user-i script forwards identity tokens to the user-r script, and the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient of the forwarded identity tokens, to ensure that the tokens will be sent to the intended $Enpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
+The user-i script forwards tokens to the user-r script, and the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient of the forwarded identity tokens, to ensure that the tokens will be sent to the intended $Enpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
 The user-r script's origin must accurately match the targetOrigin to receive tokens.
 
 The targetOrigin mechanism does not check the whole URL path in $Enpt_{RP}$, but introduces no {\em additional} risk.

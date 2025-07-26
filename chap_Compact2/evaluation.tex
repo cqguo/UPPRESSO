@@ -56,9 +56,12 @@ MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 63 ms, 179 ms, and 190
 
 Regarding identity-token requesting, %the user browser loads the RP's webpage and starts the login request.
 the RP of MITREid Connect immediately constructs an identity-token request. %MITREid Connect only needs 10 ms but UPPRESSO requires 271 ms.
-UPPRESSO incurs overheads in opening a new browser window and downloading the scripts.\footnote{This pop-up overhead can be reduced %by silently conducting these operations when the user visits the RP website, or
-by browser extensions.
-We have implemented such a browser extension while keeping the IdP and RPs unmodified, and the supplementary experiments showed a reduction of (\emph{a}) about 90 ms in the virtual private cloud setting and (\emph{b}) 260 ms when accessed remotely.}
+UPPRESSO incurs overheads in opening a new browser window and downloading the scripts.
+%
+%\footnote{This pop-up overhead can be reduced %by silently conducting these operations when the user visits the RP website, or
+%by browser extensions.
+%We have implemented such a browser extension while keeping the IdP and RPs unmodified, and the supplementary experiments showed a reduction of (\emph{a}) about 90 ms in the virtual private cloud setting and (\emph{b}) 260 ms when accessed remotely.}
+%
 In SPRESSO the RP needs to obtain information about the IdP % 's public key %(SPRESSO allows a user to assign any IdPs before login without initial registrations)
 and encrypt its domain using an ephemeral key, resulting in extra overheads.
 
