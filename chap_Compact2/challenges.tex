@@ -3,8 +3,7 @@
 
 In this section,
     we firstly list the security requirements of SSO,
-        explain the identity dilemma in identity tokens,
-        and finally present the identity-transformation approach.
+        and present the identity-transformation approach.
 
 \subsection{Security Requirements for SSO Services}
 \label{subsec:basicrequirements}
@@ -24,7 +23,7 @@ are also required for confidentiality of tokens \cite{GoogleIdIntegrate,de2014oa
 Meanwhile, in each login the IdP issues an identity token that (\emph{a}) specifies the target RP (i.e., \emph{RP designation}) and (\emph{b}) identifies the authenticated user who requests this token (i.e., \emph{user identification}),
         by the enclosed (pseudo-)identities of RP and user \cite{OpenIDConnect,rfc6749,SAML} (see Section \ref{analysis-security} for details).
 RP designation prevents malicious RPs from replaying received identity tokens to gain illegal access to other honest RPs as victim users.
-Therefore, an honest RP checks the RP (pseudo-)identity enclosed in a token before accepting it 
+Thus, an RP checks the RP (pseudo-)identity enclosed in a token before accepting it 
 \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,up-sso,miso}
  and then allows the token holder to log in as the specified (pseudo-)identity (i.e., account).
 
@@ -59,8 +58,7 @@ As analyzed in Section \ref{subsec-solutions},
         or introduce an extra fully-trusted server to process the identities of RP and user before an identity token is issued.
        % \footnote{In privacy-preserving identity federation, a user by herself keeps a long-term secret to mask the relationship of these (pseudo-)identities and accounts.}
 
-On the contrary,
-     UPPRESSO attempts to \emph{simultaneously} transform the identities of RP and user in each login,
+UPPRESSO attempts to \emph{simultaneously} transform the identities of RP and user in each login,
         without extra trusted servers more than the honest-but-curious IdP,
          to provide untraceable and unlinkable SSO service.
 %
@@ -126,7 +124,7 @@ labeled arrows denote the transformations of (pseudo-)identities.
 $PID_{RP}$ and $PID_{U}$ are ephemeral;
     otherwise, the IdP could learn the visited RP.
 $PID_{U,j}$ for visiting different RPs are independent of each other;
-    otherwise, colluding RPs could learn something on $ID_U$ from the user pseudo-identities and link the logins.
+    otherwise, colluding RPs could learn something on $ID_U$ from $PID_{U,j}$s and link the logins.
 
 \begin{figure}[tb]
   \centering
@@ -136,7 +134,7 @@ $PID_{U,j}$ for visiting different RPs are independent of each other;
 \end{figure}
 
 In privacy-preserving SSO services with the identity transformations,
-    an identity token explicitly binds $PID_{RP_j} = \mathcal{F}_{PID_{RP}}(ID_{RP_j})$ but implicitly designates only the RP with $ID_{RP_j}$.
+    an identity token \emph{explicitly binds} $PID_{RP_j} = \mathcal{F}_{PID_{RP}}(ID_{RP_j})$ but \emph{implicitly designates} only the RP with $ID_{RP_j}$.
 The following properties are required for the identity transformations:
 \begin{itemize}
 \setlength{\topsep}{0pt}

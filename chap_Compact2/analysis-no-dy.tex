@@ -7,13 +7,13 @@ in this section we prove security (i.e., user identification and RP designation)
 
 \subsection{Adversarial Scenarios}
 
-Based on our design goals %(i.e., the desired security and privacy guarantees)
- and the potential adversaries discussed in Section \ref{subsec:threatmodel}, we consider three adversarial scenarios as below
+According to our design goals %(i.e., the desired security and privacy guarantees)
+ and the potential adversaries listed in Section \ref{subsec:threatmodel}, we consider three adversarial scenarios as below
  and the security and privacy guarantees are proved against different adversaries.
 
 
 %\noindent\textbf{Impersonation and identity injection against security.}
-Security (i.e., user identification and RP designation) is proved against malicious RPs and users.
+Security (i.e., user identification and RP designation) is proved against \emph{malicious RPs and users}.
  Malicious RPs and users could collude \cite{FettKS14,BrowserID,SPRESSO},
   attempting to (\emph{a}) impersonate an honest user to log into some honest RP
    or (\emph{b}) entice an honest user to log into an honest RP under another's account.
@@ -23,10 +23,11 @@ Provided that the security properties of UPPRESSO are satisfied,
     we analyze the privacy properties \emph{only} for successful logins
     because no meaningful account is derived in an unsuccessful login
 where the initiating user or the target RP deviates from the specifications.
-It make nonsense to track login activities resulting in meaningless accounts.
+It makes no sense to track login activities resulting in meaningless accounts.
 Therefore,
     an \emph{honest-but-curious} is considered in the proof of IdP untraceability,
-        while RP unlinkability is analyzed against \emph{honest-but-colluding} RPs and users.
+while RP unlinkability is analyzed against \emph{honest-but-colluding} RPs and users
+ which follow the protocols but share their information.
 
 %\noindent\textbf{Login tracing by an IdP.}
 %The honest-but-curious IdP tries to infer the identities of the RPs being visited by an honest user \cite{BrowserID, SPRESSO}.
@@ -79,10 +80,11 @@ From $TK$ the designated honest RP derives \emph{only} the meaningful account be
 
 %We prove that identity tokens in UPPRESSO and the enclosed pseudo-identities satisfy four properties, namely, \emph{RP designation}, \emph{user identification}, \emph{token confidentiality}, and \emph{token integrity}, which together ensure the security of UPPRESSO in the first adversarial scenario.
 
-As mentioned in Section \ref{implementations}, an (honest) RP directly derives accounts based on \emph{any} signed identity tokens.
-Such operations do not break user identification or RP designation,
-    as proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}.
-The following proofs assume \emph{malicious RPs colluding with users},
+User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively.
+As mentioned in Section \ref{implementations}, an (honest) RP directly derives accounts based on any signed identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
+So we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ in the proofs.
+Moreover,
+the proofs assume \emph{malicious RPs colluding with users},
                 which attempt to break the security guarantees of UPPRESSO,
 by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 % That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
@@ -102,8 +104,7 @@ $Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are k
 
 We prove user identification by showing that,
     at any RP designated by $TK$,
-        a meaningless account not belonging to the initiating user will never be derived,
-         under an adversarial scenario involving malicious adversaries.
+        a meaningless account not belonging to the initiating user will never be derived.
 
 \begin{thm}[User Identification] Given unknown $\mathbbm{ID}_U$ and known $\mathbbm{A}cct$,
 for any known $ID_{RP} \in \mathbbm{ID}_{RP}$, 
@@ -125,8 +126,8 @@ When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic cu
 
 Next,
 we prove RP designation by showing that,
-    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$,
-         under an adversarial scenario involving malicious adversaries.
+    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
+   % under an adversarial scenario involving malicious adversaries.
 
 %\emph{Given $u \in \mathbbm{u}$ and $ID_{RP} \in \mathbbm{ID}_{RP}$, from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, an honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive any $Acct = [u']ID_{RP'}$ where $u' \in \mathbbm{u}$ and $ID_{RP'} \in \mathbbm{ID}_{RP}$.}\label{thm-rp-designation}
 
@@ -155,11 +156,11 @@ Or, the adversaries attempt to find $PID_{RP}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t
 
 The honest IdP would attempt to infer the visited RPs,
 by collecting information from the identity-token requests.
-It does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except its \emph{ephemeral} pseudo-identity $PID_{RP}$.
+It does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
 We prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on $\mathbb{E}$ to the IdP,
-    so 
- it cannot (\emph{a}) link multiple logins visiting an RP, or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
+    and then
+ it cannot (\emph{a}) link multiple logins visiting an RP or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
 
 % So UPPRESSO prevents the honest-but-curious IdP from tracing a user's login activities.
 
@@ -175,27 +176,27 @@ As $G$ is a generator on $\mathbb{E}$ of order $n$, $ID_{RP} = [r]G$ is also a g
 As $t$ is uniformly-random in $\mathbb{Z}_n$ and kept unknown, $PID_{RP} = [t]ID_{RP}$ is \emph{indistinguishable} from a point that is uniformly-random on $\mathbb{E}$. \hfill $\square$
 \vspace{1.5mm}
 
-\noarxiv{This property of obliviousness has been proved in the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved}, where the OPRF server works similarly to the IdP and learns nothing about a client's inputs or outputs of the evaluated pseudo-random function (i.e., $ID_{RP}$ or $Acct$ in UPPRESSO).}
+\noarxiv{This property actually has been proved in the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved} as obliviousness, where the OPRF server works similarly to the IdP and learns nothing about a client's inputs or outputs of the evaluated pseudo-random function (i.e., $ID_{RP}$ or $Acct$ in UPPRESSO).}
 
 \subsection{Privacy against RP-based Identity Linkage}
 \label{subsec:RP-privacy}
 
-RPs could collude with some non-honest users,
-    to infer the identities of honest users
+RPs could collude with some users,
+    attempting to infer the identities of honest users
     or link an honest user's accounts across these RPs.
 
 
-In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an \emph{ephemeral} pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
+In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
-Next, in Theorem \ref{thm-rp-unlinkability} we prove that, even if RPs collude with each other and some non-honest users by sharing $PID_U$s and other information observed in all their logins,
+Next, in Theorem \ref{thm-rp-unlinkability} we prove that, even if RPs collude with each other and some users by sharing $PID_U$s and other information observed in all their logins,
 they still cannot link any login visiting an RP by an honest user to any other logins visiting other colluding RPs by honest users.
 
 
 With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa.
 So we denote all the information that an RP learns in a login as a tuple $L =(ID_{RP}, t, Acct)=([r]G, t, [ur]G)$.
 
-As $c$ RPs collude with each other, they create a shared view of all their logins, denoted as $\mathbbm{L}$.
-When they collude further with $v$ non-honest users, the logins initiated by these users are picked out of $\mathbbm{L}$ and linked together as
+As $c$ RPs collude with each other, they create a shared view of all logins visiting any of them, denoted as $\mathbbm{L}$.
+When they collude further with $v$ users, the logins initiated by these users are picked out of $\mathbbm{L}$ and linked together as
 $\mathfrak{L}^m=\left \{ \begin{matrix}
 L^m_{1,1},&L^m_{1,2},&\cdots,&L^m_{1,c}\\
 L^m_{2,1},& L^m_{2,2},&\cdots,&L^m_{2,c}\\
@@ -214,7 +215,7 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
 
 %\vspace{-0.5mm}
 \begin{thm}[RP Unlinkability]
-\emph{Given $\mathbbm{L}$ and $\mathfrak{L}^m$, $c$ RPs colluding with $v$ non-honest users cannot link any login visiting some of these RPs by an honest user to any subset of logins visiting any other RPs by honest users.}
+\emph{Given $\mathbbm{L}$ and $\mathfrak{L}^m$, $c$ RPs colluding with $v$ users cannot link any login visiting some of these RPs by an honest user to any subset of logins visiting any other RPs by honest users.}
 \label{thm-rp-unlinkability}
 \end{thm}
 %\vspace{-0.5mm}
@@ -283,7 +284,7 @@ Because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b
 \subsection{Account Synchronization}
 \label{account-syn}
 If new users are allowed to register after the initialization,
-in order to distinguish meaningful accounts from meaningless ones in Section 3.3,
+in order to distinguish meaningful accounts from meaningless ones in Step 3.3,
  an RP needs to regularly synchronize its accounts from the IdP.
 For example,
     when an account is derived but not in the visited RP's local account list,
