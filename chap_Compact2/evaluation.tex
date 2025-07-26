@@ -29,17 +29,6 @@ were deployed in the same virtual private cloud and connected to one vSwitch, wh
 \noindent {\bf Comparisons.} We split the login flow into three phases for detailed comparisons: (1)
 {\em identity-token requesting} (Step 1 in Figure \ref{fig:process}), to construct an identity-token request and send it to the IdP server; (2) {\em identity-token generation} (Step 2 of UPPRESSO), to generate an identity token at the IdP server, while the user authentication and the user-attribute authorization are excluded; and (3) {\em identity-token acceptance} (Step 3), where the RP receives, verifies, and parses the identity token.
 
-In the identity-token requesting phase of UPPRESSO a browser downloads the two scripts,
-    as described in Section \ref{sec:web-design}.
-As mentioned in Section \ref{subsec:OIDC},
- to process the token retrieved from the IdP, %which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},
-    in MITREid Connect and SPRESSO a user-r script is downloaded during the phase of token generation.
-SPRESSO needs another script from the forwarder server in the token acceptance phase \cite{SPRESSO}.
-
-We compared the average time required for an SSO login in three schemes based on 1,000 measurements. As shown in Figure \ref{fig:evaluation},
-MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 63 ms, 179 ms, and 190 ms, respectively when all entities were deployed on the cloud platform,
- or (\emph{b}) 312 ms, 471 ms, and 510 ms, respectively when the user browser ran locally to visit the cloud servers.
-
 \begin{figure}[tb]
   \centering
 	\subfigure[In a virtual private cloud]{
@@ -53,6 +42,17 @@ MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 63 ms, 179 ms, and 190
   \caption{The time costs of SSO login in MITREid Connect, UPPRESSO, and SPRESSO}
   \label{fig:evaluation}
 \end{figure}
+
+In the identity-token requesting phase of UPPRESSO a browser downloads the two scripts,
+    as described in Section \ref{sec:web-design}.
+As mentioned in Section \ref{subsec:OIDC},
+ to process the token retrieved from the IdP, %which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},
+    in MITREid Connect and SPRESSO a user-r script is downloaded during the phase of token generation.
+SPRESSO needs another script from the forwarder server in the token acceptance phase \cite{SPRESSO}.
+
+We compared the average time required for an SSO login in three schemes based on 1,000 measurements. As shown in Figure \ref{fig:evaluation},
+MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 63 ms, 179 ms, and 190 ms, respectively when all entities were deployed on the cloud platform,
+ or (\emph{b}) 312 ms, 471 ms, and 510 ms, respectively when the user browser ran locally to visit the cloud servers.
 
 Regarding identity-token requesting, %the user browser loads the RP's webpage and starts the login request.
 the RP of MITREid Connect immediately constructs an identity-token request. %MITREid Connect only needs 10 ms but UPPRESSO requires 271 ms.

@@ -23,11 +23,10 @@ This threat is called {\em RP-based identity linkage}. %in this paper.
 
 While preventing different privacy threats (i.e., IdP-based login tracing, RP-based identity linkage, or both),
 privacy-preserving SSO schemes \cite{maler2008venn, NIST2017draft, BrowserID, save-flow, SPRESSO,miso,POIDC} aim to provide services for users with a commercial-off-the-shelf (COTS) browser without plug-ins or extensions.
-This requires that, except the credentials for user authentication to the IdP,
-    there is no long-term secret processed in the browser across different logins.
+%This requires that, except the credentials for user authentication to the IdP,
+%    there is no long-term secret processed in the browser across different logins.
 We analyze existing privacy-preserving SSO solutions in Section \ref{sec:background},
-    and compare them with privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix} where
-    more privacy threats are eliminated at the cost of a browser plug-in or extension.
+    and compare them with privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix}.
 
 In this paper, we present UPPRESSO, an Untraceable and Unlinkable Privacy-PREserving Single Sign-On protocol.
 It proposes {\em identity transformations} in SSO,
@@ -50,11 +49,13 @@ UPPRESSO prevents both IdP-based login tracing and RP-based identity linkage, wh
 % accessed from commercial-off-the-shelf (COTS) browsers without any plug-ins or extensions.
 That is, it offers an easy-to-deploy option to enhance the protections of user privacy for SSO services.
 
-Meanwhile, compared with privacy-preserving identity federation \cite{prima,PseudoID,Opaak,ELPASSO,uprov,UnlimitID,hyperledge-idemix}
-    where a browser plug-in or extension is required to handle a long-term user secret,
+Compared with privacy-preserving identity federation \cite{prima,PseudoID,Opaak,ELPASSO,uprov,UnlimitID,hyperledge-idemix}
+    where a browser plug-in or extension is required to handle a long-term user secret
+    but
+    more privacy threats are eliminated.
 UPPRESSO works with COTS browsers without plug-ins or extensions,
     but collusive attacks by the IdP and RPs still break user privacy in UPPRESSO.
-Anyway, our strategy provides a convenient choice for some users not installing browser plug-ins or extensions.
+That is, our design provides a convenient choice for some users not installing browser plug-ins or extensions.
 
 Our contributions are as follows.
 \begin{itemize}

@@ -189,13 +189,13 @@ the IdP issues a token but replies with an ``empty'' $Enpt_{RP}$,
     and the calculation of $PID_{U}$ is considered as a special way to assign PPIDs.
 
 Finally, to prevent referer leakage in the HTTP request to pop up the user-i window,
- we need to ensure this request does not carry a \texttt{referer} header, which reveals the visited RP's domain to the IdP server.\footnote{In original OIDC services similar privacy leakages commonly exist, but do not matter because such services are not designed to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.
+ we need to ensure this request does not carry an HTTP \texttt{referer} header, which reveals the visited RP's domain to the IdP web server.\footnote{In original OIDC services similar privacy leakages commonly exist, but do not matter because such services are not designed to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.
 %
 %Fortunately, in UPPRESSO this pop-up is an HTTP redirection from the new window to the IdP (Steps 1.2-1.3 in Figure \ref{fig:process}), but not a direct visit. The HTTP redirection response from the RP server includes a \texttt{referrer-policy=no-referrer} header, which ensures that the HTTP request to access the IdP carries no \texttt{referer} header.
 This is achieved by setting
 \verb+<meta name="referrer" content="no-referrer">+
 in the RP's SSO login page.
-This method is specified by W3C \cite{referer_policy} and widely supported. We have tested it in various browsers such as Chrome, Safari, Edge, Opera, and Firefox, and confirmed no referer leakage.
+%This method is specified by W3C \cite{referer_policy} and widely supported. We have tested it in various browsers such as Chrome, Safari, Edge, Opera, and Firefox, and confirmed no referer leakage.
 
 \begin{figure*}[htb]
   \centering
