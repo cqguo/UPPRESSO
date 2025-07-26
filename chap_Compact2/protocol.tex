@@ -214,7 +214,7 @@ $\mathbb{E}$, $G$ and $n$ are set up and publicly published.
 An IdP generates a key pair ($SK$, $PK$) to sign and verify identity tokens and RP certificates.
 %The IdP keeps $SK$ secret, and $PK$ is publicly known.
 
-%\vspace{1mm}
+
 \noindent\textbf{RP Registration.}
 Each RP registers itself at the IdP to obtain $ID_{RP}$ and its RP certificate $Cert_{RP}$ as follows.
 This registration may be conducted by face-to-face means.
@@ -241,7 +241,7 @@ The IdP then signs $Cert_{RP} = [ID_{RP}, Enpt_{RP}, *]_{SK}$,
 The RP verifies $Cert_{RP}$ using $PK$, and accepts $ID_{RP}$ and $Cert_{RP}$.
 \end{enumerate}
 
-%\vspace{0.5mm}
+
 \noindent\textbf{User Registration.}
 %Each user registers once at the IdP. 
 Each user sets up her unique username and the corresponding credential for the IdP.
@@ -259,14 +259,14 @@ Then,
 because it is \emph{only} used to calculate $PID_{U}$ as the IdP is signing an identity token binding $PID_{U}=
   [{ID_U}]{PID_{RP}}$.
 
-%\vspace{1mm}
+
 \noindent\textbf{Account Synchronization.} 
 % An account belonging to some registered user is \emph{meaningful}, while \emph{meaningless} accounts at an RP do not belong to any registered user.
 Every RP regularly synchronizes all accounts at it from the IdP,
     and then locally maintains an up-to-date list of meaningful accounts.
 We discuss account synchronization in Section \ref{account-syn}.
 
-%\vspace{1mm}
+
 \noindent\textbf{SSO Login.} 
 A login flow %is typically launched through a browser,
 %when a user attempts to visit an RP. It
@@ -300,7 +300,6 @@ The user-i script uses the \verb+sessionStorage+ HTML5 object to save $Enpt_{RP}
 \end{itemize}
 
 
-%\vspace{1mm}
 \noindent 2. {\em Identity-Token Generation.}
 The IdP calculates $PID_U = [ID_U]{PID_{RP}}$ and signs an identity token as follows. % The processes are as follows.
 \begin{itemize}
@@ -320,7 +319,7 @@ where $Iss$ identifies the IdP, $Validity$ indicates the validity period, and $A
     as well as the user-i script to forward this token.
 \end{itemize}
 
-%\vspace{1mm}
+
 \noindent 3. {\em Identity-Token Acceptance.}
 The RP receives the identity token and allows the user to log in.
 \begin{itemize}
