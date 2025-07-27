@@ -75,7 +75,7 @@ Otherwise, if the visited RP is not anonymously authenticated to the IdP in the 
 %\vspace{0.75mm}
 \noindent \textbf{Alternatives for generating $\boldsymbol{ID_{RP}}$ and binding $\boldsymbol{Enpt_{RP}}$.}
 In UPPRESSO the IdP generates random $ID_{RP}$ and signs an RP certificate to bind $ID_{RP}$ and $Enpt_{RP}$, which is verified by the user-i script.
-This ensures the relationship between the RP designated in an identity token and the endpoint to receive this token.
+This ensures the relationship between the RP designated by an identity token and the endpoint to receive this token.
 It also guarantees that the target RP has already registered itself at the IdP and prevents unauthorized RPs from utilizing the IdP's services \cite{OpenIDConnect,save-flow}.
 
 An alternative method for binding $ID_{RP}$ and $Enpt_{RP}$ is

@@ -94,7 +94,7 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 
 
 In Section \ref{sec:analysis},
-    under adversarial scenarios, we formally prove the other required properties (i.e.,
+    under the adversarial scenarios, we formally prove the other required properties (i.e.,
     user identification, RP designation, IdP untraceability, and RP unlinkability) of the identity transformations.
 % Note that the proofs in Section \ref{sec:analysis} consider adversaries.
 
@@ -120,11 +120,11 @@ In an original OIDC system with pop-up UX, as shown in Figure \ref{fig:OpenID},
 %  % so the user agent (i.e., browser) forwards it to the designated RP.
 %Alternatively, 
     and the IdP replies with the signed token and also the RP's endpoint to receive tokens (i.e., $Enpt_{RP}$).
-Then, after receiving the token, the user-i script forwards it to the user-r script by \verb+postMessage+,
+Then, after receiving the token, the user-i script forwards it to the user-r script by \verb+postMessage+
     which is restricted by the origin of $Enpt_{RP}$ \cite{SPRESSO,MITREid,BrowserID,GoogleIdIntegrate,de2014oauth,OpenIDConnect}.
 The \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient,
-so this ensures confidentiality of identity tokens because only scripts downloaded from the origin of $Enpt_{RP}$ are legitimate recipients of the forwarded tokens
-    as the relationship between $Enpt_{RP}$ and $ID_{RP}$ is maintained at the honest IdP server.
+so this ensures confidentiality of identity tokens because (\emph{a}) only scripts downloaded from the origin of $Enpt_{RP}$ are legitimate recipients of the forwarded tokens
+    and (\emph{b}) the relationship between $Enpt_{RP}$ and $ID_{RP}$ is maintained at the honest IdP server.
 
 %The following designs are proposed, %\footnote{UPPRESSO also works with redirect UX, .}
 %    and the complete UPPRESSO protocol is described in Section \ref{implementations}.
@@ -143,23 +143,22 @@ This HTTP request downloads the user-i script,
 Then, after the IdP signs the token,
     the user-i script forwards it to the user-r script by \verb+postMessage+,
     which is also restricted by the origin of $Enpt_{RP}$.
-This ensures that (\emph{a}) $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the target RP's identity and (\emph{b}) the identity token is forwarded to the corresponding RP server,
+This ensures that (\emph{a}) $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the visited RP's identity and (\emph{b}) the identity token is forwarded to the corresponding RP server,
     because $Enpt_{RP}$ and $ID_{RP}$ are signed in $Cert_{RP}$ by the IdP.
 
 It is worth noting that,
 in the HTTP request to pop up the user-i window, $Cert_{RP}$ and the scope of requested user attributes are carried as \emph{fragments} (but not parameters), which are identified by \texttt{\#} instead of \texttt{?},
-    so $Cert_{RP}$ is not sent to the IdP web server.
-Meanwhile, we save $Enpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object,
+    so they are not sent to the IdP web server.
+Besides, we save $Enpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object,
     because the user-i window is refreshed to finish user authentication and attribute authorization.
 %The scripts are responsible for communicating with the origin web servers and also the cross-origin communications within the browser.
 % as most browsers do in secure OIDC settings \cite{de2014oauth,GoogleIdIntegrate}.
 %\footnote{The user-i script is recommended in OIDC services for an in-context user experience of attribute authorization \cite{GoogleIdIntegrate,uber}, so the authorization of user attributes is also implemented through this user-i script in UPPRESSO.}
-Therefore, $Cert_{RP}$, $Enpt_{RP}$ and $t$ are processed locally within the COTS browsers.
+Therefore, $Cert_{RP}$, $Enpt_{RP}$ and $t$ are processed locally within the browsers.
 
 On receiving an identity-token request, the IdP web server checks the included HTTP \texttt{origin} header to ensure it is sent by the user-i script,
-which verifies $Cert_{RP}$ to ensure correctness of the relationship between $Enpt_{RP}$ and $ID_{RP}$.
-Besides,
-the IdP's public key is set in the user-i script to verify $Cert_{RP}$,
+which verifies $Cert_{RP}$ to ensure the correct relationship between $Enpt_{RP}$ and $ID_{RP}$.
+The IdP's public key is set in the user-i script to verify $Cert_{RP}$,
 so a user configures nothing locally,
  like in other popular SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}.
 %This should be conducted by an \emph{honest} script that obtains $ID_{RP}$ correctly
@@ -180,9 +179,9 @@ so a user configures nothing locally,
 
 Compared with the original OIDC protocol in Figure \ref{fig:OpenID},
 UPPRESSO adopts the common mechanisms for secure communications,
-except that the relationship between $ID_{RP}$ and $Enpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way but by the IdP).
+except that the relationship between $ID_{RP}$ and $Enpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way by the IdP).
 Therefore, authenticity, confidentiality, and integrity of identity tokens are still ensured in UPPRESSO.
-Meanwhile, in UPPRESSO the IdP's token endpoint 
+Moreover, in UPPRESSO the IdP's token endpoint 
     works in a way compatible with original OIDC protocols \cite{rfc6749,OpenIDConnect}:
         When receiving a token request for an ``unknown'' $ID_{RP}$ (i.e., $PID_{RP}$),
 the IdP issues a token but replies with an ``empty'' $Enpt_{RP}$,
@@ -199,7 +198,7 @@ in the RP's SSO login page.
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.825\linewidth]{fig/pop-up-process.pdf}
+  \includegraphics[width=0.805\linewidth]{fig/pop-up-process.pdf}
   \caption{The SSO login flow of UPPRESSO}
   \label{fig:process}
 \end{figure*}

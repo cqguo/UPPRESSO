@@ -71,7 +71,7 @@ $TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
 where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ is calculated
     and (\emph{b}) $PID_U = [ID_U]PID_{RP}$ is calculated based on the initiating user's identity $ID_U$.
 
-When authenticity, confidentiality and integrity of identity tokens are ensured, we summarize the following sufficient conditions of secure SSO services \cite{FettKS14,BrowserID,SPRESSO}:
+When authenticity, confidentiality and integrity of identity tokens have been ensured, we summarize the following sufficient conditions of secure SSO services \cite{FettKS14,BrowserID,SPRESSO}:
 
 \noindent \textbf{User Identification.} %At the designated RP, $TK$ identifies only the user who requests this identity token from the IdP. That is, 
 From $TK$ the designated honest RP derives \emph{only} the meaningful account belonging to the user requesting $TK$.
@@ -117,7 +117,7 @@ It requires that, for any $ID_{RP}$, adversaries cannot find $\hat{t}$ and $\che
     = [ID_{\check{U}}]ID_{RP} = \mathcal{F}_{Acct\ast}(ID_{\check{U}}, ID_{RP})$,
 where $ID_{\hat{U}} \neq ID_{\check{U}}$.
 
-When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G}$.
+When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G} = \log_{\hat{A}cct}{\check{A}cct}$.
 \hfill $\square$
 
 \vspace{1.5mm}
@@ -132,8 +132,8 @@ we prove RP designation by showing that,
 \vspace{1.5mm}
 \begin{thm}[RP Designation]
 When given known $\mathbbm{ID}_{RP}$, known $\mathbbm{A}cct$ and unknown $\mathbbm{ID}_U$,
- malicious adversaries cannot find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$, and $t_2$ which satisfy that $\mathcal{F}_{Acct}(\mathcal{F}_{PID_U}(ID_{U_{i_1}}, PID_{RP}), t_2) = \mathcal{F}_{Acct\ast}(ID_{U_{i_2}}, ID_{RP_{j_2}})$,
-where $PID_{RP}$ may be calculated as $\mathcal{F}_{PID_{RP}}(ID_{RP_{j_1}}, t_1)$
+ malicious adversaries cannot find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$, and $t_2$ which satisfy that $\mathcal{F}_{Acct}(\mathcal{F}_{PID_U}(ID_{U_{i_1}}, PID_{RP}^{*}), t_2) = \mathcal{F}_{Acct\ast}(ID_{U_{i_2}}, ID_{RP_{j_2}})$,
+where $PID_{RP}^{*}$ may be calculated as $\mathcal{F}_{PID_{RP}}(ID_{RP_{j_1}}, t_1)$
     or arbitrarily generated (i.e., $RP_{j_1}$ or no RP is designated),
     ${j_1} \neq {j_2}$, $1 \leq j_1, j_2 \leq p$, and $1 \leq i_1, i_2 \leq s$.
 \label{thm-rp-designation}
@@ -143,13 +143,18 @@ where $PID_{RP}$ may be calculated as $\mathcal{F}_{PID_{RP}}(ID_{RP_{j_1}}, t_1
 \noindent\textbf{\textsc{Proof.}} 
 If adversaries could find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$ and $t_2$ which satisfy that $[{t_2}^{-1}t_1ID_{U_{i_1}}]ID_{RP_{j_1}} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$
  where ${j_1} \neq {j_2}$,
- the ECDLP of ${t_2}^{-1}t_1 = \log_{[{u_{i_1}}{r_{j_1}}]G}{[{u_{i_2}}{r_{j_2}}]G}$ would be solved.
+ the ECDLP of ${t_2}^{-1}t_1 = \log_{[{u_{i_1}}{r_{j_1}}]G}{[{u_{i_2}}{r_{j_2}}]G}
+ = \log_{Acct_{i_1,j_1}}{Acct_{i_2,j_2}}$ would be solved.
 
-Or, the adversaries might attempt to find $PID_{RP}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ satisfying that  $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
-        but this cannot be solved due to unknown $ID_{U_{i}}$.
+The adversary might alternatively attempt to find $PID_{RP}^{*}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ satisfying that $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP}^{*} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
+        but this cannot be solved due to unknown $ID_{U_{i}}$ if ${i_1} \neq {i_2}$.
+Or, if ${i_1} = {i_2}$, 
+    it would require the adversary to solve $[{{t_2}^{-1}}]PID_{RP}^{*} = ID_{RP_{j_2}}$
+        or $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$.
+Therefore,
+    the adversary chooses $t_2$, calculates $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$, requests a token for $PID_{RP}^{*}$, and then log into $RP_{j_2}$ to ``impersonate'' himself.
+This is not an attack: $RP_{j_2}$ is designated by $TK$ and the adversary's account is derived at $RP_{j_2}$.
 \hfill $\square$
-
-%\vspace{1mm}
 
 \subsection{Privacy against IdP-based Login Tracing}
 \label{subsec:IdP-privacy}
