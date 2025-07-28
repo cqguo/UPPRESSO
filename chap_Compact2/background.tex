@@ -42,9 +42,9 @@ Alternatively, if a browser works as the user agent of OIDC with only one window
     \begin{tabular}{|c|c|c|c|c|c|}
   \hline
   & \multirow{3}*{\textbf{Solution}} &
-  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & \textbf{Extra} & \textbf{Browser} \\ \cline{3-4}
-  & & IdP-based & RP-based & \textbf{Trusted} & \textbf{Plug-in or}\\
-  & & Login Tracing & Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{Extension}$^{\ddag}$ \\\hline\hline
+  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & & \\ \cline{3-4}
+  & & IdP-based & RP-based & \textbf{Extra Trusted} & \textbf{Browser Plug-in}\\
+  & & Login Tracing & Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{or Extension}$^{\ddag}$ \\\hline\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
@@ -76,8 +76,8 @@ SPRESSO assumes a malicious IdP (but honest IdPs in others), and then a trusted 
 
 \item[2.]
 A variation of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
-        but it takes seconds to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{ZKP-BINF,zkp-benchmark,ZKP-GPU},
-        which is impracticable for a user agent in SSO systems.
+        but it takes seconds or more to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{ZKP-BINF,zkp-benchmark,ZKP-GPU},
+        which is impracticable for a user agent in SSO.
 %\item[3.]
 %Opaak supports two exclusive pseudonym options: (\emph{a}) linkable within an RP but unlinkable across multiple RPs and (\emph{b}) unlinkable for any pair of actions.
 %
@@ -202,7 +202,7 @@ enabling it to independently derive the user's permanent account, i.e., $Acct = 
 Second, $u$ and $ID_{RP}$, which roughly correspond to $k$ and $T$ in PrivacyPass/TrustToken, are assigned as the permanent identities of the user and the RP, respectively, to establish the relationship among identities and accounts.
 This is very different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as a server's secret key.
 %The integration of SSO (pseudo-)identities and OPRF variables requires a deep understanding of both SSO and OPRF protocols.
-Finally, UPPRESSO leverages randomness of Hash(EC)DH OPRFs to provide RP unlinkability, and this property is not utilized in PrivacyPass/TrustToken.
+Finally, UPPRESSO leverages randomness of Hash(EC)DH OPRFs to ensure RP unlinkability, and this property is not utilized in PrivacyPass/TrustToken.
 It ensures colluding RPs cannot link any logins across RPs,
 even by sharing their knowledge about the pseudo-identities and permanent accounts in UPPRESSO.
 This property offers desirable indistinguishability of \emph{different users} visiting colluding RPs.
@@ -211,7 +211,7 @@ It roughly corresponds to the indistinguishability of \emph{different private ke
 Although UPPRESSO mathematically employs the same technique in the identity transformations as the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved}, we require more properties of these algorithms. % in Theorems 4, 6, and 7.
 UPPRESSO essentially 
 depends on the \emph{deterministicness} property of \emph{pseudo-random} functions to derive a permanent account for any $t$, \emph{obliviousness} to ensure IdP untraceability, 
-and \emph{pseudo-randomness} to provide RP unlinkability. 
+and \emph{pseudo-randomness} to ensure RP unlinkability. 
 In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} depend on only the properties of deterministicness and obliviousness.
 Moreover, UPPRESSO requires more properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
     which are not discussed in OPRFs \cite{sok-oprf,oprf-proved,voprf-proved}.

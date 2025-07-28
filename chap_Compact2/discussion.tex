@@ -17,7 +17,7 @@ In this case,
             to handle the user secret,
              and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers this strategy.
 %Besides, if the user secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.
-Alternatively, MISO \cite{miso} introduces an extra fully-trusted mixer server other than the IdP to keep such a long-term secret,
+Alternatively, MISO \cite{miso} introduces an extra fully-trusted mixer server other than the IdP to keep $s_i$,
             to calculate user pseudo-identities (or accounts) in each login.
 Then, in MISO the mixer server can track all users' login activities,
     but the IdP cannot even when colluding with RPs.

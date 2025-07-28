@@ -25,9 +25,8 @@ Provided that the security properties of UPPRESSO are satisfied,
 where the initiating user or the target RP deviates from the specifications.
 It makes no sense to track login activities resulting in meaningless accounts.
 Therefore,
-    an \emph{honest-but-curious} is considered in the proof of IdP untraceability,
-while RP unlinkability is analyzed against \emph{honest-but-colluding} RPs and users
- which follow the protocols but share their information.
+    an \emph{honest-but-curious} IdP is considered in the proof of IdP untraceability,
+while RP unlinkability is analyzed against a group of \emph{semi-honest} RPs and users which follow the protocols but share all their information.
 
 %\noindent\textbf{Login tracing by an IdP.}
 %The honest-but-curious IdP tries to infer the identities of the RPs being visited by an honest user \cite{BrowserID, SPRESSO}.
@@ -146,14 +145,14 @@ If adversaries could find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$ and $t_2$ wh
  the ECDLP of ${t_2}^{-1}t_1 = \log_{[{u_{i_1}}{r_{j_1}}]G}{[{u_{i_2}}{r_{j_2}}]G}
  = \log_{Acct_{i_1,j_1}}{Acct_{i_2,j_2}}$ would be solved.
 
-The adversary might alternatively attempt to find $PID_{RP}^{*}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ satisfying that $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP}^{*} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
-        but this cannot be solved due to unknown $ID_{U_{i}}$ if ${i_1} \neq {i_2}$.
+The adversary might alternatively attempt to find $PID_{RP}^{*}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ which satisfy that $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP}^{*} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
+        but this cannot be solved due to unknown $ID_{U_{i}}$ when ${i_1} \neq {i_2}$.
 Or, if ${i_1} = {i_2}$, 
     it would require the adversary to solve $[{{t_2}^{-1}}]PID_{RP}^{*} = ID_{RP_{j_2}}$
         or $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$.
-Therefore,
-    the adversary chooses $t_2$, calculates $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$, requests a token for $PID_{RP}^{*}$, and then log into $RP_{j_2}$ to ``impersonate'' himself.
-This is not an attack: $RP_{j_2}$ is designated by $TK$ and the adversary's account is derived at $RP_{j_2}$.
+That is,
+    the adversary chooses $t_2$, calculates $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$, requests a token for $PID_{RP}^{*}$, and then logs into $RP_{j_2}$ to ``impersonate'' himself.
+This is not an attack: $RP_{j_2}$ is actually designated by $TK$ and the adversary's account is derived at $RP_{j_2}$.
 \hfill $\square$
 
 \subsection{Privacy against IdP-based Login Tracing}
@@ -163,7 +162,7 @@ The honest IdP would attempt to infer the visited RPs,
 by collecting information from the identity-token requests.
 It does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
-We prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on $\mathbb{E}$ to the IdP,
+Next, we prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on $\mathbb{E}$ to the IdP,
     and then
  it cannot (\emph{a}) link multiple logins visiting an RP or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
 
@@ -171,7 +170,7 @@ We prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on 
 
 \vspace{1.5mm}
 \begin{thm}[IdP Untraceability]
-\emph{The IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$ and kept unknown to the IdP.}\label{thm-idp-untraceability}
+\emph{The honest-but-curious IdP cannot distinguish $PID_{RP} = [t]ID_{RP}$ from a random variable on $\mathbb{E}$, where $t$ is random in $\mathbb{Z}_n$ and kept unknown to the IdP.}\label{thm-idp-untraceability}
 \end{thm}
 
 \noindent\textbf{\textsc{Proof.}}
@@ -187,29 +186,29 @@ As $t$ is uniformly-random in $\mathbb{Z}_n$ and kept unknown, $PID_{RP} = [t]ID
 \subsection{Privacy against RP-based Identity Linkage}
 \label{subsec:RP-privacy}
 
-RPs could collude with some users,
-    attempting to infer the identities of honest users
-    or link an honest user's accounts across these RPs.
+All semi-honest RPs and users share their information, attempting to infer the identities of honest users or link an honest user's accounts across the semi-honest RPs.
 
 
 In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
-Next, in Theorem \ref{thm-rp-unlinkability} we prove that, even if RPs collude with each other and some users by sharing $PID_U$s and other information observed in all their logins,
-they still cannot link any login visiting an RP by an honest user to any other logins visiting other colluding RPs by honest users.
+
+Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
+even when a number of semi-honest users share information with them,
+the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users.
 
 
 With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa.
 So we denote all the information that an RP learns in a login as a tuple $L =(ID_{RP}, t, Acct)=([r]G, t, [ur]G)$.
 
-As $c$ RPs collude with each other, they create a shared view of all logins visiting any of them, denoted as $\mathbbm{L}$.
-When they collude further with $v$ users, the logins initiated by these users are picked out of $\mathbbm{L}$ and linked together as
+When $c$ RPs share information with each other, they create a shared view of all logins visiting any of them, denoted as $\mathbbm{L}$.
+When they further collect information from $v$ semi-honest users, the logins initiated by these users are picked out of $\mathbbm{L}$ and linked together as
 $\mathfrak{L}^m=\left \{ \begin{matrix}
 L^m_{1,1},&L^m_{1,2},&\cdots,&L^m_{1,c}\\
 L^m_{2,1},& L^m_{2,2},&\cdots,&L^m_{2,c}\\
 \cdots,&\cdots,&L^m_{i,j},&\cdots\\
 L^m_{v,1},&L^m_{v,2},&\cdots,&L^m_{v,c}
 \end{matrix}\right\}$,
-where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le v$ and $1 \le j \le c$. Any login in $\mathbbm{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to visit one of the $c$ colluding RPs.
+where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le v$ and $1 \le j \le c$. Any login in $\mathbbm{L}$ but not linked in $\mathfrak{L}^m$ is initiated by an honest user to visit one of the $c$ semi-honest RPs.
 
 \begin{figure}[tb]
   \centering
@@ -221,19 +220,19 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
 
 \vspace{1.5mm}
 \begin{thm}[RP Unlinkability]
-\emph{Given $\mathbbm{L}$ and $\mathfrak{L}^m$, $c$ RPs colluding with $v$ users cannot link any login visiting some of these RPs by an honest user to any subset of logins visiting any other RPs by honest users.}
+\emph{Given $\mathbbm{L}$ and $\mathfrak{L}^m$, $c$ semi-honest RPs and $v$ semi-honest users cannot link any login visiting some of these RPs by an honest user to any subset of logins visiting other RPs by honest users.}
 \label{thm-rp-unlinkability}
 \end{thm}
 
 \noindent\textbf{\textsc{Proof.}} Out of $\mathbbm{L}$
  we randomly choose a login $L' \neq L^m_{i,j}$ $(1 \le i \le v, 1 \le j \le c)$,
- which is initiated by an (unknown) honest user with $ID_{U'}=u'$ to a malicious $RP_{a}$ where $a \in [1,c]$.
-Then, we randomly choose another malicious $RP_{b}$, where $b \in [1,c]$ and $b \neq a$.
+ which is initiated by an (unknown) honest user with $ID_{U'}=u'$ to a semi-honest $RP_{a}$ where $a \in [1,c]$.
+Then, we randomly choose another semi-honest $RP_{b}$, where $b \in [1,c]$ and $b \neq a$.
 Consider any subset $\mathbbm{L}'' \subset \mathbbm{L}$ of $w$ $(1 \leq w < s-v)$ logins visiting $RP_{b}$ by unknown honest users,
  and denote the identities of the users initiating these logins as $\mathbbm{u}_w=\{{u''_1}, {u''_2}, \cdots, {u''_w}\} \subset \mathbbm{u}$.
 
-Next, we prove that the colluding adversaries cannot distinguish $u' \in \mathbbm{u}_w$ from $u'$ randomly selected in the universal set (i.e., $u' \in \mathbb{Z}_n$).
-This indicates the adversaries cannot link $L'$ to another login (or a subset of logins) visiting $RP_{b}$.
+Next, we prove that the group of semi-honest adversaries cannot distinguish $u' \in \mathbbm{u}_w$ from $u'$ randomly selected in the universal set (i.e., $u' \in \mathbb{Z}_n$).
+So the adversaries cannot link $L'$ to another login (or any subset of logins) visiting $RP_{b}$.
 
 
 We define an RP-based identity linkage game $\mathcal{G}_R$ between an adversary and a challenger, to describe this login linkage: the adversary receives $\mathfrak{L}^m$, $L'$, and $\mathbbm{L}''$ from the challenger and outputs $e$, where (\emph{a}) $e = 1$ if it decides $u'$ is in $\mathbbm{u}_w$ %$\{{U''_1}, {U''_2}, \cdots, {U''_w}\}$
@@ -245,7 +244,7 @@ Thus, the adversary succeeds in $\mathcal{G}_R$ with an advantage $\mathbf{Adv}$
 &{\mathbf{Adv}}=|{\rm Pr}_1-{\rm Pr}_2|
 \end{align*}
 
-As depicted in Figure \ref{fig:dalgorithm}, we then design a PPT algorithm $\mathcal{D}^*_R$ based on $\mathcal{G}_R$ to solve the elliptic curve decisional Diffie-Hellman (ECDDH) problem: given $(G, [x]G$, $[y]G$, $[z]G)$, decide whether $z$ is equal to $xy$ or randomly chosen in $\mathbb{Z}_n$, where $G$ is a point on an elliptic curve $\mathbb{E}$ of order $n$, and $x$ and $y$ are integers randomly and independently chosen in $\mathbb{Z}_n$.
+As depicted in Figure \ref{fig:dalgorithm}, we design a PPT algorithm $\mathcal{D}^*_R$ based on $\mathcal{G}_R$ to solve the elliptic curve decisional Diffie-Hellman (ECDDH) problem: Given $(G, [x]G$, $[y]G$, $[z]G)$, decide whether $z$ is equal to $xy$ or randomly chosen in $\mathbb{Z}_n$, where $G$ is a point on an elliptic curve $\mathbb{E}$ of order $n$, and $x$ and $y$ are integers randomly and independently chosen in $\mathbb{Z}_n$.
 
 
 The algorithm $\mathcal{D}^*_R$ works as follows. (1) On receiving an input $(G, Q_1=[x]G, Q_2=[y]G, Q_3=[z]G)$,
@@ -268,8 +267,8 @@ According to the above construction, % of $\mathfrak{L}$, $L'$ and $\mathbbm{L}'
 $x$ is embedded as $ID_{U'}$ of the login $L'$ visiting the RP with $ID_{RP_{a}} = [r_{a}]G$,
 and $z/y$ is embedded as $ID_{U''_d}$ of $\mathbbm{L}''$ visiting the RP with $ID_{RP_{b}}=[y]G$,
 together with $\{u''_1, \cdots, u''_{d-1}, u''_{d+1}, \cdots, u''_w\}$.
-Meanwhile, $[r_{a}]G$ and $[y]G$ are two malicious RPs' identities in $\mathfrak{L}^m$.
-Because $x \neq u''_{k; 1\leq k \leq w, k \neq d}$ and then $x$ is not in $\{u''_1, \cdots, u''_{d-1}, u''_{d+1}, \cdots, u''_w\}$, the adversary outputs $s=1$ and succeeds in the game \emph{only if} $x = z/y$.
+Meanwhile, $[r_{a}]G$ and $[y]G$ are two semi-honest RPs' identities in $\mathfrak{L}^m$.
+Because $x \neq u''_{k; 1\leq k \leq w, k \neq d}$ and then $x$ is not in $\{u''_1, \cdots, u''_{d-1}, u''_{d+1}, \cdots, u''_w\}$, the adversary outputs $s=1$ and succeeds in this game only if $x = z/y$.
 Therefore, using $\mathcal{D}^*_R$ to solve the ECDDH problem, we have an advantage $\mathbf{Adv}^*=|{\rm Pr}^*_1 - {\rm Pr}^*_2|$, where
 \begin{align*}
 &{\rm Pr}^*_1 =  {\rm Pr}(\mathcal{D}^*_R(G, [x]G, [y]G, [xy]G)=1) \\
@@ -279,10 +278,10 @@ Therefore, using $\mathcal{D}^*_R$ to solve the ECDDH problem, we have an advant
 &\mathbf{Adv}^*=|{\rm Pr}^*_1-{\rm Pr}^*_2|=|{\rm Pr}_1-{\rm Pr}_2|={\mathbf{Adv}}
 \end{align*}
 
-If in $\mathcal{G}_R$ the adversary has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption.
+If the adversary of $\mathcal{G}_R$ has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption.
 
 Therefore, the adversary has no advantage in $\mathcal{G}_R$ and cannot decide whether $L'$ is initiated by some honest user with an identity in $\mathbbm{u}_w$ or not.
-Because $RP_b$ is any malicious RP, this proof can be easily extended from $RP_b$ to more colluding malicious RPs.
+Because $RP_b$ is any semi-honest RP, this proof can be easily extended from $RP_b$ to more semi-honest RPs.
 \hfill $\square$
 
 
@@ -302,9 +301,10 @@ An RP cannot imperceptively treat the token holder with an account not in the li
  as a newly-registered user.
 Although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorems \ref{thm-u-id} and \ref{thm-rp-designation},
  she could log into such an RP as a meaningless but identical account in multiple logins.
-For example, both $\hat{t}$ and $\check{t}$ ($\check{t} \neq \hat{t}$) are reused in these logins,
+For example,
+    by reusing both $\hat{t}$ and $\check{t}$ ($\check{t} \neq \hat{t}$) in these logins,
     as analyzed in the proof of Theorem \ref{thm-u-id}.
-Then, this malicious user actually owns multiple accounts at one RP.
+this malicious user actually owns another account $Acct=[\check{t}^{-1}\hat{t}ID_U]ID_{RP} \neq [ID_U]ID_{RP}$.
 %\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
 
 
@@ -316,5 +316,6 @@ If an RP derives some account not in its local account list,
                 and then the derived account is meaningful.}
                 and the RP updates its account list locally;
     otherwise, it rejects this token.
+
 
 

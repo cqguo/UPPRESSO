@@ -55,7 +55,7 @@ Thus, an RP checks the RP (pseudo-)identity enclosed in a token before accepting
 As analyzed in Section \ref{subsec-solutions},
     existing privacy-preserving solutions of SSO hide only RP identities or user identities
     (i.e., only IdP-based login tracing or RP-based identity linkage is prevented),
-        or introduce an extra fully-trusted server to process the identities of RP and user before an identity token is issued.
+        or introduce an extra fully-trusted server to process the (pseudo-)identities of RP and user before an identity token is issued.
        % \footnote{In privacy-preserving identity federation, a user by herself keeps a long-term secret to mask the relationship of these (pseudo-)identities and accounts.}
 
 UPPRESSO attempts to \emph{simultaneously} transform the identities of RP and user in each login,
@@ -64,7 +64,7 @@ UPPRESSO attempts to \emph{simultaneously} transform the identities of RP and us
 %
 %Therefore, we try to implement privacy-preserving SSO that ensures security as above, while preventing both IdP-based login tracing and RP-based identity linkage.
 %The requirements of security and privacy are satisfied through \emph{transformed identities} in the identity tokens.
-Table \ref{tbl:notations-dilemma} lists the notations,
+Table \ref{tbl:notations-dilemma} lists the notations of the identity-transformation approach,
 and a sub/super-script (i.e., $i$, $j$, or $l$) may be omitted if it does not cause ambiguity.
 
 %Since an IdP authenticates users and always knows the user's identity (i.e., $ID_U$),
@@ -81,11 +81,11 @@ $\mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j}) = Acct_{i,j}$ is proposed to determ
 An account belonging to some user is \emph{meaningful},
 while \emph{meaningless} accounts at an RP do not belong to any user.
 
-To provide IdP untraceability (or prevent IdP-based login tracing),
+To ensure IdP untraceability (or prevent IdP-based login tracing),
     a user initiates a login by negotiating an \emph{ephemeral} pseudo-identity $PID^l_{RP_j}$  with the target RP and sending an identity-token request for $PID^l_{RP_j}$ (but not $ID_{RP_j}$) to an IdP.
 
 After authenticating the initiating user as $ID_{U_i}$, the IdP calculates an \emph{ephemeral} $PID^l_{U_i,j}$ based on $ID_{U_i}$ and $PID^l_{RP_j}$, and then issues an identity token that binds $PID^l_{U_i,j}$ and $PID^l_{RP_j}$.
-To provide RP unlinkability (or prevent RP-based identity linkage),
+To ensure RP unlinkability (or prevent RP-based identity linkage),
     $ID_{U_i}$ is not enclosed in the identity token.
 %Meanwhile, the calculation of $PID_U$ involves $ID_U$, and then the user is identified implicitly.
 
