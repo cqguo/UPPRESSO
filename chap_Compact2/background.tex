@@ -4,7 +4,7 @@
 \subsection{OpenID Connect}
 \label{subsec:OIDC}
 OIDC is one of the most popular SSO protocols. It supports different login flows: implicit flow, authorization code flow, and hybrid flow (a mix of the other two).
-These flows differ in the steps for requesting, receiving and forwarding identity tokens, but have common security requirements for tokens.
+These flows differ in the steps for requesting, receiving and forwarding identity tokens, but have common security requirements for the tokens.
 We present our designs in the implicit flow and discuss the support for the authorization code flow in Section \ref{sec:discussion}.
 
 Users and RPs register at an OIDC IdP with their identities
@@ -12,18 +12,18 @@ and other information such as user credentials (e.g., passwords)
 and RP endpoints (i.e., the URLs to receive tokens).
 User operations in the login flows are conducted through a user agent (or browser typically).
 Figure \ref{fig:OpenID} shows
-the implicit SSO login flow of OIDC with \emph{pop-up UX} \cite{dimvaLiM16,GoogleIdIntegrate,uber},
+the implicit SSO login flow of OIDC with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber},
 which is recommended to provide an in-context user experience.
 When a user clicks the SSO login button in a browser window visiting the target RP 
 (called the \emph{user-r window} in this paper),
  an identity-token request is constructed with the RP's identity and the scope of requested user attributes.
 It pops up another window (i.e., the \emph{user-i window}),
     and this request is sent to the IdP.
-After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the user and the target RP, the authorized attributes, a validity period, etc.
+After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the authorized attributes, a validity period, etc.
 The identity token is then forwarded to the RP's endpoint via the user-i window.
-Finally, the RP verifies the token and allows the holder to log in as the enclosed user (pseudo-)identity.
+Finally, the RP verifies the token and allows the token holder to log in as the enclosed user (pseudo-)identity.
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
-    responsible for communicating with the respective origin servers
+    responsible for communicating with the respective origin web servers
     and also the cross-origin
 communications using the \verb+postMessage+ HTML5 API within the COTS browser.
 
@@ -106,7 +106,7 @@ However,
 %Some schemes \cite{BrowserID, SPRESSO, NIST2017draft} prevent either IdP-based login tracing or RP-based identity linkage, but not both.
 Existing solutions propose various mechanisms to hide (\emph{a}) RP identities from the IdP or/and (\emph{b}) user identities from the visited RPs.
 Table \ref{tbl:comparison-protocol} compares these solutions,
-and only UPPRESSO provides authentication services for RPs accessed from COTS browsers while preventing both of the two privacy threats and not introducing extra trusted servers in addition to the honest IdP.
+and only UPPRESSO provides SSO services accessed from COTS browsers while preventing both of the two privacy threats and not introducing extra trusted servers in addition to the honest IdP.
 
 
 Pairwise pseudonymous identifiers (PPIDs) are specified \cite{OpenIDConnect, SAMLIdentifier} and recommended \cite{NIST2017draft} in OIDC to protect user privacy against colluding RPs.
@@ -118,9 +118,9 @@ For example, in BrowserID \cite{BrowserID}
 after authenticating a user,
     an IdP %(called the primary identity authority in BrowserID)
 issues a ``user certificate'' binding the user's identity to an ephemeral public key.
-The user then uses the private key to sign a subsidiary ``identity assertion'' that binds the target RP's identity and sends both of them to the RP.
-In SPRESSO an RP creates a one-time tag (or ephemeral pseudo-identity) for each login \cite{SPRESSO},
- and in POIDC \cite{POIDC,save-flow} a user sends an identity-token request with a hash commitment on the target RP's identity (but not the RP identity),
+The user then uses the corresponding private key to sign a subsidiary ``identity assertion'' that binds the target RP's identity and sends both of them to the RP.
+In SPRESSO an RP creates a one-time tag (i.e., ephemeral pseudo-identity) for each login \cite{SPRESSO},
+ and in POIDC \cite{POIDC,save-flow} a user sends an identity-token request with a hash commitment on the target RP's identity (but not $ID_{RP}$),
         which are enclosed in identity tokens along with the user's unique identity.
 
 %As in SPRESSO the IdP is assumed to be malicious, there is no IdP-confirmed attribute provision.
@@ -129,29 +129,29 @@ In SPRESSO an RP creates a one-time tag (or ephemeral pseudo-identity) for each 
 MISO \cite{miso} decouples the calculation of PPIDs from an honest IdP,
  to an extra fully-trusted mixer server that calculates a user's PPID based on $ID_U$, $ID_{RP}$ and a secret after it receives the authenticated user's identity from the IdP.
 MISO prevents both RP-based identity linkage for the RPs receives only PPIDs,
-    and IdP-based login tracing for $ID_{RP}$ is disclosed to the mixer but not the IdP.
+    and IdP-based login tracing because $ID_{RP}$ is disclosed to the mixer but not the IdP.
 It protects a user's online profile against even collusive attacks by the IdP and RPs,
     but the mixer server could track a user's all login activities.
-UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the user side,
+Similarly, UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the user side,
  which is remotely attested by the IdP and then receives the secret to generate PPIDs for a user, and then both of two privacy threats are eliminated.
 
 \noindent\textbf{Privacy-preserving identity federation.}
 % SSO allows a user to log into an RP, without by herself maintaining an account at the RP or holding a long-term secret verified by the RP, so that SSO services are accessible from COTS browsers.
 Identity federation enables a user registered at a trusted IdP to be accepted by other parties, potentially with different accounts,
 but %authentication operations between the user and RPs are involved, so 
-browser plug-ins or extensions are needed to access such services.
+browser plug-ins or extensions are needed handle a long-term user secret in such systems.
 Although the term ``single sign-on (SSO)'' was used in some schemes \cite{PseudoID, Opaak, ELPASSO, WangWS13, HanCSTW18, HanCSTWW20}, this paper refers to them as \emph{identity federation} to emphasize this difference.
 
 In PRIMA \cite{prima}, an IdP signs a credential
 that binds user attributes and  a verification key.
-Using the signing key, the user authenticates herself and provides selected attributes to RPs. This verification key works as the user's identity and exposes her to RP-based identity linkage.
+Using the corresponding signing key, the user authenticates herself and provides selected attributes to RPs. The verification key works as the user's identity and exposes her to RP-based identity linkage.
 PseudoID \cite{PseudoID} introduces another trusted server in addition to the IdP,
  to blindly sign \cite{blind-sign}
 a token that binds a long-term user secret and a pseudonym.
 The user then unblinds this token,
     and then authenticates herself to an RP using the secret.
 
-Privacy-preserving schemes of identity federation \cite{Opaak, hyperledge-idemix, uprov, UnlimitID, ELPASSO} are designed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}.
+Privacy-preserving schemes of identity federation are designed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}.
 For instance, the IdP signs anonymous credentials in Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, U-Prove \cite{uprov}, and EL PASSO \cite{ELPASSO}, each of which binds a long-term user secret. %, with which users can authenticate to an RP.
 Then a user proves ownership of the anonymous credentials using her secret.
   %   and discloses IdP-confirmed attributes in the credentials in most schemes except Opaak.
@@ -161,11 +161,20 @@ Similarly, Fabric \cite{hyperledge-idemix} integrates Idemix anonymous credentia
 Some privacy-preserving identity federation solutions \cite{PseudoID,ELPASSO,UnlimitID,Opaak,uprov,hyperledge-idemix} prevent both IdP-based login tracing and RP-based identity linkage, for (\emph{a}) the RP's identity is not enclosed in the anonymous credentials and (\emph{b}) the user selects different pseudonyms to visit different RPs.
 They even protect user privacy against collusive attacks by the IdP and RPs, as these pseudonyms cannot be linked through anonymous credentials \cite{anon-credential-2001, idemix, anon-credential} when the ownership of these credentials is proved to colluding RPs. % using a user secret.
 %However, this protection brings extra complexity to users, and such services cannot be accessed from COTS browsers.
-This privacy protection depends on the long-term user secrets to mask the relationship of these pseudonyms (or accounts),
+In privacy-preserving identity federation
+this privacy protection depends on long-term user secrets to mask the relationship of the pseudonyms (or accounts),
         so a browser plug-in or extension is always needed to handle the user secrets. 
 In Section \ref{sec:discussion}
-we particularly discuss the collusion of the IdP and RPs in privacy-preserving identity management and authentication.
+we particularly discuss the collusion of the IdP and RPs in privacy-preserving SSO and identity federation.
 
+%Compared with privacy-preserving identity federation \cite{prima,PseudoID,Opaak,ELPASSO,uprov,UnlimitID,hyperledge-idemix}
+%    where a browser plug-in or extension is required to handle a long-term user secret
+%    but
+%    more privacy threats are eliminated,
+%UPPRESSO works with COTS browsers,
+%    but collusive attacks by the IdP and RPs still break user privacy in UPPRESSO.
+%Our design provides a convenient choice for some users not installing browser plug-ins or extensions.
+%
 
 \noindent\textbf{Anonymous identity federation.}
 Such approaches offer the strongest privacy,
@@ -178,7 +187,7 @@ These completely-anonymous authentication services only work for special applica
 \subsection{OPRF-based Applications}
 PrivacyPass and TrustToken \cite{privacypass,trusttoken} adopted the oblivious pseudo-random function (OPRF) protocol of Hash(EC)DH \cite{oprf-proved,voprf-proved} to generate anonymous tokens. %, with which a user ly accesses protected resources.
 A user generates a random number $e$ to blind an unsigned token $T$ into $[e]T$. After authenticating the user, a token server signs $[e]T$ using its private key $k$ and returns $[k e]T$. The user then uses $e$ to convert it into ($T, [k]T$),
-        which is redeemed when she accesses protected resources
+        which is redeemed when she anonymously accesses protected resources
  (see \cite{privacypass,trusttoken} for details).
 In this procedure, the token server obliviously calculates a pseudo-random output as an anonymous token,
     because ($T, [k]T$) and ($[e]T, [ke]T$) cannot be linked.
@@ -197,13 +206,13 @@ UPPRESSO leverages this cryptographic technique in very different ways.
 First, 
 it works among three parties, unlike the two-party PrivacyPass/TrustToken protocols.
 UPPRESSO shares the user-selected random number $t$ with the target RP,
-enabling it to independently derive the user's permanent account, i.e., $Acct = [t^{-1}]PID_{U}$. This account is ``obliviously'' determined by the IdP when it calculates the user's pseudo-identity.
+enabling it to derive the user's permanent account, i.e., $Acct = [t^{-1}]PID_{U}$. This account is ``obliviously'' determined by the IdP when it calculates the user's pseudo-identity.
 % based on the ``blinded'' input (i.e., the visited RP's pseudo-identity).
 Second, $u$ and $ID_{RP}$, which roughly correspond to $k$ and $T$ in PrivacyPass/TrustToken, are assigned as the permanent identities of the user and the RP, respectively, to establish the relationship among identities and accounts.
-This is very different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as a server's secret key.
+This is different from existing OPRF-based systems  \cite{privacypass, trusttoken, strong-oprf, oprf-bitcoin-wallet, pesto, oprf-ot-si, pp-ss, Private-Contact-Discovery, o-kms, oprf-deduplication} that always use $k$ as a server's secret key.
 %The integration of SSO (pseudo-)identities and OPRF variables requires a deep understanding of both SSO and OPRF protocols.
-Finally, UPPRESSO leverages randomness of Hash(EC)DH OPRFs to ensure RP unlinkability, and this property is not utilized in PrivacyPass/TrustToken.
-It ensures colluding RPs cannot link any logins across RPs,
+Finally, UPPRESSO leverages randomness of Hash(EC)DH OPRFs to ensure RP unlinkability, but this property is not utilized in PrivacyPass/TrustToken.
+This ensures colluding RPs cannot link any logins across RPs,
 even by sharing their knowledge about the pseudo-identities and permanent accounts in UPPRESSO.
 This property offers desirable indistinguishability of \emph{different users} visiting colluding RPs.
 It roughly corresponds to the indistinguishability of \emph{different private keys} for signing anonymous tokens, not considered in PrivacyPass/TrustToken. 
@@ -213,16 +222,16 @@ UPPRESSO essentially
 depends on the \emph{deterministicness} property of \emph{pseudo-random} functions to derive a permanent account for any $t$, \emph{obliviousness} to ensure IdP untraceability, 
 and \emph{pseudo-randomness} to ensure RP unlinkability. 
 In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} depend on only the properties of deterministicness and obliviousness.
-Moreover, UPPRESSO requires more properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
+Moreover, UPPRESSO requires additional properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
     which are not discussed in OPRFs \cite{sok-oprf,oprf-proved,voprf-proved}.
 % in the case of user identity leakage, \emph{collision-freeness} of $PID_{RP}$ (see Appendix \ref{proof-rp-collision}).
-So an OPRF protocol is not always ready to work as the identity transformations in UPPRESSO.
+Thus, an OPRF protocol is not always ready to work as the identity transformations in UPPRESSO.
 % unless no collision exists in the blinded inputs of the pseudo-random function \cite{oprf-proved,voprf-proved}.
 
-\subsection{Formal Analysis of SSO Protocols}
-Dolev-Yao style models are developed to analyze the communications among entities in an SSO system \cite{SPRESSO,BrowserID,FettKS14}, to ensure that all messages including identity tokens are delivered as expected in the system
-        and then to prove security and privacy of services 
-        based on only traditional public-key and symmetric cryptographic algorithms (e.g., RSA and AES in Spresso \cite{SPRESSO}).
-On the contrary, in this paper security and privacy of SSO services are analyzed based on more complicated cryptographic primitives,
-    while secure communications among entities (i.e., authenticity, confidentiality and integrity of identity tokens) are ensured by common security mechanisms within a COTS browser.
-
+%\subsection{Formal Analysis of SSO Protocols}
+%Dolev-Yao style models are developed to analyze the communications among entities in an SSO system \cite{SPRESSO,BrowserID,FettKS14}, to ensure that all messages including identity tokens are delivered as expected in the system
+%        and then to prove security and privacy of services 
+%        based on only traditional public-key and symmetric cryptographic algorithms (e.g., RSA and AES in SPRESSO \cite{SPRESSO}).
+%On the contrary, in this paper security and privacy of SSO services are analyzed based on more complicated cryptographic primitives,
+%    while secure communications among entities (i.e., authenticity, confidentiality and integrity of identity tokens) in UPPRESSO are assumed (or ensured by common mechanisms in popular SSO services).
+%

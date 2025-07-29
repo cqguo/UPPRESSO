@@ -22,7 +22,8 @@ Besides, it is easy to shift these transformations into a finite field $\mathbb{
     {$PID_{U_i,j}^l$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the $i$-th user's pseudo-identity, in the user's $l$-th login visiting the $j$-th RP.} \\ \hline
      {$Acct_{i,j}$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the $i$-th user's locally-unique account at the $j$-th RP, publicly known.} \\ \hline
     {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
-    {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens.} \\ \hline
+    {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens,
+    i.e., the RP's redirection endpoint \cite{rfc6749}.} \\ \hline
     {$Cert_{RP_j}$} & {The RP certificate binding $Enpt_{RP_j}$ and $ID_{RP_j}$, signed by the IdP.} \\ \hline
     \end{tabular}
     \label{tbl:notations-protocol}
@@ -35,12 +36,12 @@ Here, $G$ is a base point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the a
 $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})= [ID_{U_i}]ID_{RP_j} =[u_ir_j]G$ is automatically assigned to a user at every RP.
 
 A user's accounts at different RPs are inherently different and unlinkable.
-A user's identity $ID_U = u$ is unknown to all entities except the honest IdP; otherwise, colluding RPs could calculate $[u]ID_{RP_j}$s for any known $u$ and link these accounts.
+A user's identity $ID_U = u$ is unknown to all entities except the honest IdP; otherwise, colluding RPs could calculate $[u]ID_{RP_j}$ for any known $u$ and link these accounts.
 Meanwhile, $ID_{RP} = [r]G$ and $Acct = [ID_U]ID_{RP}$ are publicly-known,
  but $r$ is always kept secret;
 otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j$ is equal to $[r]Acct_{j'}$ or not.
 
-In UPPRESSO $r$ is processed only once by the IdP,
+Fortunately, in UPPRESSO $r$ is processed only once by the IdP,
     while $u$ is used only by the IdP internally and
  not enclosed in any message; see Section \ref{implementations} for details.
 
@@ -109,7 +110,7 @@ When the required properties of identity transformations are satisfied,
   \item $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the target RP's identity (but not any other RPs') and $t$ is known only to the target RP and the initiating user (but not the honest IdP; otherwise, the IdP is able to calculate $ID_{RP}$ by itself),
   \item 
 No extra privacy leakage in the requesting, receiving and forwarding of identity tokens
-(e.g., no information about the RP server is leaked to the IdP).
+(e.g., no information about the RP server is leaked to the IdP in HTTP requests).
 \end{itemize}
 
 In an original OIDC system with pop-up UX, as shown in Figure \ref{fig:OpenID},
@@ -181,11 +182,11 @@ Compared with the original OIDC protocol in Figure \ref{fig:OpenID},
 UPPRESSO adopts the common mechanisms for secure communications,
 except that the relationship between $ID_{RP}$ and $Enpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way by the IdP).
 Therefore, authenticity, confidentiality, and integrity of identity tokens are still ensured in UPPRESSO.
-Moreover, in UPPRESSO the IdP's token endpoint 
-    works in a way compatible with original OIDC protocols \cite{rfc6749,OpenIDConnect}:
-        When receiving a token request for an ``unknown'' $ID_{RP}$ (i.e., $PID_{RP}$),
+Moreover, we only improve the IdP's token endpoint in a way compatible with the original OIDC protocol \cite{rfc6749,OpenIDConnect}:
+        When receiving a token request for an ``unregistered'' $ID_{RP}$ (i.e., $PID_{RP}$),
 the IdP issues a token but replies with an ``empty'' $Enpt_{RP}$,
     and the calculation of $PID_{U}$ is considered as a special way to assign PPIDs.
+The IdP's other endpoints keep unchanged.
 
 Finally, to prevent referer leakage in the HTTP request to pop up the user-i window,
  we need to ensure this request does not carry an HTTP \texttt{referer} header, which reveals the visited RP's domain to the IdP web server.\footnote{In original OIDC services similar privacy leakages commonly exist, but do not matter because such services are not designed to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.

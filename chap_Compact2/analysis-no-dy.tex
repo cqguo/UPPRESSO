@@ -13,20 +13,26 @@ According to our design goals %(i.e., the desired security and privacy guarantee
 
 
 %\noindent\textbf{Impersonation and identity injection against security.}
-Security (i.e., user identification and RP designation) is proved against \emph{malicious RPs and users}.
- Malicious RPs and users could collude \cite{FettKS14,BrowserID,SPRESSO},
+First of all, security (i.e., user identification and RP designation) is proved against \emph{malicious RPs and users}.
+ Malicious entities could collude \cite{FettKS14,BrowserID,SPRESSO},
   attempting to (\emph{a}) impersonate an honest user to log into some honest RP
-   or (\emph{b}) entice an honest user to log into an honest RP under another's account.
+   or (\emph{b}) entice an honest user to log into an honest RP under another's account, 
 %These attacks break security of SSO services.
+by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
+% That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
+% These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
 
 Provided that the security properties of UPPRESSO are satisfied,
     we analyze the privacy properties \emph{only} for successful logins
     because no meaningful account is derived in an unsuccessful login
 where the initiating user or the target RP deviates from the specifications.
-It makes no sense to track login activities resulting in meaningless accounts.
-Therefore,
-    an \emph{honest-but-curious} IdP is considered in the proof of IdP untraceability,
-while RP unlinkability is analyzed against a group of \emph{semi-honest} RPs and users which follow the protocols but share all their information.
+It makes no sense to track login activities resulting in meaningless accounts,
+    and then no malicious entities are considered in the proofs of privacy.
+
+Therefore, (\emph{a}) IdP untraceability is proved against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
+and (\emph{b}) RP unlinkability is analyzed against \emph{a group of semi-honest RPs and users} which follow the protocols but share information,
+    attempting to link an honest user's accounts across these semi-honest RPs.
+%in addition to an \emph{honest-but-curious} IdP according to the threat model.
 
 %\noindent\textbf{Login tracing by an IdP.}
 %The honest-but-curious IdP tries to infer the identities of the RPs being visited by an honest user \cite{BrowserID, SPRESSO}.
@@ -82,10 +88,6 @@ From $TK$ the designated honest RP derives \emph{only} the meaningful account be
 User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively.
 As mentioned in Section \ref{implementations}, an (honest) RP directly derives accounts based on any signed identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
 So we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ in the proofs.
-Moreover,
-the proofs assume \emph{malicious RPs colluding with users},
-                which attempt to break the security guarantees of UPPRESSO,
-by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 % That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
 % These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
 
@@ -160,7 +162,8 @@ This is not an attack: $RP_{j_2}$ is actually designated by $TK$ and the adversa
 
 The honest IdP would attempt to infer the visited RPs,
 by collecting information from the identity-token requests.
-It does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
+According to the designs and the detailed protocol in Sections \ref{sec:web-design} and \ref{implementations},
+ it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
 Next, we prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on $\mathbb{E}$ to the IdP,
     and then
@@ -186,9 +189,10 @@ As $t$ is uniformly-random in $\mathbb{Z}_n$ and kept unknown, $PID_{RP} = [t]ID
 \subsection{Privacy against RP-based Identity Linkage}
 \label{subsec:RP-privacy}
 
-All semi-honest RPs and users share their information, attempting to infer the identities of honest users or link an honest user's accounts across the semi-honest RPs.
-
-
+Semi-honest RPs and users share their information, attempting to 
+%infer the identities of honest users or 
+link an honest user's accounts across the semi-honest RPs.
+%
 In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
 
