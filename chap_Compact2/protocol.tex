@@ -22,8 +22,7 @@ Besides, it is easy to shift these transformations into a finite field $\mathbb{
     {$PID_{U_i,j}^l$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the $i$-th user's pseudo-identity, in the user's $l$-th login visiting the $j$-th RP.} \\ \hline
      {$Acct_{i,j}$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the $i$-th user's locally-unique account at the $j$-th RP, publicly known.} \\ \hline
     {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
-    {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens,
-    i.e., the RP's redirection endpoint \cite{rfc6749}.} \\ \hline
+    {$Enpt_{RP_j}$} & {The $j$-th RP's endpoint for receiving the identity tokens \cite{rfc6749}.} \\ \hline
     {$Cert_{RP_j}$} & {The RP certificate binding $Enpt_{RP_j}$ and $ID_{RP_j}$, signed by the IdP.} \\ \hline
     \end{tabular}
     \label{tbl:notations-protocol}
@@ -182,11 +181,11 @@ Compared with the original OIDC protocol in Figure \ref{fig:OpenID},
 UPPRESSO adopts the common mechanisms for secure communications,
 except that the relationship between $ID_{RP}$ and $Enpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way by the IdP).
 Therefore, authenticity, confidentiality, and integrity of identity tokens are still ensured in UPPRESSO.
-Moreover, we only improve the IdP's token endpoint in a way compatible with the original OIDC protocol \cite{rfc6749,OpenIDConnect}:
+Moreover, we improve the IdP's token endpoint in a way compatible with the original OIDC protocol \cite{rfc6749,OpenIDConnect}:
         When receiving a token request for an ``unregistered'' $ID_{RP}$ (i.e., $PID_{RP}$),
 the IdP issues a token but replies with an ``empty'' $Enpt_{RP}$,
     and the calculation of $PID_{U}$ is considered as a special way to assign PPIDs.
-The IdP's other endpoints keep unchanged.
+%The IdP's other endpoints (e.g., authorization endpoint, logout endpoint and RP registration endpoint) are kept unchanged.
 
 Finally, to prevent referer leakage in the HTTP request to pop up the user-i window,
  we need to ensure this request does not carry an HTTP \texttt{referer} header, which reveals the visited RP's domain to the IdP web server.\footnote{In original OIDC services similar privacy leakages commonly exist, but do not matter because such services are not designed to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.

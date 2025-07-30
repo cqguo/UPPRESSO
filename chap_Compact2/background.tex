@@ -11,10 +11,10 @@ Users and RPs register at an OIDC IdP with their identities
 and other information such as user credentials (e.g., passwords)
 and RP endpoints (i.e., the URLs to receive tokens).
 User operations in the login flows are conducted through a user agent (or browser typically).
-Figure \ref{fig:OpenID} shows
-the implicit SSO login flow of OIDC with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber},
-which is recommended to provide an in-context user experience.
-When a user clicks the SSO login button in a browser window visiting the target RP 
+To provide an in-context user experience,
+    the SSO login flow of OIDC with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is recommended.
+As shown in Figure \ref{fig:OpenID},
+when a user clicks the SSO login button in a browser window visiting the target RP 
 (called the \emph{user-r window} in this paper),
  an identity-token request is constructed with the RP's identity and the scope of requested user attributes.
 It pops up another window (i.e., the \emph{user-i window}),
@@ -219,7 +219,7 @@ It roughly corresponds to the indistinguishability of \emph{different private ke
 
 Although UPPRESSO mathematically employs the same technique in the identity transformations as the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved}, we require more properties of these algorithms. % in Theorems 4, 6, and 7.
 UPPRESSO essentially 
-depends on the \emph{deterministicness} property of \emph{pseudo-random} functions to derive a permanent account for any $t$, \emph{obliviousness} to ensure IdP untraceability, 
+depends on the \emph{deterministicness} property of \emph{pseudo-random} functions to correctly derive the account for any $t$, \emph{obliviousness} to ensure IdP untraceability, 
 and \emph{pseudo-randomness} to ensure RP unlinkability. 
 In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} depend on only the properties of deterministicness and obliviousness.
 Moreover, UPPRESSO requires additional properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
