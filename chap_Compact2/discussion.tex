@@ -7,16 +7,20 @@ Even when the IdP strictly follows the protocols but shares information with RPs
     a user would complete her logins \emph{entirely} with colluding entities,
     and then the IdP and RPs could always link a user's (pseudo-)identities and accounts (i.e., both IdP untraceability and RP unlinkability are broken),
     unless a long-term secret, unknown to the colluding IdP and RPs,
-                is introduced to mask the relationship of these (pseudo-)identities and accounts.
+                is introduced to mask the relationship among these (pseudo-)identities and accounts.
 That is, regardless of which $\mathcal{F}_{Acct\ast}()$ is adopted to determine
 $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$,
 the IdP could always collude with RPs to track a user's login activities by analyzing the relationship between derived accounts and the user's identity,
 unless $Acct_{i,j} = \mathcal{F}_{Acct\ast}(s_i,ID_{U_i}, ID_{RP_j})$ is adopted and $s_i$ is a long-term secret known to only the user.
 In this case,
-    a browser extension or plug-in is required
+    a browser extension is required
             to handle the user secret,
              and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers this strategy.
-%Besides, if the user secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.
+However, if the user wants to access the services from different devices,
+    addition user operations are required to synchronize the secret among these devices.
+Moreover, if the user secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.\footnote{This secret used to derive accounts (or mask the relationship of identities and accounts) is different from the credential for user
+authentication to the IdP: If the credential is lost or leaked, the user only needs to update it at the IdP and her user identity is kept unchanged.}
+
 Alternatively, MISO \cite{miso} introduces an extra fully-trusted mixer server other than the IdP to keep $s_i$,
             to calculate user pseudo-identities (or accounts) in each login.
 Then, in MISO the mixer server can track all users' login activities,

@@ -43,8 +43,8 @@ Alternatively, if a browser works as the user agent of OIDC with only one window
   \hline
   & \multirow{3}*{\textbf{Solution}} &
   \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & & \\ \cline{3-4}
-  & & IdP-based & RP-based & \textbf{Extra Trusted} & \textbf{Browser Plug-in}\\
-  & & Login Tracing & Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{or Extension}$^{\ddag}$ \\\hline\hline
+  & & IdP-based & RP-based & \textbf{Extra Trusted} & \textbf{Browser Extension}\\
+  & & Login Tracing & Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{with User Secret}$^{\ddag}$ \\\hline\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
@@ -68,8 +68,8 @@ Alternatively, if a browser works as the user agent of OIDC with only one window
 \begin{itemize}
 \item[]
 ${\sharp}$ \textbf{Privacy Threat}: $\CIRCLE$ prevented, $\Circle$ not prevented.
-\ \ \ ${\dag}$ \textbf{Extra Trusted Server}: $\CIRCLE$ no, $\Circle$ required.
-\ \ \ ${\ddag}$ \textbf{Browser Plug-in or Extension}: $\CIRCLE$ no, $\Circle$ required.
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ${\dag}$ \textbf{Extra Trusted Server}: $\CIRCLE$ no, $\Circle$ required.\\
+${\ddag}$ \textbf{Browser Extension with User Secret}: $\CIRCLE$ no, $\Circle$ required.
 
 \item[1.]
 SPRESSO assumes a malicious IdP (but honest IdPs in others), and then a trusted forwarder server is needed to decrypt the RP identity and forward tokens to the RP.
@@ -139,7 +139,7 @@ Similarly, UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the us
 % SSO allows a user to log into an RP, without by herself maintaining an account at the RP or holding a long-term secret verified by the RP, so that SSO services are accessible from COTS browsers.
 Identity federation enables a user registered at a trusted IdP to be accepted by other parties, potentially with different accounts,
 but %authentication operations between the user and RPs are involved, so 
-browser plug-ins or extensions are needed handle a long-term user secret in such systems.
+browser extensions are needed to handle a long-term user secret.
 Although the term ``single sign-on (SSO)'' was used in some schemes \cite{PseudoID, Opaak, ELPASSO, WangWS13, HanCSTW18, HanCSTWW20}, this paper refers to them as \emph{identity federation} to emphasize this difference.
 
 In PRIMA \cite{prima}, an IdP signs a credential
@@ -162,8 +162,8 @@ Some privacy-preserving identity federation solutions \cite{PseudoID,ELPASSO,Unl
 They even protect user privacy against collusive attacks by the IdP and RPs, as these pseudonyms cannot be linked through anonymous credentials \cite{anon-credential-2001, idemix, anon-credential} when the ownership of these credentials is proved to colluding RPs. % using a user secret.
 %However, this protection brings extra complexity to users, and such services cannot be accessed from COTS browsers.
 In privacy-preserving identity federation
-this privacy protection depends on long-term user secrets to mask the relationship of the pseudonyms (or accounts),
-        so a browser plug-in or extension is always needed to handle the user secrets. 
+this privacy protection depends on long-term user secrets to mask the relationship of among pseudonyms (or accounts),
+        so a browser extension is always needed to handle the user secrets. 
 In Section \ref{sec:discussion}
 we particularly discuss the collusion of the IdP and RPs in privacy-preserving SSO and identity federation.
 
