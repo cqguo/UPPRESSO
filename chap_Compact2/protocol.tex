@@ -110,8 +110,8 @@ When the required properties of identity transformations are satisfied,
   by the common mechanisms in widely-deployed SSO services \cite{OpenIDConnect, rfc6749, SAML,GoogleIdIntegrate,de2014oauth,FettKS14,BrowserID,uber},
   \item $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the target RP's identity but not any other RPs' (i.e., the target RP is designated) and $t$ is known only to the target RP and the initiating user (but not the honest IdP; otherwise, the IdP is able to calculate $ID_{RP}$ by itself),
   \item 
-No extra privacy leakage in the requesting, receiving and forwarding of identity tokens
-(e.g., no information about the RP server is leaked to the IdP in HTTP requests).
+No direct privacy leakage in the requesting, receiving and forwarding of identity tokens
+(e.g., no HTTP \texttt{referer} header about the RP server is leaked to the IdP in HTTP requests).
 \end{itemize}
 
 In an original OIDC system with pop-up UX, as shown in Figure \ref{fig:OpenID},
@@ -200,7 +200,7 @@ in the RP's SSO login page \cite{referer_policy}.
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.79\linewidth]{fig/pop-up-process.pdf}
+  \includegraphics[width=0.785\linewidth]{fig/pop-up-process.pdf}
   \caption{The SSO login flow of UPPRESSO}
   \label{fig:process}
 \end{figure*}

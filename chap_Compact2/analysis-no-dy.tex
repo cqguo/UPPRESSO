@@ -169,7 +169,7 @@ by collecting information from the identity-token requests.
 According to the designs and the detailed protocol in Sections \ref{sec:web-design} and \ref{implementations},
  it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
-Next, we prove that, $PID_{RP}$ is \emph{indistinguishable} from a random variable on $\mathbb{E}$ to the IdP,
+Next, we prove that, \emph{$PID_{RP}$ is indistinguishable from a random variable on $\mathbb{E}$ to the IdP},
     and then
  it cannot (\emph{a}) link multiple logins visiting an RP or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
 
@@ -223,7 +223,7 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
 
 Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
 even when a number of semi-honest users share information with them,
-the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users.
+\emph{the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users}.
 
 
 \vspace{1.5mm}
