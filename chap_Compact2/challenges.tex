@@ -23,7 +23,7 @@ are also required for confidentiality of tokens \cite{GoogleIdIntegrate,de2014oa
 Meanwhile, in each login the IdP issues an identity token that (\emph{a}) specifies the target RP (i.e., \emph{RP designation}) and (\emph{b}) identifies the authenticated user who requests this token (i.e., \emph{user identification}),
         as the enclosed (pseudo-)identities of RP and user \cite{OpenIDConnect,rfc6749,SAML} (see Section \ref{analysis-security} for details).
 RP designation prevents malicious RPs from replaying received identity tokens to gain illegal access to other honest RPs as victim users.
-Thus, an RP usually checks the RP (pseudo-)identity enclosed in a token before accepting it 
+So an RP usually checks the RP (pseudo-)identity enclosed in a token before accepting it 
 \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,up-sso,miso}
  and then allows the token holder to log in as the specified (pseudo-)identity (i.e., account).
 
@@ -126,13 +126,6 @@ $PID_{RP}$ and $PID_{U}$ are ephemeral;
 $PID_{U,j}$ for visiting different RPs are independent of each other;
     otherwise, colluding RPs could learn something on $ID_U$ from $PID_{U,j}$s and link the logins.
 
-\begin{figure}[tb]
-  \centering
-  \includegraphics[width=1.00\linewidth]{fig/IDCorrelation.pdf}
-  \caption{Identity transformations in UPPRESSO} %privacy-preserving SSO}
-  \label{fig:IDCorrelation}
-\end{figure}
-
 In privacy-preserving SSO services integrating the identity transformations,
     an identity token \emph{explicitly binds} $PID_{RP_j} = \mathcal{F}_{PID_{RP}}(ID_{RP_j})$ but \emph{implicitly designates} only the RP with $ID_{RP_j}$.
 The following properties are required for the identity transformations:
@@ -147,7 +140,7 @@ The following properties are required for the identity transformations:
 %\item \textbf{Account Correctness.} In a login involving no adversary,
 % the visited RP always derives the account belonging to the user who requests the identity token,
 %    by calculating $\mathcal{F}_{Acct}(PID_{U}, PID_{RP})$.
-\item \textbf{User Identification.} Based on an identity token,
+\item \textbf{User Identification.} From an identity token,
     the designated honest RP derives only the account exactly identifying the user requesting this token.
 \item \textbf{RP Designation.} 
 An identity token is rejected, at any honest RPs other than the designated one.
@@ -160,6 +153,13 @@ Colluding RPs
  cannot link any login initiated by an honest user visiting an RP,
   to any logins visiting any other colluding RPs by honest users.
 \end{itemize}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=1.00\linewidth]{fig/IDCorrelation.pdf}
+  \caption{Identity transformations in UPPRESSO} %privacy-preserving SSO}
+  \label{fig:IDCorrelation}
+\end{figure}
 
 In addition to the basic requirement of account uniqueness,
     user identification and RP designation ensure security of SSO services,

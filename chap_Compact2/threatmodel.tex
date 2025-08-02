@@ -11,8 +11,8 @@ The system consists of an honest-but-curious IdP, as well as several honest or m
 \noindent \textbf{Honest-but-curious IdP.} The IdP strictly follows the protocols,
  while remaining interested in learning about a user's login activities.
 For example, it could store received messages to infer the relationship among $ID_U$, $ID_{RP}$, $PID_{U}$, and $PID_{RP}$.
-It never actively violates the protocols.
-% so a script downloaded from the IdP also strictly follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
+It never actively violates the protocols,
+ so a script downloaded from the IdP also follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
 
 The IdP maintains the private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
 and adversaries cannot forge such signed messages.

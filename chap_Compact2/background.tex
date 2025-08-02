@@ -25,7 +25,7 @@ Finally, the RP verifies the token and allows the token holder to log in as the 
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
     responsible for communicating with the respective origin web servers
     and also the cross-origin
-communications using the \verb+postMessage+ HTML5 API within the COTS browser.
+communications using the \verb+postMessage+ HTML5 API \cite{postm-targeto} within the COTS browser.
 
 
 %To process identity tokens retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},
@@ -90,9 +90,9 @@ A variation of POIDC \cite{POIDC} proposes to also hide a user's identity in the
 
 \subsection{Privacy-Preserving SSO and Identity Federation}
 \label{subsec-solutions}
-To provide secure SSO services,
+In the original OIDC protocol 
     an IdP signs identity tokens binding the identities of the authenticated user and the target RP \cite{OpenIDConnect,rfc6749}.
-However,
+So
     a user's login activities are leaked due to these identities:
         The curious IdP learns the visited RP from $ID_{RP}$ enclosed in an identity-token request (i.e., IdP-based login tracing),
         while colluding RPs link a user's logins visiting these RPs by $ID_{U}$ in the tokens (i.e., RP-based identity linkage).
@@ -139,7 +139,8 @@ Similarly, UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the us
 % SSO allows a user to log into an RP, without by herself maintaining an account at the RP or holding a long-term secret verified by the RP, so that SSO services are accessible from COTS browsers.
 Identity federation enables a user registered at a trusted IdP to be accepted by other parties, potentially with different accounts,
 but %authentication operations between the user and RPs are involved, so 
-browser extensions are needed to handle a long-term user secret.
+browser extensions are needed to handle a long-term user secret
+which is involved in the derivation of accounts.
 Although the term ``single sign-on (SSO)'' was used in some schemes \cite{PseudoID, Opaak, ELPASSO, WangWS13, HanCSTW18, HanCSTWW20}, this paper refers to them as \emph{identity federation} to emphasize this difference.
 
 In PRIMA \cite{prima}, an IdP signs a credential
@@ -225,7 +226,7 @@ In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} depend on 
 Moreover, UPPRESSO requires additional properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
     which are not discussed in OPRFs \cite{sok-oprf,oprf-proved,voprf-proved}.
 % in the case of user identity leakage, \emph{collision-freeness} of $PID_{RP}$ (see Appendix \ref{proof-rp-collision}).
-Thus, an OPRF protocol is not always ready to work as the identity transformations in UPPRESSO.
+Thus, an OPRF is not always ready to work as the identity transformations in UPPRESSO.
 % unless no collision exists in the blinded inputs of the pseudo-random function \cite{oprf-proved,voprf-proved}.
 
 %\subsection{Formal Analysis of SSO Protocols}

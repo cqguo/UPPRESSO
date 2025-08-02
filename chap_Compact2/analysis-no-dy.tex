@@ -1,8 +1,9 @@
 \section{Security and Privacy Analysis}
 \label{sec:analysis}
 
-As account uniqueness has been analyzed in Section \ref{subsec:overview},
-in this section we prove security (i.e., user identification and RP designation) and privacy (i.e., IdP untraceability and RP unlinkability) of UPPRESSO.
+As account uniqueness is analyzed in Section \ref{subsec:overview}
+    and the designs in Section \ref{sec:web-design} ensure secure communications and no direct privacy leakage in the communications,
+in this section we prove security (i.e., user identification and RP designation) and privacy (i.e., IdP untraceability and RP unlinkability) of the identity transformations in UPPRESSO.
 
 
 \subsection{Adversarial Scenarios}
@@ -14,7 +15,7 @@ According to our design goals %(i.e., the desired security and privacy guarantee
 
 %\noindent\textbf{Impersonation and identity injection against security.}
 First of all, security (i.e., user identification and RP designation) is proved against \emph{malicious RPs and users} in Section \ref{analysis-security}.
- Malicious entities could collude \cite{FettKS14,BrowserID,SPRESSO},
+In the proofs, malicious entities could collude \cite{FettKS14,BrowserID,SPRESSO},
   attempting to (\emph{a}) impersonate an honest user to log into some honest RP
    or (\emph{b}) entice an honest user to log into an honest RP under another's account, 
 %These attacks break security of SSO services.
@@ -71,36 +72,39 @@ and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} a
 \label{analysis-security}
 
 In secure SSO systems, an identity token denoted as $TK$, which is requested by a user to visit an RP,
-    \emph{enables only this user to log into only the honest target RP as her account at this RP}. It makes no sense to discuss the login results at malicious RPs.
-$TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
-where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ is calculated
-    and (\emph{b}) $PID_U = [ID_U]PID_{RP}$ is calculated based on the initiating user's identity $ID_U$.
-
-When authenticity, confidentiality and integrity of identity tokens have been ensured, we summarize the following sufficient conditions of secure SSO services \cite{FettKS14,BrowserID,SPRESSO}:
-
-\noindent \textbf{User Identification.} %At the designated RP, $TK$ identifies only the user who requests this identity token from the IdP. That is, 
-From $TK$ the designated honest RP derives \emph{only} the meaningful account belonging to the user requesting $TK$.
-
-\noindent \textbf{RP Designation.} From $TK$, \emph{only} the designated honest RP derives meaningful accounts.
-
-%We prove that identity tokens in UPPRESSO and the enclosed pseudo-identities satisfy four properties, namely, \emph{RP designation}, \emph{user identification}, \emph{token confidentiality}, and \emph{token integrity}, which together ensure the security of UPPRESSO in the first adversarial scenario.
-
-User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively.
-As mentioned in Section \ref{implementations}, an (honest) RP directly derives accounts based on any signed identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
-So we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ in the proofs.
-% That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
-% These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
+    \emph{enables only this user to log into only the honest target RP as her account at this RP} (i.e., user identification and RP designation). It makes no sense to discuss the login results at malicious RPs.
 
 Let's assume totally $s$ users and $p$ RPs in UPPRESSO,
     whose identities are denoted as $\mathbbm{ID}_U = \mathbbm{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbbm{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
 There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
 $Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept unknown to adversaries.
 
+$TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
+where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ is calculated
+    and (\emph{b}) $PID_U = [ID_U]PID_{RP}$ is calculated based on the initiating user's identity $ID_U$.
+
+User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively, against malicious RPs colluding with users.
+Besides, as mentioned in Section \ref{implementations}, 
+in Step 3.2 an (honest) RP directly derives accounts from any signed identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
+So we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ in the proofs.
+% That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
+% These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
+
+
+%When authenticity, confidentiality and integrity of identity tokens have been ensured, we summarize the following sufficient conditions of secure SSO services \cite{FettKS14,BrowserID,SPRESSO}:
+
+
+%We prove that identity tokens in UPPRESSO and the enclosed pseudo-identities satisfy four properties, namely, \emph{RP designation}, \emph{user identification}, \emph{token confidentiality}, and \emph{token integrity}, which together ensure the security of UPPRESSO in the first adversarial scenario.
+
+
 
 %Because $TK$ works only at the ``implicitly'' designated RP and no meaningful user will be derived at any other RPs, % when $u_i$ and $r_j$ are kept unknown to adversaries,
 % in Step 4.2 an RP does not check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
 
-We prove user identification by showing that,
+User identification means that,
+%At the designated RP, $TK$ identifies only the user who requests this identity token from the IdP. That is, 
+\emph{from $TK$ the designated honest RP derives only the meaningful account belonging to the user requesting $TK$}.
+We prove this property by showing that,
     at any RP designated by $TK$,
         a meaningless account not belonging to the initiating user will never be derived.
 
@@ -123,8 +127,8 @@ When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic cu
 
 \vspace{1.5mm}
 
-Next,
-we prove RP designation by showing that,
+RP designation means that, \emph{from $TK$ only the designated honest RP derives meaningful accounts}.
+We prove it by showing that,
     at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
    % under an adversarial scenario involving malicious adversaries.
 
@@ -196,10 +200,6 @@ link an honest user's accounts across the semi-honest RPs.
 In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
 
-Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
-even when a number of semi-honest users share information with them,
-the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users.
-
 
 With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa.
 So we denote all the information that an RP learns in a login as a tuple $L =(ID_{RP}, t, Acct)=([r]G, t, [ur]G)$.
@@ -220,6 +220,10 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
   \caption{The PPT algorithm $\mathcal{D}^*_R$ constructed based on the RP-based identity linkage game to solve the ECDDH problem.}
   \label{fig:dalgorithm}
 \end{figure}
+
+Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
+even when a number of semi-honest users share information with them,
+the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users.
 
 
 \vspace{1.5mm}
