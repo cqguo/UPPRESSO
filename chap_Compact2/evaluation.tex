@@ -3,34 +3,43 @@
 
 \begin{figure*}[tb]  % 星号*表示跨双栏
   \centering
+    \renewcommand{\thesubfigure}{\roman{subfigure}} % 改为罗马数字
   % 第一行：横向两个子图
-  \subfigure[Caption A]{
-    \begin{minipage}[b]{0.9\columnwidth}
-      \includegraphics[width=\linewidth]{fig/evaluation-cache-internet.pdf}
-    \end{minipage}
-  }\hfill
-  \subfigure[Caption B]{
+  \subfigure[\footnotesize Initial visit]{
     \begin{minipage}[b]{0.9\columnwidth}
       \includegraphics[width=\linewidth]{fig/evaluation-nocache-internet.pdf}
     \end{minipage}
-  }
-  
-  % 第二行：横向两个子图
-  \subfigure[Caption C]{
-    \begin{minipage}[b]{0.9\columnwidth}
-      \includegraphics[width=\linewidth]{fig/evaluation-cache-LAN.pdf}
-    \end{minipage}
   }\hfill
-  \subfigure[Caption D]{
+  \subfigure[\footnotesize Subsequent visit]{
+    \begin{minipage}[b]{0.9\columnwidth}
+      \includegraphics[width=\linewidth]{fig/evaluation-cache-internet.pdf}
+    \end{minipage}
+  }
+  \vspace*{-10pt}
+  \par\medskip
+  \centering{\footnotesize (a) With a remotely-visiting browser}
+
+    \setcounter{subfigure}{0} % 重置subfigure计数器
+  % 第二行：横向两个子图
+  \subfigure[\footnotesize Initial visit]{
     \begin{minipage}[b]{0.9\columnwidth}
       \includegraphics[width=\linewidth]{fig/evaluation-nocache-LAN.pdf}
     \end{minipage}
+  }\hfill
+  \subfigure[\footnotesize Subsequent visit]{
+    \begin{minipage}[b]{0.9\columnwidth}
+      \includegraphics[width=\linewidth]{fig/evaluation-cache-LAN.pdf}
+    \end{minipage}
   }
+  \vspace*{-10pt}
+  \par\medskip
+  \centering{\footnotesize (b) In a local virtual environment}
+
+  
   \vspace*{-5pt}
   \caption{The time costs of SSO login in MITREid Connect, UPPRESSO, and SPRESSO}
-  \vspace*{-5pt}
   \label{fig:evaluation}
-\end{figure*}
+\end{figure*} 
 
 \noindent {\bf Experiment setting.}
 %SPRESSO encrypts the RP's domain in identity tokens and keeps the AES symmetric key known only to the RP and the user.
