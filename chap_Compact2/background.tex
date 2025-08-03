@@ -7,12 +7,14 @@ OIDC is one of the most popular SSO protocols. It supports different login flows
 These flows differ in the steps for requesting, receiving and forwarding identity tokens, but have common security requirements for the tokens.
 We present our designs in the implicit flow and discuss the support for the authorization code flow in Section \ref{sec:discussion}.
 
-Users and RPs register at an OIDC IdP with their identities
+Users and RPs register at an IdP with their identities
 and other information such as user credentials (e.g., passwords)
-and RP \emph{redirection endpoints} (i.e., the URLs to receive tokens \cite{rfc6749}).
-User operations in the login flows are conducted through a user agent (or browser typically).
+and RP \emph{redirection endpoints} \cite{rfc6749} (i.e., the URLs to receive tokens,
+denoted as $ReEnpt_{RP}$).
+User operations in the login flows are conducted on a user agent (or browser typically).
 To provide an in-context user experience (UX),
-    the SSO login flow of OIDC with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is recommended.
+    the SSO login flow with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is recommended.
+
 As shown in Figure \ref{fig:OpenID},
 when a user clicks the SSO login button in a browser window visiting the target RP 
 (called the \emph{user-r window} in this paper),
@@ -34,17 +36,18 @@ communications by the \verb+postMessage+ HTML5 API \cite{postm-targeto} within t
 Alternatively, if a browser works as the user agent of OIDC with only one window,
         user attributes are consented in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}, 
         which is called \emph{redirect UX}.
-
+After a token is issued by the IdP,
+    it is sent to the RP's redirection endpoint as a fragment instead of parameters due to security considerations \cite{de2014oauth}.
+So a script is downloaded from the RP to process the token.
 
 \begin{table*}[tb]
     \caption{Privacy-preserving solutions of SSO and identity federation}
     \centering{
     \begin{tabular}{|c|c|c|c|c|c|}
   \hline
-  & \multirow{3}*{\textbf{Solution}} &
-  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & & \\ \cline{3-4}
-  & & IdP-based & RP-based & \textbf{Extra Trusted} & \textbf{Browser Extension}\\
-  & & Login Tracing & Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{with User Secret}$^{\ddag}$ \\\hline\hline
+  & \multirow{2}*{\textbf{Solution}} &
+  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & \textbf{Extra Trusted} & \textbf{Browser Extension} \\ \cline{3-4}
+  & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{with User Secret}$^{\ddag}$ \\\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}

@@ -2,29 +2,29 @@
 \label{sec:implementation}
 
 We implemented the UPPRESSO prototype\footnote{The prototype is open-sourced at \url{https://github.com/uppresso/}.} and conducted experimental comparisons with two open-source SSO systems:
- (\emph{a}) MITREid Connect \cite{MITREid}, a PPID-enhanced OIDC system, %with redirect UX,
+ (\emph{a}) MITREid Connect \cite{MITREid}, a PPID-enhanced OIDC system with redirect UX,
   preventing only RP-based identity linkage,
  and (\emph{b}) SPRESSO \cite{SPRESSO}, which prevents only IdP-based login tracing.
-All these solutions work with COTS browsers as user agents.
+All these solutions work with COTS browsers as user agents,
+    while UPPRESSO and SPRESSO implement OIDC-compatible services with pop-up UX.
 
 \subsection{Prototype Implementation}
 \label{subsec:proto-imple}
 
-The UPPRESSO prototype implemented identity transformations on the NIST P256 elliptic curve where $n \approx 2^{256}$,
+The UPPRESSO prototype implemented the identity transformations on the NIST P256 elliptic curve where $n \approx 2^{256}$,
 %with RSA-2048 and SHA-256 serving as the digital signature and hash algorithms, respectively. 
 and the IdP was developed on top of MITREid Connect \cite{MITREid}, %certificated by the OpenID Foundation \cite{OIDF},
 with minimal code modifications.
+All systems employ RSA-2048 and SHA-256 to generate tokens.
 The scripts of user-i and user-r consist of about 180 and 80 lines of JavaScript code, respectively.  %to provide the functions in Steps 2.1, 2.3, and 4.3.
-The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on elliptic\cite{elliptic}, an open-source JavaScript library.
+The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on elliptic \cite{elliptic}, an open-source JavaScript library.
 
 We developed a Java-based RP SDK with about 310 lines of code on the Spring Boot framework.
-The main function encapsulates the RP operation of UPPRESSO: deriving the user's $Acct$ and attributes from identity token. The cryptographic computations are finished using the Spring Security library.
+The main function encapsulates the RP operations of UPPRESSO: verify an identity token and derive $Acct$. The cryptographic computations are finished using the Spring Security library.
 Then, an RP can invoke necessary functions by adding less than 10 lines of Java code, to access the services provided by UPPRESSO.
-    
 
-All systems employ RSA-2048 and SHA-256 to generate tokens.
 SPRESSO implements all entities by JavaScript based on node.js, while MITREid Connect provides Java implementations of IdP and RP SDK.
-Thus, for UPPRESSO and MITREid Connect, we implemented RPs based on Spring Boot by integrating the respective SDKs. In all three schemes, the RPs provide the same function of obtaining the user's account from verified identity tokens.
+Thus, in UPPRESSO and MITREid Connect, we implemented RPs based on Spring Boot by integrating the respective SDKs. In all three schemes, the RPs provide the same function of obtaining the user's account from a verified identity token.
 
 %For fair comparisons, MITREid Connect and the UPPRESSO prototype implement the implicit flow of OIDC, while SPRESSO implements a similar flow to forward identity tokens to an RP.
 

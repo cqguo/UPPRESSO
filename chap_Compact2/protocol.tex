@@ -1,37 +1,36 @@
 \subsection{Identity-Transformation Algorithms}
 \label{subsec:overview}
 
-We propose the identity transformations on an elliptic curve $\mathbb{E}$,
-and Table \ref{tbl:notations-protocol} lists the notations.
-Besides, it is easy to shift these transformations into a finite field $\mathbb{F}_q$.
+We propose the following identity transformations on an elliptic curve $\mathbb{E}$ of order $n$.
+%and Table \ref{tbl:notations-protocol} lists the notations.
+%it is easy to shift these transformations into a finite field $\mathbb{F}_q$.
 %The subscript $j$ and/or superscript $i$ may be omitted if there is no ambiguity.
 
 
-\begin{table}[tb]
-\footnotesize
-    \caption{Notations used in the UPPRESSO protocol}
-    \centering
-%    \begin{tabular}{|c|c|c|}
-    \begin{tabular}{|r|p{6.79cm}|} \hline
-    {\textbf{Notation}} & {\textbf{Description}} \\ \hline
-    {$\mathbb{E}$, $G$, $n$} & {$\mathbb{E}$ is an elliptic curve over a finite field $\mathbb{F}_q$. $G$ is a base point (or generator) on $\mathbb{E}$, and the order of $G$ is a prime number $n$.} \\ \hline
-    {$ID_{U_i}$} & {$ID_U = u \in \mathbb{Z}_n$ is the $i$-th user's unique identity at the IdP, which is known only to the IdP.} \\ \hline
-   {$ID_{RP_j}$} & {$ID_{RP} = [r]G$ is the $j$-th RP's unique identity, which is publicly known; $r \in \mathbb{Z}_n$ is known to \emph{nobody}.} \\ \hline
-    {$t$} & {$t \in \mathbb{Z}_n$ is a user-selected random integer in each login; $t$ is shared with the target RP and kept unknown to the IdP.} \\ \hline
-    {$PID_{RP_j}^l$} & {$PID_{RP} = [t]{ID_{RP}} = [tr]G$ is the $j$-th RP's pseudo-identity, in the user's $l$-th login visiting this RP.} \\ \hline
-    {$PID_{U_i,j}^l$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the $i$-th user's pseudo-identity, in the user's $l$-th login visiting the $j$-th RP.} \\ \hline
-     {$Acct_{i,j}$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the $i$-th user's locally-unique account at the $j$-th RP, publicly known.} \\ \hline
-    {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
-    {$ReEnpt_{RP_j}$} & {The $j$-th RP's URL for receiving the identity tokens (or redirection endpoint \cite{rfc6749}).} \\ \hline
-    {$Cert_{RP_j}$} & {The RP certificate binding $ReEnpt_{RP_j}$ and $ID_{RP_j}$, signed by the IdP.} \\ \hline
-    \end{tabular}
-    \label{tbl:notations-protocol}
-\end{table}
+%\begin{table}[tb]
+%\footnotesize
+%    \caption{Notations used in the UPPRESSO protocol}
+%    \centering
+%    \begin{tabular}{|r|p{6.59cm}|} \hline
+%    {\textbf{Notation}} & {\textbf{Description}} \\ \hline
+%    {$\mathbb{E}$, $G$, $n$} & {$\mathbb{E}$ is an elliptic curve over a finite field $\mathbb{F}_q$. $G$ is a base point on $\mathbb{E}$, and the order of $G$ is a prime number $n$.} \\ \hline
+%    {$ID_{U_i}$} & {$ID_U = u \in \mathbb{Z}_n$ is the $i$-th user's unique identity at the IdP, which is known only to the IdP.} \\ \hline
+%   {$ID_{RP_j}$} & {$ID_{RP} = [r]G$ is the $j$-th RP's unique identity, which is publicly known; $r \in \mathbb{Z}_n$ is known to \emph{nobody}.} \\ \hline
+%    {$t$} & {$t \in \mathbb{Z}_n$ is a user-selected random integer in each login; $t$ is shared with the target RP and kept unknown to the IdP.} \\ \hline
+%    {$PID_{RP_j}^l$} & {$PID_{RP} = [t]{ID_{RP}} = [tr]G$ is the $j$-th RP's pseudo-identity, in the user's $l$-th login visiting this RP.} \\ \hline
+%    {$PID_{U_i,j}^l$} & {$PID_U = [{ID_U}]{PID_{RP}} = [utr]G$ is the $i$-th user's pseudo-identity, in her $l$-th login visiting the $j$-th RP.} \\ \hline
+%     {$Acct_{i,j}$} & {$Acct = [t^{-1}\bmod n]PID_{U} = [ID_U]ID_{RP} = [ur]G$ is the $i$-th user's locally-unique account at the $j$-th RP, publicly known.} \\ \hline
+%    {$SK$, $PK$} & {The IdP's private key and public key, used to sign and verify identity tokens and RP certificates.} \\ \hline
+%    {$ReEnpt_{RP}$} & {The RP's URL for receiving the identity tokens (or redirection endpoint \cite{rfc6749}).} \\ \hline
+%    {$Cert_{RP}$} & {The RP certificate binding $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP.} \\ \hline
+%    \end{tabular}
+%    \label{tbl:notations-protocol}
+%\end{table}
 
 \noindent {\bf $\boldsymbol{ID_{\boldsymbol{U}}}$, $\boldsymbol{ID_{\boldsymbol{RP}}}$ and $\boldsymbol{Acct}$.}
 The IdP assigns a unique random integer $u \in \mathbb{Z}_n$ to a user (i.e., $ID_U = u$),
  and randomly selects unique $ID_{RP} = [r]G$ for an RP. % if it is a point on $\mathbb{E}$.
-Here, $G$ is a base point on $\mathbb{E}$ of order $n$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
+Here, $G$ is a base point on $\mathbb{E}$, and $[r]G$ denotes the addition of $G$ on the curve $r$ times.
 $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})= [ID_{U_i}]ID_{RP_j} =[u_ir_j]G$ is automatically assigned to a user at every RP.
 
 A user's accounts at different RPs are inherently different and unlinkable.
@@ -132,10 +131,12 @@ so this ensures confidentiality of identity tokens because (\emph{a}) only scrip
 %    and the complete UPPRESSO protocol is described in Section \ref{implementations}.
 In UPPRESSO the IdP receives $PID_{RP}$ (but not $ID_{RP}$),
     so it cannot reply with $ReEnpt_{RP}$ to the user-i window.
+An RP certificate, denoted as $Cert_{RP}$, is introduced to bind $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP during the RP's initial registration.
 %
 %The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
 %
-Thus, in each login, 
+
+Then, in each login, 
 as shown in Figure \ref{fig:process},
 when the user-i window is popped up,
     the RP certificate (i.e., $Cert_{RP}$) and the scope of request user attributes are also carried with the HTTP request to the IdP,
@@ -200,7 +201,7 @@ in the RP's SSO login page \cite{referer_policy}.
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.81\linewidth]{fig/pop-up-process.pdf}
+  \includegraphics[width=0.75\linewidth]{fig/pop-up-process.pdf}
   \caption{The SSO login flow of UPPRESSO}
   \label{fig:process}
 \end{figure*}

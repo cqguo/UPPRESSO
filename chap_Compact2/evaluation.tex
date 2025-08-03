@@ -43,8 +43,9 @@
 
 \noindent {\bf Experiment setting.}
 %SPRESSO encrypts the RP's domain in identity tokens and keeps the AES symmetric key known only to the RP and the user.
-We conducted experiments in two settings: (\emph{a}) on a PC with Core AMD Ryzen 7 57000x CPU and 32 GB memory, the browser ran locally, and the IdP and RP servers and the extra forwarder server of SPRESSO were deployed on the separated virtual machines, each of which ran Windows 10 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with Core AMD Ryzen 7 57000x CPU and 32 GB memory, remotely accessed the servers (IdP and RP servers, and the extra forwarder server of SPRESSO) were all deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM. 
-The deployment of services on the same PC (setting a) minimized the impact of network delays.
+We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, the browser ran locally, and the IdP and RP servers and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows 10 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM. 
+The first setting ran all functions on the same PC,
+    and minimized the impact of network delays.
 
 %Of all solutions, the IdP and RP servers and the extra forwarder server of SPRESSO were all deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM.
 
@@ -53,7 +54,7 @@ The deployment of services on the same PC (setting a) minimized the impact of ne
 
 
 \noindent {\bf Comparisons.} We split the login flow into three phases for detailed comparisons: (1)
-{\em identity-token requesting} (Step 1 in Figure \ref{fig:process}), to construct an identity-token request and send it to the IdP server; (2) {\em identity-token generation} (Step 2 of UPPRESSO), to generate an identity token at the IdP server, while the user authentication and the user-attribute consent are excluded; and (3) {\em identity-token acceptance} (Step 3), where the RP receives, verifies, and parses the identity token.
+{\em identity-token requesting} (Step 1 in Figure \ref{fig:process}), to construct an identity-token request and send it to the IdP server; (2) {\em identity-token generation} (Step 2), to generate an identity token at the IdP server, while the user authentication and the user-attribute consent are excluded; and (3) {\em identity-token acceptance} (Step 3), where the RP receives, verifies, and parses the identity token.
 
 
 %\begin{figure}[tb]
@@ -70,22 +71,25 @@ The deployment of services on the same PC (setting a) minimized the impact of ne
 %  \label{fig:evaluation}
 %\end{figure}
 
-Of all solutions, the IdP, RP, and SPRESSO extra forwarder servers require user-side scripts, which introduces additional time overhead for downloading. 
-In the identity-token requesting phase of UPPRESSO a browser downloads the two scripts,
+The IdP and the RP of all solutions, as well as the forwarder server in SPRESSO,
+     require user-side scripts, which introduces additional time for downloading. 
+In the identity-token requesting phase of UPPRESSO a browser downloads the user-i script,
     as described in Section \ref{sec:web-design}.
 As mentioned in Section \ref{subsec:OIDC},
  to process the token retrieved from the IdP, %which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},
-    in MITREid Connect and SPRESSO a user-r script is downloaded during the phase of token generation.
+    in MITREid Connect a user-r script is downloaded during the phase of token generation.
+In addition to a script from the IdP in identity-token requesting,
 SPRESSO needs another script from the forwarder server in the token acceptance phase \cite{SPRESSO}.
-However, once a browser visits the server, it can cache these scripts locally, reducing download time for subsequent visits. 
+Fortunately, once a browser visits a web server, it can cache the scripts locally, reducing the download time for subsequent visits. This caching is enabled by xxxxxx.
 
-Therefore, we measured the time cost for both initial and subsequent visits (1,000 trials each) and compared the average SSO login times across the three schemes. As shown in Figure \ref{fig:evaluation},
+Therefore, we measured the time cost for both initial and subsequent visits (1,000 trials) and compared the average SSO login times of the three schemes.
+As shown in Figure \ref{fig:evaluation},
 MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 70 ms, 190 ms, and 280 ms for initial visits, and 65 ms, 152 ms and 278 ms for subsequent visits,
  or (\emph{b}) 224 ms, 321 ms, and 670 ms for initial visits, and 65 ms, 152 ms and 635 ms for subsequent visits.
 
 Regarding identity-token requesting, %the user browser loads the RP's webpage and starts the login request.
 the RP of MITREid Connect immediately constructs an identity-token request. %MITREid Connect only needs 10 ms but UPPRESSO requires 271 ms.
-UPPRESSO incurs overheads in opening a new browser window and downloading the scripts.
+UPPRESSO incurs overheads in opening a new browser window and downloading the user-i script.
 %
 %\footnote{This pop-up overhead can be reduced %by silently conducting these operations when the user visits the RP website, or
 %by browser extensions.
@@ -95,10 +99,10 @@ In SPRESSO the RP also needs to open a new browser window, and obtain informatio
 and encrypt its domain using an ephemeral key, resulting in extra overheads.
 
 UPPRESSO requires the least time for generating identity tokens for it receives the token from the IdP without any additional processing.
-MITREid Connect and SPRESSO require extra time as the browser downloads a script from the RP (FWD server) in this phase. % to process the token retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{#} instead of \texttt{?} due to security considerations \cite{de2014oauth}.
+In this phase MITREid Connect and SPRESSO require extra time as the browser downloads a script from the RP and the forwarder, respectively. % to process the token retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{#} instead of \texttt{?} due to security considerations \cite{de2014oauth}.
 Moreover, SPRESSO takes slightly more time to generate an identity token, as it implements the IdP using node.js and uses a JavaScript cryptographic library that is a little less efficient than the Java library used in the others.
 
 In the identity-token acceptance phase, 
 MITREid Connect and UPPRESSO take similar amounts of time for the RP to receive a token and accept it.
 In contrast, SPRESSO takes the longest time due to its complex processing at the user agent.
-After receiving an identity token from the IdP, the browser downloads another script from the forwarder server, to decrypt the RP redirection endpoint and sends the token to this endpoint.
+After receiving an identity token from the IdP, the browser downloads another script from the forwarder server, to decrypt the RP's domain and sends the token to its redirection endpoint.
