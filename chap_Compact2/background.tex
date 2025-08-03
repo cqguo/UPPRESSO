@@ -9,9 +9,9 @@ We present our designs in the implicit flow and discuss the support for the auth
 
 Users and RPs register at an OIDC IdP with their identities
 and other information such as user credentials (e.g., passwords)
-and RP endpoints (i.e., the URLs to receive tokens).
+and RP redirection endpoints (i.e., the URLs to receive tokens \cite{rfc6749}).
 User operations in the login flows are conducted through a user agent (or browser typically).
-To provide an in-context user experience,
+To provide an in-context user experience (UX),
     the SSO login flow of OIDC with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is recommended.
 As shown in Figure \ref{fig:OpenID},
 when a user clicks the SSO login button in a browser window visiting the target RP 
@@ -20,12 +20,12 @@ when a user clicks the SSO login button in a browser window visiting the target 
 It pops up another window (i.e., the \emph{user-i window}),
     and this request is sent to the IdP.
 After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the authorized attributes, a validity period, etc.
-The identity token is then forwarded to the RP's endpoint via the user-i window.
+The token is then forwarded to the RP's redirection endpoint via the user-i window.
 Finally, the RP verifies the token and allows the token holder to log in as the enclosed user (pseudo-)identity.
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
     responsible for communicating with the respective origin web servers
     and also the cross-origin
-communications using the \verb+postMessage+ HTML5 API \cite{postm-targeto} within the COTS browser.
+communications by the \verb+postMessage+ HTML5 API \cite{postm-targeto} within the browser.
 
 
 %To process identity tokens retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},

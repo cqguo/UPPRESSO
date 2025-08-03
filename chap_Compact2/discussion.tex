@@ -77,18 +77,18 @@ Otherwise, if the visited RP is not anonymously authenticated to the IdP in the 
 
 
 %\vspace{0.75mm}
-\noindent \textbf{Alternatives for generating $\boldsymbol{ID_{RP}}$ and binding $\boldsymbol{Enpt_{RP}}$.}
-In UPPRESSO the IdP generates random $ID_{RP}$ and signs an RP certificate to bind $ID_{RP}$ and $Enpt_{RP}$, which is verified by the user-i script.
-This ensures the relationship between the RP designated by an identity token and the endpoint to receive this token.
+\noindent \textbf{Alternatives to generate $\boldsymbol{ID_{RP}}$ and bind $\boldsymbol{ReEnpt_{RP}}$.}
+In UPPRESSO the IdP generates random $ID_{RP}$ and signs an RP certificate to bind $ID_{RP}$ and $ReEnpt_{RP}$, which is verified by the user-i script.
+This ensures the relationship between the RP designated by an identity token and the URL to receive this token.
 It also guarantees that the target RP has already registered itself at the IdP and prevents unauthorized RPs from utilizing the IdP's services \cite{OpenIDConnect,save-flow}.
 
-An alternative method for binding $ID_{RP}$ and $Enpt_{RP}$ is
+An alternative method for binding $ID_{RP}$ and $ReEnpt_{RP}$ is
  to design a \emph{deterministic} scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
 This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the discrete logarithm of the output. It generates a point on the elliptic curve $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
 Then, any RP can be visited through the SSO services, either authorized by the IdP or not.
+In this case, in Step 1.2 the user-r script sends only the RP's redirection endpoint (i.e., its URL for receiving tokens) but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's unambiguous name. 
 
-In this case, in Step 1.2 the user-r script sends only the endpoint but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's unambiguous name. 
-However, if the RP changes its domain, for example, from \verb+https://theRP.com+ to \verb+https://RP.com+, the accounts (i.e., $Acct = [ID_U]ID_{RP}$) will inevitably change.
+However, if some RP changes its domain, for example, from \verb+https://theRP.com+ to \verb+https://RP.com+, the accounts (i.e., $Acct = [ID_U]ID_{RP}$) will inevitably change.
 Thus, a user is required to perform special operations to migrate her account to the updated RP system.
 It is worth noting that the user operations cannot be eliminated in the migration to the updated one;
 otherwise, it implies two colluding RPs could link a user's accounts across these RPs.
@@ -96,12 +96,12 @@ otherwise, it implies two colluding RPs could link a user's accounts across thes
 
 %\vspace{0.75mm}
 \noindent \textbf{Restriction of the user-r script's origin.}
-The user-i script forwards tokens to the user-r script, and the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient of the forwarded identity tokens, to ensure that the tokens will be sent to the intended $Enpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
+The user-i script forwards tokens to the user-r script, and the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient of the forwarded identity tokens, to ensure that the tokens will be sent to the intended $ReEnpt_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
 The user-r script's origin must accurately match the targetOrigin to receive tokens.
 
-The targetOrigin mechanism does not check the whole URL path in $Enpt_{RP}$, but introduces no {\em additional} risk.
+The targetOrigin mechanism does not check the whole URL path in $ReEnpt_{RP}$, but introduces no {\em additional} risk.
 %This assumes only one RP runs on a domain.
-Consider two RPs in one domain but receiving identity tokens through different endpoints,
+Consider two RPs in one domain but receiving tokens through different URLs,
  e.g., \verb+https://RP.com/honest/tk+ and \verb+https://RP.com/malicious/tk+.
 This mechanism cannot distinguish them.
 %

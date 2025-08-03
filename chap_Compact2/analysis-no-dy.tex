@@ -27,10 +27,11 @@ Provided that the security properties of UPPRESSO are satisfied,
     we analyze the privacy properties \emph{only} for successful logins
     because no meaningful account is derived in an unsuccessful login
 where the initiating user or the target RP deviates from the specifications.
-It makes no sense to track login activities resulting in meaningless accounts,
-    and then no malicious entities are considered in the proofs of privacy.
+It makes no sense to track login activities resulting in meaningless accounts, and
+    malicious RP and users cannot break privacy by deviating from the protocols.
+Thus, no malicious entities are considered in the proofs of privacy.
 
-Thus, (\emph{a}) IdP untraceability is proved in Section \ref{subsec:IdP-privacy} against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
+Therefore, (\emph{a}) IdP untraceability is proved in Section \ref{subsec:IdP-privacy} against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
 and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} against \emph{a group of semi-honest RPs and users} which follow the protocols but share information,
     attempting to link an honest user's accounts across these semi-honest RPs.
 %in addition to an \emph{honest-but-curious} IdP according to the threat model.
@@ -167,11 +168,12 @@ This is not an attack: $RP_{j_2}$ is actually designated by $TK$ and the adversa
 The honest IdP would attempt to infer the visited RPs,
 by collecting information from the identity-token requests.
 According to the designs and the detailed protocol in Sections \ref{sec:web-design} and \ref{implementations},
- it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $Enpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
+ it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $ReEnpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
 Next, we prove that, \emph{$PID_{RP}$ is indistinguishable from a random variable on $\mathbb{E}$ to the IdP},
     and then
  it cannot (\emph{a}) link multiple logins visiting an RP or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
+Therefore, IdP untraceability is ensured.
 
 % So UPPRESSO prevents the honest-but-curious IdP from tracing a user's login activities.
 
@@ -224,7 +226,7 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
 Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
 even when a number of semi-honest users share information with them,
 \emph{the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users}.
-
+Then, RP unlinkability is ensured.
 
 \vspace{1.5mm}
 \begin{thm}[RP Unlinkability]
