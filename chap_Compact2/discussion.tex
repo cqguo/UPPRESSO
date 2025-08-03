@@ -2,12 +2,12 @@
 \label{sec:discussion}
 
 \noindent \textbf{IdP-RP collusive attacks.} 
-In this work, we prefer to provide better user experience rather than prevent IdP-RP collusive attacks.
+This work prefers to provide better user experience rather than prevent IdP-RP collusive attacks.
 Even when the IdP strictly follows the protocols but shares information with RPs,
     a user would complete her logins \emph{entirely} with colluding entities,
     and then the IdP and RPs could always link a user's (pseudo-)identities and accounts (i.e., both IdP untraceability and RP unlinkability are broken),
     unless a long-term secret, unknown to the colluding IdP and RPs,
-                is used to mask the relationship among these (pseudo-)identities and accounts.
+                is used to mask the relationship among the (pseudo-)identities and accounts.
 That is, regardless of which $\mathcal{F}_{Acct\ast}()$ is adopted to determine
 $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$,
 the IdP could always collude with RPs to track a user's login activities by analyzing the relationship between derived accounts and the user's identity,
@@ -16,9 +16,10 @@ In this case,
     a browser extension is required
             to handle the user secret,
              and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers this strategy.
-However, if the user wants to access the services from different devices,
-    addition user operations are required to synchronize the secret among these devices.
-Moreover, if the user secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret, or additional revocation checking will be needed \cite{ELPASSO, UnlimitID}.\footnote{This secret used to derive accounts (or mask the relationship of identities and accounts) is different from the credential for user
+However, if the user accesses the services from different devices,
+    addition operations are required to synchronize the secret among these devices.
+Moreover, if this secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret %, or additional revocation checking will be needed 
+\cite{ELPASSO, UnlimitID}.\footnote{This secret used to derive accounts (or mask the relationship of identities and accounts) is different from the credential for user
 authentication to the IdP: If the credential is lost or leaked, the user only needs to update it at the IdP and her accounts are kept unchanged.}
 
 Alternatively, MISO \cite{miso} introduces an extra fully-trusted mixer server other than the IdP to keep $s_i$,
@@ -84,9 +85,9 @@ It also guarantees that the target RP has already registered itself at the IdP a
 
 An alternative method for binding $ID_{RP}$ and $ReEnpt_{RP}$ is
  to design a \emph{deterministic} scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
-This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the discrete logarithm of the output. It generates a point on the elliptic curve $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
+This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the elliptic-curve discrete logarithm of the output. It generates a point on $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
+In this case, in Step 1.2 the user-r script sends only the RP's redirection endpoint (i.e., its URL for receiving tokens) but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's domain. 
 Then, any RP can be visited through the SSO services, either registered or not.
-In this case, in Step 1.2 the user-r script sends only the RP's redirection endpoint (i.e., its URL for receiving tokens) but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's unambiguous name. 
 
 However, if some RP changes its domain, for example, from \verb+https://theRP.com+ to \verb+https://RP.com+, the accounts (i.e., $Acct = [ID_U]ID_{RP}$) will inevitably change.
 Thus, a user is required to perform special operations to migrate her account to the updated RP system.

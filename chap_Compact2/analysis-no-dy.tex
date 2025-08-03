@@ -123,7 +123,7 @@ It requires that, for any $ID_{RP}$, adversaries cannot find $\hat{t}$ and $\che
     = [ID_{\check{U}}]ID_{RP} = \mathcal{F}_{Acct\ast}(ID_{\check{U}}, ID_{RP})$,
 where $ID_{\hat{U}} \neq ID_{\check{U}}$.
 
-When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G} = \log_{\hat{A}cct}{\check{A}cct}$.
+When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic-curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G} = \log_{\hat{A}cct}{\check{A}cct}$.
 \hfill $\square$
 
 \vspace{1.5mm}
@@ -290,8 +290,8 @@ Therefore, using $\mathcal{D}^*_R$ to solve the ECDDH problem, we have an advant
 
 If the adversary of $\mathcal{G}_R$ has a non-negligible advantage, then $\mathbf{Adv}^*={\mathbf{Adv}}$ is also non-negligible regardless of the security parameter $\lambda$. This violates the ECDDH assumption.
 
-Therefore, the adversary has no advantage in $\mathcal{G}_R$ and cannot decide whether $L'$ is initiated by some honest user with an identity in $\mathbbm{u}_w$ or not.
-Because $RP_b$ is any semi-honest RP, this proof can be easily extended from $RP_b$ to more semi-honest RPs.
+So the adversary has no advantage in $\mathcal{G}_R$ and cannot decide whether $L'$ is initiated by some honest user with an identity in $\mathbbm{u}_w$ or not.
+Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to more semi-honest RPs.
 \hfill $\square$
 
 
