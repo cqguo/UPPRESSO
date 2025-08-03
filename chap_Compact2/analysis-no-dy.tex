@@ -1,8 +1,8 @@
 \section{Security and Privacy Analysis}
 \label{sec:analysis}
 
-As account uniqueness is analyzed in Section \ref{subsec:overview}
-    and the designs in Section \ref{sec:web-design} ensure secure communications and no direct privacy leakage in the communications,
+As (\emph{a}) account uniqueness is analyzed in Section \ref{subsec:overview}
+    and (\emph{b}) the designs in Section \ref{sec:web-design} ensure secure communications and no direct privacy leakage in the communications,
 in this section we prove security (i.e., user identification and RP designation) and privacy (i.e., IdP untraceability and RP unlinkability) of the identity transformations in UPPRESSO.
 
 
@@ -32,7 +32,7 @@ It makes no sense to track login activities resulting in meaningless accounts, a
 Thus, no malicious entities are considered in the proofs of privacy.
 
 Therefore, (\emph{a}) IdP untraceability is proved in Section \ref{subsec:IdP-privacy} against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
-and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} against \emph{a group of semi-honest RPs and users} which follow the protocols but share information,
+and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} against \emph{a group of semi-honest RPs and users} which follow the protocols but share their information,
     attempting to link an honest user's accounts across these semi-honest RPs.
 %in addition to an \emph{honest-but-curious} IdP according to the threat model.
 
@@ -86,8 +86,8 @@ where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ 
 
 User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively, against malicious RPs colluding with users.
 Besides, as mentioned in Section \ref{implementations}, 
-in Step 3.2 an (honest) RP directly derives accounts from any signed identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
-So we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ in the proofs.
+in Step 3.2 an (honest) RP directly derives accounts from any signed and unexpired identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
+So in the proofs we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ which are received by an RP.
 % That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
 % These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
 
@@ -106,7 +106,7 @@ User identification means that,
 %At the designated RP, $TK$ identifies only the user who requests this identity token from the IdP. That is, 
 \emph{from $TK$ the designated honest RP derives only the meaningful account belonging to the user requesting $TK$}.
 We prove this property by showing that,
-    at any RP designated by $TK$,
+    at the RP designated by any $TK$,
         a meaningless account not belonging to the initiating user will never be derived.
 
 \vspace{1.5mm}

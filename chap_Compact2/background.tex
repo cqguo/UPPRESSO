@@ -3,8 +3,8 @@
 
 \subsection{OpenID Connect}
 \label{subsec:OIDC}
-OIDC is one of the most popular SSO protocols. It supports different login flows: implicit flow, authorization code flow, and hybrid flow (a mix of the other two).
-These flows differ in the steps for requesting, receiving and forwarding identity tokens, but have common security requirements for the tokens.
+OIDC \cite{OpenIDConnect} is one of the most popular SSO protocols. It supports different login flows: implicit flow, authorization code flow, and hybrid flow (a mix of the other two).
+The flows differ in the steps for requesting, receiving and forwarding identity tokens, but have common security requirements for the tokens.
 We present our designs in the implicit flow and discuss the support for the authorization code flow in Section \ref{sec:discussion}.
 
 Users and RPs register at an IdP with their identities
@@ -54,7 +54,7 @@ So a script is downloaded from the RP to process the token.
    & SPRESSO \cite{SPRESSO} & $\CIRCLE$ & $\Circle$ & $\LEFTcircle$$^1$ & $\CIRCLE$ \\ \cline{2-6}
    & POIDC \cite{POIDC,save-flow} & $\CIRCLE$ & $\Circle$$^2$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & MISO \cite{miso} & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ \\ \cline{2-6}
-   & UP-SSO \cite{up-sso} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ \\ \hline 
+   & UP-SSO \cite{up-sso} & $\CIRCLE$ & $\CIRCLE$ & $\LEFTcircle$$^3$ & $\Circle$ \\ \hline 
   \multirow{5}*{\makecell{Identity\\Federation}} & PRIMA \cite{prima} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
    & PseudoID \cite{PseudoID} & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \cline{2-6}
    & Opaak \cite{Opaak} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
@@ -81,7 +81,8 @@ SPRESSO assumes a malicious IdP (but honest IdPs in others), and then a trusted 
 A variation of POIDC \cite{POIDC} proposes to also hide a user's identity in the commitment and prove this to the IdP in zero-knowledge,
         but it takes seconds or more to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{ZKP-BINF,zkp-benchmark,ZKP-GPU},
         which is impracticable for a user agent in SSO.
-%\item[3.]
+\item[3.]
+UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the user side.
 %Opaak supports two exclusive pseudonym options: (\emph{a}) linkable within an RP but unlinkable across multiple RPs and (\emph{b}) unlinkable for any pair of actions.
 %
 %\item[4.]
@@ -130,13 +131,13 @@ In SPRESSO an RP creates a one-time tag (i.e., ephemeral pseudo-identity) for ea
 % J. He, L. Lei \emph{et al}. \cite{ARPSSO} copied the identity transformations of UPPRESSO published in the preprint version \cite{uppresso-arxiv}, into a prime field $F_q$,\footnote{That is, $ID_U = u$, $ID_{RP} = h = g^r$, $PID_{RP} = h^t = g^{rt}$, $PID_U = h^{tu}=g^{rtu}$, and $Acct = h^u= g^{ru}$ in $F_q$ where $g$ is a generator. It seems that these identity transformations were called RP anonymization and user identity mix-up intentionally in ARPSSO \cite{ARPSSO}.} and attempted to implement UPPRESSO in the authorization code flow of OIDC using \emph{trusted} scripts without any extensions or plug-ins, which also follows the same principle as the UPPRESSO prototype does.
 
 MISO \cite{miso} decouples the calculation of PPIDs from an honest IdP,
- to an extra fully-trusted mixer server that calculates a user's PPID based on $ID_U$, $ID_{RP}$ and a secret after it receives the authenticated user's identity from the IdP.
-MISO prevents both RP-based identity linkage for the RPs receives only PPIDs,
-    and IdP-based login tracing because $ID_{RP}$ is disclosed to the mixer but not the IdP.
-It protects a user's online profile against even collusive attacks by the IdP and RPs,
-    but the mixer server could track a user's all login activities.
+ to an extra fully-trusted mixer server that calculates a user's PPID based on $ID_U$, $ID_{RP}$ and a secret after it receives the user's identity from the IdP.
+MISO prevents RP-based identity linkage for the RPs receives only PPIDs,
+    and IdP-based login tracing for $ID_{RP}$ is disclosed to the mixer but not the IdP.
+It protects user privacy against even collusive attacks by the IdP and RPs,
+    but the mixer server could track a user's login activities.
 Similarly, UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the user side,
- which is remotely attested by the IdP and then receives the secret to generate PPIDs for a user, and then both of two privacy threats are eliminated.
+ which is remotely attested by the IdP and receives the secret to generate PPIDs. %for a user, and then both of two privacy threats are eliminated.
 
 \noindent\textbf{Privacy-preserving identity federation.}
 % SSO allows a user to log into an RP, without by herself maintaining an account at the RP or holding a long-term secret verified by the RP, so that SSO services are accessible from COTS browsers.
@@ -203,8 +204,8 @@ UPPRESSO employs a similar cryptographic technique.\footnote{We designed and imp
   % protecting $ID_{RP}$ from the IdP.
 Then, the IdP uses the user's permanent identity $u$ to calculate $PID_U = [u]PID_{RP} = [ut]ID_{RP}$,
 which is similar to token signing by the token server in PrivacyPass/TrustToken.
-Hence, \emph{IdP untraceability} in UPPRESSO, i.e., the IdP cannot link $ID_{RP}$ and $[t]ID_{RP}$,
- roughly corresponds to {\em unlinkability of token signing-redemption} in PrivacyPass/TrustToken, i.e., the token server cannot link $T$ and $[e]T$.
+Hence, IdP untraceability in UPPRESSO, i.e., the IdP cannot link $ID_{RP}$ and $[t]ID_{RP}$,
+ roughly corresponds to unlinkability of token signing-redemption in PrivacyPass/TrustToken, i.e., the token server cannot link $T$ and $[e]T$.
 
 UPPRESSO leverages this cryptographic technique in very different ways.
 First, 
@@ -218,13 +219,13 @@ This is different from existing OPRF-based systems  \cite{privacypass, trusttoke
 Finally, UPPRESSO leverages randomness of Hash(EC)DH OPRFs to ensure RP unlinkability, but this property is not utilized in PrivacyPass/TrustToken.
 This ensures colluding RPs cannot link any logins across RPs,
 even by sharing their knowledge about the pseudo-identities and permanent accounts in UPPRESSO.
-This property offers desirable indistinguishability of \emph{different users} visiting colluding RPs.
-It roughly corresponds to the indistinguishability of \emph{different private keys} for signing anonymous tokens, not considered in PrivacyPass/TrustToken. 
+This property offers desirable indistinguishability of different users visiting colluding RPs.
+It roughly corresponds to the indistinguishability of different private keys for signing anonymous tokens, not considered in PrivacyPass/TrustToken. 
 
 Although UPPRESSO mathematically employs the same technique in the identity transformations as the Hash(EC)DH OPRF \cite{oprf-proved,voprf-proved}, we require more properties of these algorithms. % in Theorems 4, 6, and 7.
 UPPRESSO essentially 
-depends on the \emph{deterministicness} property of \emph{pseudo-random} functions to correctly derive the account for any $t$, \emph{obliviousness} to ensure IdP untraceability, 
-and \emph{pseudo-randomness} to ensure RP unlinkability. 
+depends on the deterministicness property of pseudo-random functions to correctly derive the account for any $t$, obliviousness to ensure IdP untraceability, 
+and pseudo-randomness to ensure RP unlinkability. 
 In contrast, PrivacyPass and TrustToken \cite{privacypass,trusttoken} depend on only the properties of deterministicness and obliviousness.
 Moreover, UPPRESSO requires additional properties for secure SSO services (i.e., user identification and RP designation; see Theorems \ref{thm-u-id} and \ref{thm-rp-designation} in Section \ref{analysis-security}),
     which are not discussed in OPRFs \cite{sok-oprf,oprf-proved,voprf-proved}.

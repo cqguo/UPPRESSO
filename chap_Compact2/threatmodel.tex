@@ -17,22 +17,21 @@ It never actively violates the protocols,
 The IdP maintains the private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
 and adversaries cannot forge such signed messages.
 
-
-\noindent \textbf{Malicious users.} Adversaries could control a set of users by stealing their credentials or registering Sybil users in UPPRESSO.
- Their objective is to (\emph{a}) impersonate a victim user at honest RPs or (\emph{b}) entice an honest user to log into an honest RP under another user's account  \cite{SPRESSO, FettKS14}.
-A malicious user could modify, insert, drop, or replay messages or even behave arbitrarily.
-
 \noindent \textbf{Malicious RPs.}
 Adversaries could control a set of RPs by registering at the IdP as an RP or exploiting vulnerabilities to compromise some RPs.
 Malicious RPs could behave arbitrarily, attempting to compromise the security or privacy guarantees of UPPRESSO.
-For example, they could manipulate $PID_{RP}$ and $t$ in a login, attempting to (\emph{a}) entice honest users to return an identity token that could be accepted by some honest RP or (\emph{b}) affect the generation of $PID_U$ to further analyze the relationship between $ID_U$ and $PID_U$.
 
 
-\noindent \textbf{Colluding users and RPs.}
+\noindent \textbf{Malicious users.} Adversaries could control a set of users by stealing their credentials or registering Sybil users in UPPRESSO.
+A malicious user could modify, insert, drop, or replay messages or even behave arbitrarily.
+
+\noindent \textbf{Colluding RPs and users.}
 Malicious users and RPs could collude,
- attempting to break the security or privacy guarantees for honest users and RPs;
-for example, to impersonate an honest victim user at honest RPs or link an honest user's logins visiting colluding RPs.
-
+ attempting to break the security or privacy guarantees for honest users and RPs \cite{SPRESSO, FettKS14,POIDC,miso};
+that is,
+their objective is to (\emph{a}) impersonate a victim user at honest RPs, (\emph{b}) entice an honest user to log into an honest RP under another user's account,
+ and (\emph{c}) link an honest user's logins visiting colluding RPs.
+For example, they could manipulate $PID_{RP}$ and $t$ in a login, attempting to (\emph{a}) entice honest users to return an identity token that could be accepted by some honest RP or (\emph{b}) affect the generation of $PID_U$ to further analyze the relationship between $ID_U$ and $PID_U$.
 
 
 
@@ -70,7 +69,7 @@ While $PID_{RP}$ but not $ID_{RP}$ is processed by the IdP,
 it further requires that no other information about the visited RP is leaked to the IdP,
  in the requesting, receiving and forwarding of identity tokens.
 We realize this assumption by specific designs in Section \ref{sec:web-design}.
-Moreover, our work focuses only on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by network traffic analysis or crafted web pages, as they can be prevented by other defenses.
+Our work focuses on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by network traffic analysis or crafted web pages, as they can be prevented by other defenses.
 %For example, FedCM \cite{FedCM} proposes to disable iframe and third-party cookies in SSO, which could be exploited to track users.
 
 

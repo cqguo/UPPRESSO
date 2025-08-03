@@ -38,12 +38,12 @@ Then, the identity token issued by the IdP binds only $PID_U$ and $PID_{RP}$, in
 
 \begin{figure*}[tb]
   \centering
-  \includegraphics[width=0.785\linewidth]{fig/OIDC-pop.pdf}
+  \includegraphics[width=0.818\linewidth]{fig/OIDC-pop.pdf}
   \caption{The implicit SSO login flow of OIDC with pop-up UX}
   \label{fig:OpenID}
 \end{figure*}
 
-UPPRESSO prevents both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO schemes address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, save-flow,POIDC} or introduce another fully-trusted server in addition to the IdP \cite{miso,SPRESSO}.
+UPPRESSO prevents both IdP-based login tracing and RP-based identity linkage, while existing privacy-preserving SSO schemes address only one of them \cite{BrowserID, SPRESSO, NIST2017draft, save-flow,POIDC} or introduce another fully-trusted server in addition to the IdP \cite{miso,SPRESSO,up-sso}.
 %Meanwhile, UPPRESSO implements SSO services
 % works compatibly with widely-used SSO services \cite{OpenIDConnect, rfc6749, NIST2017draft}
 % accessed from commercial-off-the-shelf (COTS) browsers without any plug-ins or extensions.
@@ -57,7 +57,7 @@ Our contributions are as follows.
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
 \item We proposed a novel identity-transformation approach for privacy-preserving SSO services and designed identity-transformation algorithms with desirable properties.
-\item We designed the UPPRESSO protocol by integrating the identity transformations in OIDC, and proved that it satisfies the security and privacy requirements of SSO services.
+\item We designed the UPPRESSO protocol by integrating the identity transformations into OIDC, and proved that it satisfies the security and privacy requirements of SSO services.
 \item We implemented the UPPRESSO prototype on top of an open-source OIDC implementation. Through performance evaluations, we confirmed that UPPRESSO introduces reasonable overheads.
 \end{itemize}
 
