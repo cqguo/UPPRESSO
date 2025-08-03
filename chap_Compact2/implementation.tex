@@ -14,13 +14,12 @@ The UPPRESSO prototype implemented identity transformations on the NIST P256 ell
 %with RSA-2048 and SHA-256 serving as the digital signature and hash algorithms, respectively. 
 and the IdP was developed on top of MITREid Connect \cite{MITREid}, %certificated by the OpenID Foundation \cite{OIDF},
 with minimal code modifications.
-The scripts of user-i and user-r consist of about 160 and 140 lines of JavaScript code, respectively.  %to provide the functions in Steps 2.1, 2.3, and 4.3.
-The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on jsrsasign \cite{jsrsasign}, an open-source JavaScript library.
+The scripts of user-i and user-r consist of about 180 and 80 lines of JavaScript code, respectively.  %to provide the functions in Steps 2.1, 2.3, and 4.3.
+The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on elliptic\cite{elliptic}, an open-source JavaScript library.
 
-We developed a Java-based RP SDK with about 500 lines of code on the Spring Boot framework.
-Two functions encapsulate the RP operations of UPPRESSO: one for requesting identity tokens and the other for deriving accounts. The cryptographic computations are finished using the Spring Security library.
-Then, an RP can invoke necessary functions by adding less than 10 lines of Java code,
-    to access the services provided by UPPRESSO.
+We developed a Java-based RP SDK with about 310 lines of code on the Spring Boot framework.
+The main function encapsulates the RP operation of UPPRESSO: deriving the user's $Acct$ and attributes from identity token. The cryptographic computations are finished using the Spring Security library.
+Then, an RP can invoke necessary functions by adding less than 10 lines of Java code, to access the services provided by UPPRESSO.
     
 
 All systems employ RSA-2048 and SHA-256 to generate tokens.
