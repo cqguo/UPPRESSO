@@ -19,7 +19,7 @@ when a user clicks the SSO login button in a browser window visiting the target 
  an identity-token request is constructed with the RP's identity and the scope of requested user attributes.
 It pops up another window (i.e., the \emph{user-i window}),
     and this request is sent to the IdP's \emph{authorization endpoint} (i.e., the URL to issue tokens \cite{rfc6749}).
-After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the authorized attributes, a validity period, etc.
+After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the consented attributes, a validity period, etc.
 The token is then forwarded to the RP's redirection endpoint via the user-i window.
 Finally, the RP verifies the token and allows the token holder to log in as the enclosed user (pseudo-)identity.
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
@@ -32,7 +32,7 @@ communications by the \verb+postMessage+ HTML5 API \cite{postm-targeto} within t
 %To process responses from an IdP and forward tokens to the target RP correctly,
 
 Alternatively, if a browser works as the user agent of OIDC with only one window,
-        user attributes are authorized in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}, 
+        user attributes are consented in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}, 
         which is called \emph{redirect UX}.
 
 

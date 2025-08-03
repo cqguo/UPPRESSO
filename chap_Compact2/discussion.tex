@@ -55,7 +55,7 @@ The RP uses this code to retrieve identity tokens from the IdP.
 $\mathcal{F}_{Acct\ast}()$, $\mathcal{F}_{PID_{U}}()$, $\mathcal{F}_{PID_{RP}}()$ and $\mathcal{F}_{Acct}()$, can be also integrated into the authorization code flow of OIDC to transform (pseudo-)identities in signed identity tokens.
 Then, the user-i script will forward an authorization code (but not the token) to the user-r script, and to the RP finally.
 Then, this code serves as an index to retrieve tokens by the RP, not disclosing any information about the user.
-On receiving an authorization code, the RP uses it as well as a credential issued by the IdP during the initial registration \cite{OpenIDConnect}, to retrieve identity tokens.
+On receiving an authorization code, the RP uses it as well as a credential issued by the IdP during the initial registration \cite{OpenIDConnect}, to retrieve identity tokens from the IdP's token endpoint \cite{rfc6749}.
 
 Meanwhile, to hide RP identities from the IdP in the retrieval of identity tokens, privacy-preserving credentials
     %(e.g., ring or group signatures \cite{ring-sig,chaum1991group})
@@ -80,12 +80,12 @@ Otherwise, if the visited RP is not anonymously authenticated to the IdP in the 
 \noindent \textbf{Alternatives to generate $\boldsymbol{ID_{RP}}$ and bind $\boldsymbol{ReEnpt_{RP}}$.}
 In UPPRESSO the IdP generates random $ID_{RP}$ and signs an RP certificate to bind $ID_{RP}$ and $ReEnpt_{RP}$, which is verified by the user-i script.
 This ensures the relationship between the RP designated by an identity token and the URL to receive this token.
-It also guarantees that the target RP has already registered itself at the IdP and prevents unauthorized RPs from utilizing the IdP's services \cite{OpenIDConnect,save-flow}.
+It also guarantees that the target RP has already registered itself at the IdP and prevents unregistered RPs from utilizing the IdP's services \cite{OpenIDConnect,save-flow}.
 
 An alternative method for binding $ID_{RP}$ and $ReEnpt_{RP}$ is
  to design a \emph{deterministic} scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
 This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the discrete logarithm of the output. It generates a point on the elliptic curve $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
-Then, any RP can be visited through the SSO services, either authorized by the IdP or not.
+Then, any RP can be visited through the SSO services, either registered or not.
 In this case, in Step 1.2 the user-r script sends only the RP's redirection endpoint (i.e., its URL for receiving tokens) but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's unambiguous name. 
 
 However, if some RP changes its domain, for example, from \verb+https://theRP.com+ to \verb+https://RP.com+, the accounts (i.e., $Acct = [ID_U]ID_{RP}$) will inevitably change.

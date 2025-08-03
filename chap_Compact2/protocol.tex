@@ -151,7 +151,7 @@ This ensures that (\emph{a}) $PID_{RP} = [t]{ID_{RP}}$ is calculated based on th
 In the HTTP request to pop up the user-i window, $Cert_{RP}$ and the scope of requested user attributes are carried as \emph{fragments} (but not parameters) \cite{url-fragment}, which are identified by \texttt{\#} instead of \texttt{?},
     so that they are not sent to the IdP web server but processed by the browser.
 We save $ReEnpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object \cite{sessionStorageHtml},
-    because the user-i window is refreshed to finish user authentication and attribute authorization.
+    because the user-i window is refreshed to finish user authentication and attribute consent.
 %The scripts are responsible for communicating with the origin web servers and also the cross-origin communications within the browser.
 % as most browsers do in secure OIDC settings \cite{de2014oauth,GoogleIdIntegrate}.
 %\footnote{The user-i script is recommended in OIDC services for an in-context user experience of attribute authorization \cite{GoogleIdIntegrate,uber}, so the authorization of user attributes is also implemented through this user-i script in UPPRESSO.}
@@ -312,10 +312,10 @@ The IdP calculates $PID_U = [ID_U]{PID_{RP}}$ and signs an identity token as fol
 \item[2.1]
 On receiving an identity-token request,
 the IdP authenticates the initiating user as $ID_U$, if not authenticated yet.
-Then, it obtains the user's authorization to enclose attributes in the token.
+Then, it obtains the user's consent to enclose attributes in the token.
 \item[2.2]
 The IdP calculates $PID_U = [ID_U]{PID_{RP}}$, and signs $TK = [PID_{RP}, PID_U, Iss, Validity, Attr]_{SK}$,
-where $Iss$ identifies the IdP, $Validity$ indicates the validity period, and $Attr$ contains the authorized user attributes.
+where $Iss$ identifies the IdP, $Validity$ indicates the validity period, and $Attr$ contains the user attributes.
 \item[2.3] The IdP replies with the identity token to the user-i window,
     as well as the user-i script to forward this token.
 \end{itemize}
