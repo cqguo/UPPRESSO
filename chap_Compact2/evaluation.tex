@@ -95,14 +95,14 @@ UPPRESSO incurs overheads in opening a new browser window and downloading the us
 %by browser extensions.
 %We have implemented such a browser extension while keeping the IdP and RPs unmodified, and the supplementary experiments showed a reduction of (\emph{a}) about 90 ms in the virtual private cloud setting and (\emph{b}) 260 ms when accessed remotely.}
 %
-In SPRESSO the RP also needs to open a new browser window, and obtain information about the IdP % 's public key %(SPRESSO allows a user to assign any IdPs before login without initial registrations)
-and encrypt its domain using an ephemeral key, resulting in extra overheads.
+In SPRESSO the user also needs to open a new browser window, and obtain information about the IdP % 's public key %(SPRESSO allows a user to assign any IdPs before login without initial registrations)
+and encrypt the visited RP's domain using an ephemeral key, resulting in extra overheads.
 
-UPPRESSO requires the least time for generating identity tokens for it receives the token from the IdP without any additional processing.
+UPPRESSO requires the least time for generating identity tokens for it receives the token from the IdP without additional processing.
 In this phase MITREid Connect and SPRESSO require extra time as the browser downloads a script from the RP and the forwarder, respectively. % to process the token retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{#} instead of \texttt{?} due to security considerations \cite{de2014oauth}.
+After receiving an identity token from the IdP, in SPRESSO the user decrypts the RP's domain by scripts and sends it to the RP's redirection endpoint.
 Moreover, SPRESSO takes slightly more time to generate an identity token, as it implements the IdP using node.js and uses a JavaScript cryptographic library that is a little less efficient than the Java library used in the others.
 
-In the identity-token acceptance phase, 
-MITREid Connect and UPPRESSO take similar amounts of time for the RP to receive a token and accept it.
-In contrast, SPRESSO takes the longest time due to its complex processing at the user agent.
-After receiving an identity token from the IdP, the browser downloads another script from the forwarder server, to decrypt the RP's domain and sends the token to its redirection endpoint.
+Finally, in the identity-token acceptance phase, 
+three solutions take similar amounts of time for the RP to receive a token and accept it.
+% In contrast, SPRESSO takes the longest time due to its complex processing at the user agent.
