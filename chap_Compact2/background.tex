@@ -46,15 +46,15 @@ So a script is downloaded from the RP to process the token.
     \begin{tabular}{|c|c|c|c|c|c|}
   \hline
   & \multirow{2}*{\textbf{Solution}} &
-  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & \textbf{Extra Trusted} & \textbf{Browser Extension} \\ \cline{3-4}
-  & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{with User Secret}$^{\ddag}$ \\\hline
+  \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & \textbf{Extra Trusted} & \textbf{Accounts Derived from} \\ \cline{3-4}
+  & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{User-maintained Secret}$^{\ddag}$ \\\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
    & SPRESSO \cite{SPRESSO} & $\CIRCLE$ & $\Circle$ & $\LEFTcircle$$^1$ & $\CIRCLE$ \\ \cline{2-6}
    & POIDC \cite{POIDC,save-flow} & $\CIRCLE$ & $\Circle$$^2$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & MISO \cite{miso} & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ \\ \cline{2-6}
-   & UP-SSO \cite{up-sso} & $\CIRCLE$ & $\CIRCLE$ & $\LEFTcircle$$^3$ & $\Circle$ \\ \hline 
+   & UP-SSO \cite{up-sso} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$$^3$ \\ \hline 
   \multirow{5}*{\makecell{Identity\\Federation}} & PRIMA \cite{prima} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
    & PseudoID \cite{PseudoID} & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\Circle$ \\ \cline{2-6}
    & Opaak \cite{Opaak} & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
@@ -72,7 +72,7 @@ So a script is downloaded from the RP to process the token.
 \item[]
 ${\sharp}$ \textbf{Privacy Threat}: $\CIRCLE$ prevented, $\Circle$ not prevented.
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ${\dag}$ \textbf{Extra Trusted Server}: $\CIRCLE$ no, $\Circle$ required.\\
-${\ddag}$ \textbf{Browser Extension with User Secret}: $\CIRCLE$ no, $\Circle$ required.
+${\ddag}$ \textbf{Accounts Derived from User-maintained Secret}: $\CIRCLE$ no, $\Circle$ required.
 
 \item[1.]
 SPRESSO assumes a malicious IdP (but honest IdPs in others), and then a trusted forwarder server is needed to decrypt the RP identity and forward tokens to the RP.
@@ -82,7 +82,7 @@ A variation of POIDC \cite{POIDC} proposes to also hide a user's identity in the
         but it takes seconds or more to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{ZKP-BINF,zkp-benchmark,ZKP-GPU},
         which is impracticable for a user agent in SSO.
 \item[3.]
-UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the user side.
+UP-SSO \cite{up-sso} runs an Intel SGX enclave on the user side with a secret to calculate PPIDs.
 %Opaak supports two exclusive pseudonym options: (\emph{a}) linkable within an RP but unlinkable across multiple RPs and (\emph{b}) unlinkable for any pair of actions.
 %
 %\item[4.]
@@ -143,7 +143,7 @@ Similarly, UP-SSO \cite{up-sso} runs a fully-trusted Intel SGX enclave on the us
 % SSO allows a user to log into an RP, without by herself maintaining an account at the RP or holding a long-term secret verified by the RP, so that SSO services are accessible from COTS browsers.
 Identity federation enables a user registered at a trusted IdP to be accepted by other parties, potentially with different accounts,
 but %authentication operations between the user and RPs are involved, so 
-browser extensions are needed to handle a long-term user secret
+browser extensions are installed to maintain a long-term user secret
 which is involved in the derivation of accounts.
 Although the term ``single sign-on (SSO)'' was used in some schemes \cite{PseudoID, Opaak, ELPASSO, WangWS13, HanCSTW18, HanCSTWW20}, this paper refers to them as \emph{identity federation} to emphasize this difference.
 
@@ -154,21 +154,22 @@ PseudoID \cite{PseudoID} introduces another trusted server in addition to the Id
  to blindly sign \cite{blind-sign}
 a token that binds a long-term user secret and a pseudonym.
 The user then unblinds this token,
-    and then authenticates herself to an RP using the secret.
+        presents it to the IdP which processes the secret,
+    and then authenticates herself to an RP by this processed secret.
 
-Privacy-preserving schemes of identity federation are designed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}.
-For instance, the IdP signs anonymous credentials in Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, U-Prove \cite{uprov}, and EL PASSO \cite{ELPASSO}, each of which binds a long-term user secret. %, with which users can authenticate to an RP.
-Then a user proves ownership of the anonymous credentials using her secret.
+Privacy-preserving identity federation schemes are designed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}.
+In Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, U-Prove \cite{uprov}, and EL PASSO \cite{ELPASSO}, the IdP signs anonymous credentials, each of which binds a user secret, %, with which users can authenticate to an RP.
+and a user proves ownership of the anonymous credentials using her secret.
   %   and discloses IdP-confirmed attributes in the credentials in most schemes except Opaak.
 Similarly, Fabric \cite{hyperledge-idemix} integrates Idemix anonymous credentials \cite{idemix} for unlinkable pseudonyms. % and IdP-confirmed attribute provision.
 
 
-Some privacy-preserving identity federation solutions \cite{PseudoID,ELPASSO,UnlimitID,Opaak,uprov,hyperledge-idemix} prevent both IdP-based login tracing and RP-based identity linkage, for (\emph{a}) the RP's identity is not enclosed in the anonymous credentials and (\emph{b}) the user selects different pseudonyms to visit different RPs.
+Some privacy-preserving solutions of identity federation \cite{PseudoID,ELPASSO,UnlimitID,Opaak,uprov,hyperledge-idemix} prevent both IdP-based login tracing and RP-based identity linkage, for (\emph{a}) the RP's identity is not enclosed in the anonymous credentials and (\emph{b}) the user selects different pseudonyms to visit different RPs.
 They even protect user privacy against collusive attacks by the IdP and RPs, as these pseudonyms cannot be linked through anonymous credentials \cite{anon-credential-2001, idemix, anon-credential} when the ownership of these credentials is proved to colluding RPs. % using a user secret.
 %However, this protection brings extra complexity to users, and such services cannot be accessed from COTS browsers.
 In privacy-preserving identity federation
 this privacy protection depends on long-term user secrets to mask the relationship of among pseudonyms (or accounts),
-        so a browser extension is always needed to handle the user secrets. 
+        so a browser extension is always needed to maintain the user secrets. 
 In Section \ref{sec:discussion}
 we particularly discuss the collusion of the IdP and RPs in privacy-preserving SSO and identity federation.
 
