@@ -43,8 +43,8 @@
 
 \noindent {\bf Experiment setting.}
 %SPRESSO encrypts the RP's domain in identity tokens and keeps the AES symmetric key known only to the RP and the user.
-We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, the browser ran locally, and the IdP and RP servers and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows 10 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM. 
-The first setting ran all functions on the same PC,
+We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, a browser, the IdP, the visited RP, and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows 10 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM. 
+The first setting ran all functions separated virtual machines but on the same physical PC,
     and minimized the impact of network delays.
 
 %Of all solutions, the IdP and RP servers and the extra forwarder server of SPRESSO were all deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM.
