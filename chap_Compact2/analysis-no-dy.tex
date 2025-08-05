@@ -23,7 +23,7 @@ by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 % That is, even an unmatching token manipulated by malicious adversaries, does not break security of UPPRESSO.
 % These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
 
-Provided that the security properties of UPPRESSO are satisfied,
+Provided that the security properties are satisfied,
     we analyze the privacy properties \emph{only} for successful logins
     because no meaningful account is derived in an unsuccessful login
 where the initiating user or the target RP deviates from the specifications.
@@ -297,13 +297,13 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 
 \subsection{Account Synchronization}
 \label{account-syn}
-If new users are allowed to register after the initialization,
-in order to distinguish meaningful accounts from meaningless ones in Step 3.3,
- an RP needs to regularly synchronize its accounts from the IdP.
+If new users are allowed to register after the system initialization,
+in order to distinguish meaningless accounts from meaningful ones in Step 3.3,
+ an RP regularly synchronizes its accounts from the IdP.
 For example,
     when an account is derived but not in the visited RP's local account list,
-        the RP contacts the IdP to synchronize accounts.
-Then, after the instant account synchronization, 
+        it contacts the IdP to synchronize accounts.
+After this instant account synchronization, 
     the token holder will be rejected
      if the derived account is still considered as meaningless (i.e., not in the RP's local account list).
 
@@ -312,9 +312,10 @@ An RP cannot imperceptively treat the token holder with an account not in the li
 Although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorems \ref{thm-u-id} and \ref{thm-rp-designation},
  she could log into such an RP as a meaningless but identical account in multiple logins.
 For example,
-    by reusing both $\hat{t}$ and $\check{t}$ ($\check{t} \neq \hat{t}$) in these logins,
+    by choosing ($\hat{t}_1$, $\check{t}_1$) and ($\hat{t}_2$, $\check{t}_2$) in two logins
+     where $m=\hat{t}_1/\check{t}_1 = \hat{t}_2/\check{t}_2$,
     as analyzed in the proof of Theorem \ref{thm-u-id}.
-this malicious user actually owns another account $Acct=[\check{t}^{-1}\hat{t}ID_U]ID_{RP} \neq [ID_U]ID_{RP}$.
+this malicious user would actually own another account $Acct=[mID_U]ID_{RP} \neq [ID_U]ID_{RP}$.
 %\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
 
 
@@ -322,9 +323,9 @@ The instant account synchronization can be replaced by conditional $PID_{RP}$ ch
 If an RP derives some account not in its local account list,
     it additionally checks $PID_{RP}$ in this case:
      If $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$,
-                this account is asserted to belong to a newly-registered user\footnote{In this case, adversaries cannot manipulate $t$ or submit a token to RPs other than the designated one,
-                and then the derived account is meaningful.}
-                and the RP updates its account list locally;
+                this account is asserted to belong to a newly-registered user
+                %\footnote{In this case, adversaries cannot manipulate $t$ or submit a token to RPs other than the designated one, and then the derived account is meaningful.}
+                and then the RP updates its account list locally;
     otherwise, it rejects this token.
 
 

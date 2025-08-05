@@ -17,7 +17,7 @@ and the IdP was developed on top of MITREid Connect \cite{MITREid}, %certificate
 with minimal code modifications.
 All systems employ RSA-2048 and SHA-256 to generate tokens.
 The scripts of user-i and user-r consist of about 180 and 80 lines of JavaScript code, respectively.  %to provide the functions in Steps 2.1, 2.3, and 4.3.
-The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on elliptic \cite{elliptic}, an open-source JavaScript library.
+The cryptographic computations such as $Cert_{RP}$ verification and $PID_{RP}$ negotiation are conducted based on elliptic \cite{elliptic-lib}, an open-source JavaScript library.
 
 We developed a Java-based RP SDK with about 310 lines of code on the Spring Boot framework.
 The main function encapsulates the RP operations of UPPRESSO: verify an identity token and derive $Acct$. The cryptographic computations are finished using the Spring Security library.

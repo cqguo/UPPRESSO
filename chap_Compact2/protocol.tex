@@ -131,9 +131,9 @@ so this ensures confidentiality of identity tokens because (\emph{a}) only scrip
 
 %The following designs are proposed, %\footnote{UPPRESSO also works with redirect UX, .}
 %    and the complete UPPRESSO protocol is described in Section \ref{implementations}.
-In UPPRESSO the IdP receives $PID_{RP}$ (but not $ID_{RP}$),
+In UPPRESSO the IdP receives $PID_{RP}$ (but not $ID_{RP}$) in an identity-token request,
     so it cannot reply with $ReEnpt_{RP}$ to the user-i window.
-An RP certificate, denoted as $Cert_{RP}$ in this paper, is introduced to bind $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP during the RP's initial registration.
+An RP certificate, denoted as $Cert_{RP}$, is introduced to bind $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP during the RP's initial registration.
 %
 %The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
 %
@@ -200,10 +200,12 @@ This is achieved by setting
 \verb+<meta name="referrer" content="no-referrer">+
 in the RP's SSO login page \cite{referer_policy}.
 %This method is specified by W3C \cite{referer_policy} and widely supported. We have tested it in various browsers such as Chrome, Safari, Edge, Opera, and Firefox, and confirmed no referer leakage.
+In Figure \ref{fig:process} we can find that
+    this HTTP request is the only communication from the user-r window to the IdP server.
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.75\linewidth]{fig/pop-up-process.pdf}
+  \includegraphics[width=0.76\linewidth]{fig/pop-up-process.pdf}
   \caption{The SSO login flow of UPPRESSO}
   \label{fig:process}
 \end{figure*}
@@ -345,9 +347,9 @@ and calculates $Acct = [t^{-1}]{PID_U}$.
 
 \end{itemize}
 
-If any verification fails, this login flow will be terminated immediately.
-For example, the user halts it when receiving an invalid $Cert_{RP}$.
-The IdP rejects an identity-token request if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token if it is not well signed or the derived account is meaningless. 
+If any verification fails, the flow will be immediately terminated.
+For instance, when receiving invalid $Cert_{RP}$ the user halts it.
+The IdP rejects an identity-token request if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token if it is not well signed or a meaningless account is derived.
 
 In Step 3.2, an RP does not check whether $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$ or not,
     and this efficient design does not result in attacks, which is proved in Section \ref{analysis-security}.

@@ -50,7 +50,7 @@ So a script is downloaded from the RP to process the token.
   & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{User-maintained Secret}$^{\ddag}$ \\\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
-   & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\Circle$ \\ \cline{2-6}
+   & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & SPRESSO \cite{SPRESSO} & $\CIRCLE$ & $\Circle$ & $\LEFTcircle$$^1$ & $\CIRCLE$ \\ \cline{2-6}
    & POIDC \cite{POIDC,save-flow} & $\CIRCLE$ & $\Circle$$^2$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & MISO \cite{miso} & $\CIRCLE$ & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ \\ \cline{2-6}
@@ -72,7 +72,7 @@ So a script is downloaded from the RP to process the token.
 \item[]
 ${\sharp}$ \textbf{Privacy Threat}: $\CIRCLE$ prevented, $\Circle$ not prevented.
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ${\dag}$ \textbf{Extra Trusted Server}: $\CIRCLE$ no, $\Circle$ required.\\
-${\ddag}$ \textbf{Accounts Derived from User-maintained Secret}: $\CIRCLE$ no, $\Circle$ required.
+${\ddag}$ \textbf{Accounts Derived from User-maintained Secret}: $\CIRCLE$ no, $\Circle$ yes.
 
 \item[1.]
 SPRESSO assumes a malicious IdP (but honest IdPs in others), and then a trusted forwarder server is needed to decrypt the RP identity and forward tokens to the RP.
