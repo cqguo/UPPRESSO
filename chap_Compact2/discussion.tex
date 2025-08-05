@@ -7,16 +7,16 @@ Even when the IdP strictly follows the protocols but shares information with RPs
     a user would complete her logins \emph{entirely} with colluding entities,
     and then the IdP and RPs could always link a user's (pseudo-)identities and accounts (i.e., both IdP untraceability and RP unlinkability are broken),
     unless a secret, unknown to the colluding IdP and RPs,
-                is used to mask the relationship among the (pseudo-)identities and accounts.
+                is introduced to mask the relationship among the (pseudo-)identities and accounts.
 That is, regardless of which $\mathcal{F}_{Acct\ast}()$ is adopted to determine
 $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$,
-the IdP could always collude with RPs to track a user's login activities by analyzing the relationship between derived accounts and the user's identity,
+the IdP could always collude with RPs to track a user's login activities by analyzing the relationship between the user's identity and accounts derived at the RPs,
 unless $Acct_{i,j} = \mathcal{F}_{Acct\ast}(s_i,ID_{U_i}, ID_{RP_j})$ is adopted and $s_i$ is a long-term secret known to only the user.
 In this case,
-    a browser extension is required
-            to maintain this secret,
-             and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers this strategy.
-However, if the user accesses the services from different devices,
+    a user needs to install a browser extension 
+            to maintain the secret,
+             and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers stronger privacy than user experience.
+If the user accesses the services from different devices,
     addition operations are required to synchronize the secret among these devices.
 Moreover, if this secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret %, or additional revocation checking will be needed 
 \cite{ELPASSO, UnlimitID}.\footnote{This user-maintained secret used to derive accounts (or mask the relationship of identities and accounts) is different from the credential for user
