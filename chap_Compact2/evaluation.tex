@@ -43,7 +43,7 @@
 
 \noindent {\bf Experiment setting.}
 %SPRESSO encrypts the RP's domain in identity tokens and keeps the AES symmetric key known only to the RP and the user.
-We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, a browser, the IdP, the visited RP, and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows server 2025 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows server 2025 with 8 vCPUs and 32GB RAM. 
+We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, a browser, the IdP, the visited RP, and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows Server 2025 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows Server 2025 with 8 vCPUs and 32GB RAM. 
 The first setting ran all functions separated virtual machines but on the same physical PC,
     and minimized the impact of network delays.
 
@@ -80,7 +80,7 @@ As mentioned in Section \ref{subsec:OIDC},
     in MITREid Connect a user-r script is downloaded during the phase of token generation.
 In addition to a script from the IdP in identity-token requesting,
 SPRESSO needs another script from the forwarder server in the token acceptance phase \cite{SPRESSO}.
-Fortunately, once a browser visits a web server, it can cache the scripts locally, reducing the download time for subsequent visits. This caching is enabled by xxxxxx.
+Fortunately, once a browser visits a web server, it can cache the scripts locally, reducing the download time for subsequent visits. This caching is enabled by the \verb+localStorage+ HTML object \cite{htmlStorageHtml} and HTTP  \texttt{Cache-Control} header.
 
 Therefore, we measured the time cost for both initial and subsequent visits (1,000 trials) and compared the average SSO login times of the three schemes.
 As shown in Figure \ref{fig:evaluation},

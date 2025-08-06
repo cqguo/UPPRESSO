@@ -153,7 +153,7 @@ This ensures that (\emph{a}) $PID_{RP} = [t]{ID_{RP}}$ is calculated based on th
 
 In the HTTP request to pop up the user-i window, $Cert_{RP}$ and the scope of requested user attributes are carried as \emph{fragments} (but not parameters) \cite{url-fragment}, which are identified by \texttt{\#} instead of \texttt{?},
     so that they are not sent to the IdP web server but processed by the browser.
-Meanwhile, we save $ReEnpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object \cite{sessionStorageHtml},
+Meanwhile, we save $ReEnpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object \cite{htmlStorageHtml},
     because the user-i window is refreshed to finish user authentication and attribute consent.
 %The scripts are responsible for communicating with the origin web servers and also the cross-origin communications within the browser.
 % as most browsers do in secure OIDC settings \cite{de2014oauth,GoogleIdIntegrate}.
