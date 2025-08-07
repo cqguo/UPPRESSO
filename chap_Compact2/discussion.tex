@@ -16,11 +16,11 @@ In this case,
     a user needs to install a browser extension 
             to maintain the secret,
              and privacy-preserving identity federation \cite{ELPASSO, UnlimitID, idemix, PseudoID, uprov} prefers stronger privacy than user experience.
-If the user accesses the services from different devices,
-    addition operations are required to synchronize the secret among these devices.
-Moreover, if this secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret %, or additional revocation checking will be needed 
+If this secret is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret %, or additional revocation checking will be needed 
 \cite{ELPASSO, UnlimitID}.\footnote{This user-maintained secret used to derive accounts (or mask the relationship of identities and accounts) is different from the credential for user
 authentication to the IdP: If the credential is lost or leaked, the user only needs to update it at the IdP and her accounts are kept unchanged.}
+Moreover, if the user accesses the services from different devices,
+    addition operations are required to synchronize the secret among these devices.
 
 Alternatively, MISO \cite{miso} introduces an extra fully-trusted mixer server other than the IdP to keep $s_i$,
             to calculate user pseudo-identities (or accounts) in each login.

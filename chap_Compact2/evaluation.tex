@@ -17,7 +17,7 @@
   }
   \vspace*{-10pt}
   \par\medskip
-  \centering{\footnotesize (a) In a local virtual environment}
+  \centering{\footnotesize (a) Within a local virtual environment}
 
     \setcounter{subfigure}{0} % 重置subfigure计数器
   % 第二行：横向两个子图
@@ -44,8 +44,8 @@
 \noindent {\bf Experiment setting.}
 %SPRESSO encrypts the RP's domain in identity tokens and keeps the AES symmetric key known only to the RP and the user.
 We conducted experiments in two settings: (\emph{a}) on a PC with AMD Ryzen 7 57000X CPU and 32GB memory, a browser, the IdP, the visited RP, and the extra forwarder server of SPRESSO were deployed on separated virtual machines, each of which ran Windows Server 2025 with 2 vCPUs and 4GB RAM, and (\emph{b}) the browser running locally on the PC with AMD Ryzen 7 57000X CPU and 32GB memory, remotely accessed the servers (IdP and RP servers, and the forwarder server of SPRESSO) deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows Server 2025 with 8 vCPUs and 32GB RAM. 
-The first setting ran all functions separated virtual machines but on the same physical PC,
-    and minimized the impact of network delays.
+The first setting ran all functions on separated virtual machines but within the same physical PC,
+    to minimize the impact of network delays.
 
 %Of all solutions, the IdP and RP servers and the extra forwarder server of SPRESSO were all deployed on the Alibaba Cloud Elastic Compute Service, each of which ran Windows 10 with 8 vCPUs and 32GB RAM.
 
@@ -80,9 +80,10 @@ As mentioned in Section \ref{subsec:OIDC},
     in MITREid Connect a user-r script is downloaded during the phase of token generation.
 In addition to a script from the IdP in identity-token requesting,
 SPRESSO needs another script from the forwarder server in the token acceptance phase \cite{SPRESSO}.
-Fortunately, once a browser visits a web server, it can cache the scripts locally, reducing the download time for subsequent visits. This caching is enabled by the \verb+localStorage+ HTML object \cite{htmlStorageHtml} and HTTP  \texttt{Cache-Control} header.
+Fortunately, once a browser visits a web server, it caches the scripts locally, reducing the download time for subsequent visits.
+This caching is enabled by the \verb+localStorage+ HTML object \cite{htmlStorageHtml} and HTTP  \texttt{Cache-Control} header.
 
-Therefore, we measured the time cost for both initial and subsequent visits (1,000 trials) and compared the average SSO login times of the three schemes.
+Therefore, we measured the time cost for both initial and subsequent visits (1,000 trials) and compared the average SSO login times of three schemes.
 As shown in Figure \ref{fig:evaluation},
 MITREid Connect, UPPRESSO, and SPRESSO require (\emph{a}) 69 ms, 187 ms, and 282 ms for initial visits, and 74 ms, 158 ms and 277 ms for subsequent visits,
  or (\emph{b}) 222 ms, 372 ms, and 605 ms for initial visits, and 219 ms, 318 ms and 576 ms for subsequent visits.
@@ -106,3 +107,8 @@ Moreover, SPRESSO takes slightly more time to generate an identity token, as it 
 Finally, in the identity-token acceptance phase, 
 three solutions take similar amounts of time for the RP to receive a token and accept it.
 % In contrast, SPRESSO takes the longest time due to its complex processing at the user agent.
+
+
+By comparing the average time costs of initial visits and subsequent visits,
+    we find that the performances of all schemes are improved
+        and the improvement is the most significant in UPPRESSO for the size of its scripts is the largest. 
