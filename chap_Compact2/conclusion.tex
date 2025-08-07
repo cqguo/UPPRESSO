@@ -3,11 +3,16 @@
 This paper presents UPPRESSO, an untraceable and unlinkable privacy-preserving SSO system for protecting a user's online profile across RPs against both a curious IdP and colluding RPs.
 We propose an identity-transformation approach and design algorithms satisfying the requirements of security and privacy: (\emph{a}) $\mathcal{F}_{Acct\ast}()$ determines a user's account, unique at an RP and unlinkable across RPs,
 (\emph{b}) $\mathcal{F}_{PID_{RP}}()$ protects a visited RP's identity from the curious IdP, (\emph{c}) $\mathcal{F}_{PID_{U}}()$ prevents colluding RPs from linking a user's multiple logins visiting different RPs, and (\emph{d}) $\mathcal{F}_{Acct}()$ derives a user's permanent account from ephemeral pseudo-identities.
-The identity transformations are integrated into the widely-adopted OIDC protocol, maintaining user convenience and security guarantees of SSO services. Our experimental evaluations of the UPPRESSO prototype demonstrate its efficiency, with an average login taking 174 ms when the IdP, the visited RP, and user browsers are deployed in a virtual private cloud, or 421 ms when a user visits remotely.
+The identity transformations are integrated into the widely-adopted OIDC protocol, maintaining user convenience and security guarantees of SSO services. Our experimental evaluations of the UPPRESSO prototype demonstrate its efficiency,
+        with an average login taking 187 ms when the IdP, the visited RP, and user browsers are deployed in a virtual private cloud, or 372 ms when a user visits remotely.
+Compared with MITREid Connect,
+it takes an overhead of at most 150 ms to prevent these privacy threats in UPPRESSO.
+
+% with an average login taking 174 ms when the IdP, the visited RP, and user browsers are deployed in a virtual private cloud, or 421 ms when a user visits remotely.
 
 %\section*{Acknowledgments}
 %We would like to thank the anonymous shepherd and reviewers for their valuable suggestions and comments.
 %Prof. Xianhui Lu and Prof. Yi Deng at Institute of Information Engineering, CAS 
 %    helped us to improve the analysis of security and privacy.
 
-\newpage
+\newpage 
