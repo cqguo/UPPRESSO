@@ -28,9 +28,9 @@ Then, in MISO the mixer server can track all users' login activities,
     but the IdP cannot even when colluding with RPs.
 
 On the contrary,
-    UPPRESSO is designed to provide privacy-preserving SSO services accessed from COTS browsers without extra trusted servers,
-        at the cost of user privacy vulnerable to IdP-RP collusive attacks.
-Our strategy offers an option for different users.
+    UPPRESSO is designed to provide privacy-preserving SSO services accessed from COTS browsers without extra trusted servers.
+  %      at the cost of user privacy vulnerable to IdP-RP collusive attacks.
+Our strategy offers a different option.
 In the future, we plan to improve the identity-transformation algorithms
     to process such a user secret as optional arguments,
     and then flexible privacy-preserving services will be provided.
@@ -54,8 +54,8 @@ Instead, it generates an authorization code, which is forwarded to the target RP
 The RP uses this code to retrieve identity tokens from the IdP.
 
 $\mathcal{F}_{Acct\ast}()$, $\mathcal{F}_{PID_{U}}()$, $\mathcal{F}_{PID_{RP}}()$ and $\mathcal{F}_{Acct}()$, can be also integrated into the authorization code flow of OIDC to transform (pseudo-)identities in signed identity tokens.
-Then, the user-i script will forward an authorization code (but not the token) to the user-r script, and to the RP finally.
-Then, this code serves as an index to retrieve tokens by the RP, not disclosing any information about the user.
+Then, in the flow an authorization code (but not the token) will be sent to the user-r script, and to the RP finally.
+This code serves as an index to retrieve tokens by the RP, not disclosing any information about the user.
 On receiving an authorization code, the RP uses it as well as a credential issued by the IdP during the initial registration \cite{OpenIDConnect}, to retrieve identity tokens from the IdP's token endpoint \cite{rfc6749}.
 
 Meanwhile, to hide RP identities from the IdP in the retrieval of identity tokens, privacy-preserving credentials

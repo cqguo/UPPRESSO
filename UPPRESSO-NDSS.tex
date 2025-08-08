@@ -71,10 +71,10 @@ Single sign-on (SSO) protocols such as OpenID Connect (OIDC),
 allow a user to maintain only the credential for an identity provider (IdP) to log into multiple relying parties (RPs).
 However, SSO introduces privacy threats, as ({\em a}) a curious IdP could trace a user's visits to RPs, and ({\em b}) colluding RPs could learn a user's online profile by linking her identities across these RPs.
 This paper presents a privacy-preserving SSO scheme, called UPPRESSO, to protect a user's online profile against both (\emph{a}) an honest-but-curious IdP and (\emph{b}) malicious RPs colluding with other users.
-An identity-transformation approach is proposed to generate untraceable ephemeral pseudo-identities for an RP and a user in a login, %(denoted as $PID_{RP}$ and $PID_U$, respectively)
+An identity-transformation approach is proposed to generate untraceable ephemeral pseudo-identities for an RP and a user in each login, %(denoted as $PID_{RP}$ and $PID_U$, respectively)
  from which the visited RP derives a permanent account for the user, %(denoted as $Acct$),
   while these identity transformations provide unlinkability among the logins visiting different RPs.
-We built the UPPRESSO prototype providing OIDC-compatible SSO services, accessed from a commercial-off-the-shelf browser without installing extensions.
+We built the UPPRESSO prototype providing OIDC-compatible SSO services, accessed from a commercial-off-the-shelf browser without installing any extension.
 %Moreover, this approach protects the identities of a user and the visited RP,
 %We built a prototype of UPPRESSO on top of MITREid Connect, an open-source SSO system.
 The extensive evaluations show that it fulfills the security and privacy requirements of SSO with reasonable overheads.

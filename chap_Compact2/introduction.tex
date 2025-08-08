@@ -22,15 +22,15 @@ to learn the user's online profile \cite{maler2008venn, FirefoxAccount}.
 This threat is called {\em RP-based identity linkage}. %in this paper.
 
 While preventing different privacy threats (i.e., IdP-based login tracing, RP-based identity linkage, or both),
-privacy-preserving SSO schemes \cite{maler2008venn, NIST2017draft, BrowserID, save-flow, SPRESSO,miso,POIDC} aim to provide services for users with a commercial-off-the-shelf (COTS) browser without installing extensions.
+privacy-preserving SSO schemes \cite{maler2008venn, NIST2017draft, BrowserID, save-flow, SPRESSO,miso,POIDC} aim to provide services for users with a commercial-off-the-shelf (COTS) browser without installing any extensions.
 %This requires that, except the credentials for user authentication to the IdP,
 %    there is no long-term secret processed in the browser across different logins.
 We analyze existing privacy-preserving SSO solutions in Section \ref{sec:background},
     and also compare them with privacy-preserving identity federation \cite{PseudoID, ELPASSO, UnlimitID, Opaak, uprov, hyperledge-idemix}.
 
-In this paper, we present UPPRESSO, an Untraceable and Unlinkable Privacy-PREserving Single Sign-On protocol.
-It proposes {\em identity transformations} in SSO,
- and integrates them in OIDC services.
+This paper presents UPPRESSO, an Untraceable and Unlinkable Privacy-PREserving Single Sign-On protocol.
+We propose {\em identity transformations} in SSO,
+ and integrates them into OIDC services.
 When visiting an RP in UPPRESSO, a user transforms $ID_{RP}$ into ephemeral $PID_{RP}$, which is sent to a trusted IdP to transform $ID_U$ into an ephemeral user pseudo-identity $PID_U$.
 Then, the identity token issued by the IdP binds only $PID_U$ and $PID_{RP}$, instead of $ID_U$ and $ID_{RP}$. On receiving the token, % with a matching $PID_{RP}$,
  the RP transforms $PID_U$ into an account unique at each RP but identical across multiple logins visiting this RP.
@@ -57,7 +57,7 @@ Our contributions are as follows.
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
 \item We proposed a novel identity-transformation approach for privacy-preserving SSO services and designed identity-transformation algorithms with desirable properties.
-\item We designed the UPPRESSO protocol by integrating the identity transformations into OIDC, and proved that it satisfies the security and privacy requirements of SSO services.
+\item We designed the UPPRESSO protocol by integrating the identity transformations into OIDC, and proved the security or privacy guarantees of SSO services.
 \item We implemented the UPPRESSO prototype on top of an open-source OIDC implementation. Through performance evaluations, we confirmed that UPPRESSO introduces reasonable overheads.
 \end{itemize}
 

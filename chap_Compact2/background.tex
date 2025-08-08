@@ -12,16 +12,16 @@ and other information such as user credentials (e.g., passwords)
 and RP \emph{redirection endpoints} \cite{rfc6749} (i.e., the URLs to receive tokens,
 denoted as $ReEnpt_{RP}$).
 User operations in the login flows are conducted on a user agent (or browser typically).
+
 To provide an in-context user experience (UX),
     the SSO login flow with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is recommended.
-
 As shown in Figure \ref{fig:OpenID},
 when a user clicks the SSO login button in a browser window visiting the target RP 
 (called the \emph{user-r window} in this paper),
  an identity-token request is constructed with the RP's identity and the scope of requested user attributes.
 It pops up another window (i.e., the \emph{user-i window}),
     and this request is sent to the IdP's \emph{authorization endpoint} (i.e., the URL to issue tokens \cite{rfc6749}).
-After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the consented attributes, a validity period, etc.
+After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the consented user attributes, a validity period, etc.
 The token is then forwarded to the RP's redirection endpoint via the user-i window.
 Finally, the RP verifies the token and allows the token holder to log in as the enclosed user (pseudo-)identity.
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
@@ -33,11 +33,11 @@ communications by the \verb+postMessage+ HTML5 API \cite{postm-targeto} within t
 %To process identity tokens retrieved from the IdP, which is carried with a URL following the fragment identifier \texttt{\#} instead of \texttt{?} due to security considerations \cite{de2014oauth},
 %To process responses from an IdP and forward tokens to the target RP correctly,
 
-Alternatively, if a browser works as the user agent of OIDC with only one window,
+Alternatively, if a browser works as the user agent of OIDC but with only one window,
         user attributes are consented in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}, 
         which is called \emph{redirect UX}.
 After a token is issued by the IdP,
-    it is sent to the RP's redirection endpoint as a fragment instead of parameters due to security considerations \cite{de2014oauth}.
+    it is sent to the RP's redirection endpoint as a fragment (but not parameters) of the URL due to security considerations \cite{de2014oauth}.
 So a script is downloaded from the RP to process the token.
 
 \begin{table*}[tb]
@@ -82,7 +82,7 @@ A variation of POIDC \cite{POIDC} proposes to also hide a user's identity in the
         but it takes seconds or more to generate such a zero-knowledge proof (ZKP) even for a powerful server \cite{ZKP-BINF,zkp-benchmark,ZKP-GPU},
         which is impracticable for a user agent in SSO.
 \item[3.]
-UP-SSO \cite{up-sso} runs an Intel SGX enclave on the user side with a secret to calculate PPIDs.
+UP-SSO \cite{up-sso} runs a user-side Intel SGX enclave with a secret to calculate PPIDs.
 %Opaak supports two exclusive pseudonym options: (\emph{a}) linkable within an RP but unlinkable across multiple RPs and (\emph{b}) unlinkable for any pair of actions.
 %
 %\item[4.]
