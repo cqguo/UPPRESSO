@@ -34,6 +34,8 @@ Our strategy offers a different option.
 In the future, we plan to improve the identity-transformation algorithms
     to process such a user secret as optional arguments,
     and then flexible privacy-preserving services will be provided.
+    
+   
 
 %UPPRESSO assumes an honest IdP, and the user-i script downloaded from IdP servers is also honest; otherwise, it might directly disclose the identities of visited RPs to the IdP.
 
@@ -64,6 +66,10 @@ Meanwhile, to hide RP identities from the IdP in the retrieval of identity token
  and anonymous communications (e.g., oblivious proxies \cite{ohttp-rfc} or Tor \cite{tor}) need to be adopted for RPs.
 Otherwise, if the visited RP is not anonymously authenticated to the IdP in the retrieval of tokens,
     IdP untraceability is broken.
+
+
+
+
 
 %\vspace{0.75mm}
 %\noindent \textbf{Scalability.}
@@ -114,6 +120,21 @@ Because a browser controls access to web resources following the same-origin pol
  even if the honest RP restricts only the HTTP requests to specific paths are allowed to access its cookies.
 So this risk is caused by the SOP model of browsers but not our designs,
     and commonly exists in SSO services accessed from COTS browsers \cite{rfc6749,SPRESSO,MITREid,GoogleIdIntegrate,uber}.
+    
+    
+    
+\noindent \textbf{Support for the redirect UX login.}    
+UPPRESSO can be adapted to support the OIDC login flow with Redirect UX (full-page navigation) instead of the pop-up UX. In the standard OIDC Redirect UX, the Relying Party (RP) and Identity Provider (IdP) typically exchange parameters via HTTP 302 redirections. However, to maintain UPPRESSO's privacy guarantees (i.e., IdP-based login tracing), the flow is modified to ensure the RP’s identity remains hidden from the curious IdP during these navigational hand-offs.
+
+1. Initiating the Login (RP to IdP):
+When the user initiates a login, the RP redirects the browser to the IdP. Unlike standard OIDC, which passes the client\_id and redirect\_uri as query parameters, UPPRESSO must pass the RP Certificate ($Cert_{RP}$) and scope as URL fragments (following the \# symbol) . This ensures these sensitive parameters are processed only by the browser and not sent to the IdP’s web server.
+Crucially, the RP must also suppress the HTTP Referer header (e.g., using rel="noreferrer") during this redirection. This prevents the IdP server from reading the RP's domain from the HTTP request headers.
+
+2. Authenticating and Returning (IdP to RP):
+Same as in pop-up UX, the UPPRESSO client-side script (formerly the user-i script) verifies $Cert_{RP}$, calculates the ephemeral pseudo-identity $PID_{RP}$ locally , and requests the token from the IdP via AJAX/Fetch.
+In standard OIDC, the IdP server would issue an HTTP 302 redirect to return the user to the RP. However, in UPPRESSO, the IdP server does not know the RP's redirection endpoint ($ReEnpt_{RP}$) . Therefore, the IdP returns the signed token to the user-i script within the current page. This script then retrieves the valid $ReEnpt_{RP}$ and $t$ from the local session and performs a client-side redirection (e.g., window.location.href) to navigate the user back to the RP with the token in the URL fragment.
+This approach ensures that neither the entry redirection nor the return redirection exposes the RP's permanent identity or location to the curious IdP.
+
 
 %\vspace{0.75mm}
 
