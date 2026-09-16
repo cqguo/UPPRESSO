@@ -1,9 +1,9 @@
 \section{Security and Privacy Analysis}
 \label{sec:analysis}
 
-As (\emph{a}) account uniqueness is analyzed in Section \ref{subsec:overview}
-    and (\emph{b}) the designs in Section \ref{sec:web-design} ensure secure communications and no direct privacy leakage in the communications,
-in this section we prove security (i.e., user identification and RP designation) and privacy (i.e., IdP untraceability and RP unlinkability) of the identity transformations in UPPRESSO.
+As account uniqueness is analyzed in Section \ref{subsec:overview}
+   % and (\emph{b}) the designs in Section \ref{sec:web-design} ensure secure communications and no direct privacy leakage in the communications,
+this section proves security (i.e., RP designation and user identification) and privacy (i.e., IdP untraceability and RP unlinkability) of the identity transformations in UPPRESSO.
 
 
 \subsection{Adversarial Scenarios}
@@ -14,7 +14,7 @@ According to our design goals %(i.e., the desired security and privacy guarantee
 
 
 %\noindent\textbf{Impersonation and identity injection against security.}
-First of all, security (i.e., user identification and RP designation) is proved against \emph{malicious RPs and users} in Section \ref{analysis-security}.
+First of all, security (i.e., RP designation and user identification) is proved with an honest IdP but against \emph{malicious RPs and users}.
 In the proofs, malicious entities could collude \cite{FettKS14,BrowserID,SPRESSO},
   attempting to (\emph{a}) impersonate an honest user to log into some honest RP
    or (\emph{b}) entice an honest user to log into an honest RP under another's account, 
@@ -24,14 +24,11 @@ by arbitrarily manipulating $t$ and/or sending $TK$ to an RP not designated.
 % These properties are defined and proved specially for the proposed identity transformations in UPPRESSO, while checking $ID_{RP}$ in identity tokens by an RP is \emph{necessary} in other SSO solutions \cite{OpenIDConnect,BrowserID,SPRESSO,NIST2017draft,POIDC,save-flow,miso}.
 
 Provided that the security properties are satisfied,
-    we analyze the privacy properties \emph{only} for successful logins
-    because no meaningful account is derived in an unsuccessful login
-where the initiating user or the target RP deviates from the specifications.
-It makes no sense to track login activities resulting in meaningless accounts, and
-    malicious RP and users cannot break privacy by deviating from the protocols.
-Thus, no malicious entities are considered in the proofs of privacy.
-
-Therefore, (\emph{a}) IdP untraceability is proved in Section \ref{subsec:IdP-privacy} against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
+    we analyze the privacy properties \emph{only} for successful logins.
+It makes no sense to track user activities
+     from malicious behaviors deviating from the protocols, resulting unsuccessful logins.
+So no malicious entities are considered in the proofs of privacy.
+In particular, (\emph{a}) IdP untraceability is proved in Section \ref{subsec:IdP-privacy} against \emph{an honest-but-curious IdP}, which tries to infer the identities of the \emph{honest} RPs being visited by an \emph{honest} user,
 and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} against \emph{a group of semi-honest RPs and users} which follow the protocols but share their information,
     attempting to link an honest user's accounts across these semi-honest RPs.
 %in addition to an \emph{honest-but-curious} IdP according to the threat model.
@@ -73,18 +70,18 @@ and (\emph{b}) RP unlinkability is analyzed in Section \ref{subsec:RP-privacy} a
 \label{analysis-security}
 
 In secure SSO systems, an identity token denoted as $TK$, which is requested by a user to visit an RP,
-    \emph{enables only this user to log into only the honest target RP as her account at this RP} (i.e., user identification and RP designation). It makes no sense to discuss the login results at malicious RPs.
+    \emph{enables only this user to log into only the honest target RP as her account at this RP} (i.e., RP designation and user identification). It makes no sense to discuss the login results at malicious RPs.
 
 Let's assume totally $s$ users and $p$ RPs in UPPRESSO,
     whose identities are denoted as $\mathbbm{ID}_U = \mathbbm{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbbm{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
 There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
-$Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept unknown to adversaries.
+$Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept secret to adversaries.
 
 $TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
 where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ is calculated
     and (\emph{b}) $PID_U = [ID_U]PID_{RP}$ is calculated based on the initiating user's identity $ID_U$.
 
-User identification and RP designation are proved in Theorems \ref{thm-u-id} and \ref{thm-rp-designation}, respectively, against malicious RPs colluding with users.
+RP designation and user identification are proved in Theorems \ref{thm-rp-designation} and \ref{thm-u-id}, respectively, against malicious RPs colluding with users.
 Besides, as mentioned in Section \ref{implementations}, 
 in Step 3.2 an (honest) RP directly derives accounts from any signed and unexpired identity token, without checking whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not.
 So in the proofs we do not assume any relationship among $t$, $ID_{RP}$ and $PID_{RP}$ which are received by an RP.
@@ -101,6 +98,42 @@ So in the proofs we do not assume any relationship among $t$, $ID_{RP}$ and $PID
 
 %Because $TK$ works only at the ``implicitly'' designated RP and no meaningful user will be derived at any other RPs, % when $u_i$ and $r_j$ are kept unknown to adversaries,
 % in Step 4.2 an RP does not check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
+
+RP designation means that, \emph{from $TK$ only the designated honest RP derives meaningful accounts}.
+We prove it by showing that,
+    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
+   % under an adversarial scenario involving malicious adversaries.
+
+%\emph{Given $u \in \mathbbm{u}$ and $ID_{RP} \in \mathbbm{ID}_{RP}$, from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, an honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive any $Acct = [u']ID_{RP'}$ where $u' \in \mathbbm{u}$ and $ID_{RP'} \in \mathbbm{ID}_{RP}$.}\label{thm-rp-designation}
+
+\vspace{1.5mm}
+\begin{thm}[RP Designation]
+When given known $\mathbbm{ID}_{RP}$, known $\mathbbm{A}cct$ and unknown $\mathbbm{ID}_U$ defined as above,
+  malicious adversaries cannot find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$, and $t_2$ which satisfy that $\mathcal{F}_{Acct}(\mathcal{F}_{PID_U}(ID_{U_{i_1}}, PID_{RP}^{*}), t_2) = \mathcal{F}_{Acct\ast}(ID_{U_{i_2}}, ID_{RP_{j_2}})$,
+where $PID_{RP}^{*}$ may be calculated as $\mathcal{F}_{PID_{RP}}(ID_{RP_{j_1}}, t_1)$
+    (i.e., $RP_{j_1}$ is designated)
+    or even arbitrarily generated (i.e., no RP is designated),
+    ${j_1} \neq {j_2}$, $1 \leq j_1, j_2 \leq p$, and $1 \leq i_1, i_2 \leq s$.
+\label{thm-rp-designation}
+\end{thm}
+
+\noindent\textbf{\textsc{Proof.}} 
+If adversaries could find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$ and $t_2$ which satisfy that $[{t_2}^{-1}t_1ID_{U_{i_1}}]ID_{RP_{j_1}} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$
+ where ${j_1} \neq {j_2}$,
+ the ECDLP of ${t_2}^{-1}t_1 = \log_{[{u_{i_1}}{r_{j_1}}]G}{[{u_{i_2}}{r_{j_2}}]G}
+ = \log_{Acct_{i_1,j_1}}{Acct_{i_2,j_2}}$ would be solved.
+
+The adversary might alternatively attempt to find $PID_{RP}^{*}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ which satisfy that $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP}^{*} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
+        but this cannot be solved due to unknown $ID_{U_{i}}$ when ${i_1} \neq {i_2}$.
+Or, if ${i_1} = {i_2}$, 
+    it would require the adversary to solve $[{{t_2}^{-1}}]PID_{RP}^{*} = ID_{RP_{j_2}}$
+        or $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$.
+That is,
+    the adversary chooses $t_2$, calculates $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$, requests a token for $PID_{RP}^{*}$, and then logs into $RP_{j_2}$ to ``impersonate'' himself.
+This is not an attack: $RP_{j_2}$ is actually designated by $TK$ and the adversary's account is derived at $RP_{j_2}$.
+\hfill $\square$
+
+\vspace{1.5mm}
 
 User identification means that,
 %At the designated RP, $TK$ identifies only the user who requests this identity token from the IdP. That is, 
@@ -126,42 +159,6 @@ where $ID_{\hat{U}} \neq ID_{\check{U}}$.
 When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic-curve discrete logarithm problem (ECDLP) of $\check{t}^{-1}\hat{t} = \log_{[\hat{u}r]G}{[\check{u}r]G} = \log_{\hat{A}cct}{\check{A}cct}$.
 \hfill $\square$
 
-\vspace{1.5mm}
-
-RP designation means that, \emph{from $TK$ only the designated honest RP derives meaningful accounts}.
-We prove it by showing that,
-    at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
-   % under an adversarial scenario involving malicious adversaries.
-
-%\emph{Given $u \in \mathbbm{u}$ and $ID_{RP} \in \mathbbm{ID}_{RP}$, from $TK$ binding $PID_{RP}=[t]ID_{RP}$ and $PID_U = [u]PID_{RP}$, an honest RP with ${ID_{RP'} \neq ID_{RP}}$ cannot derive any $Acct = [u']ID_{RP'}$ where $u' \in \mathbbm{u}$ and $ID_{RP'} \in \mathbbm{ID}_{RP}$.}\label{thm-rp-designation}
-
-\vspace{1.5mm}
-\begin{thm}[RP Designation]
-When given known $\mathbbm{ID}_{RP}$, known $\mathbbm{A}cct$ and unknown $\mathbbm{ID}_U$,
- malicious adversaries cannot find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$, and $t_2$ which satisfy that $\mathcal{F}_{Acct}(\mathcal{F}_{PID_U}(ID_{U_{i_1}}, PID_{RP}^{*}), t_2) = \mathcal{F}_{Acct\ast}(ID_{U_{i_2}}, ID_{RP_{j_2}})$,
-where $PID_{RP}^{*}$ may be calculated as $\mathcal{F}_{PID_{RP}}(ID_{RP_{j_1}}, t_1)$
-    or arbitrarily generated (i.e., $RP_{j_1}$ or no RP is designated),
-    ${j_1} \neq {j_2}$, $1 \leq j_1, j_2 \leq p$, and $1 \leq i_1, i_2 \leq s$.
-\label{thm-rp-designation}
-\end{thm}
-
-
-\noindent\textbf{\textsc{Proof.}} 
-If adversaries could find ${j_1}$, ${j_2}$, ${i_1}$, ${i_2}$, $t_1$ and $t_2$ which satisfy that $[{t_2}^{-1}t_1ID_{U_{i_1}}]ID_{RP_{j_1}} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$
- where ${j_1} \neq {j_2}$,
- the ECDLP of ${t_2}^{-1}t_1 = \log_{[{u_{i_1}}{r_{j_1}}]G}{[{u_{i_2}}{r_{j_2}}]G}
- = \log_{Acct_{i_1,j_1}}{Acct_{i_2,j_2}}$ would be solved.
-
-The adversary might alternatively attempt to find $PID_{RP}^{*}$, ${j_2}$, ${i_1}$, ${i_2}$ and $t_2$ which satisfy that $[{{t_2}^{-1}}ID_{U_{i_1}}]PID_{RP}^{*} = [ID_{U_{i_2}}]ID_{RP_{j_2}}$,
-        but this cannot be solved due to unknown $ID_{U_{i}}$ when ${i_1} \neq {i_2}$.
-Or, if ${i_1} = {i_2}$, 
-    it would require the adversary to solve $[{{t_2}^{-1}}]PID_{RP}^{*} = ID_{RP_{j_2}}$
-        or $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$.
-That is,
-    the adversary chooses $t_2$, calculates $PID_{RP}^{*} = [t_2]ID_{RP_{j_2}}$, requests a token for $PID_{RP}^{*}$, and then logs into $RP_{j_2}$ to ``impersonate'' himself.
-This is not an attack: $RP_{j_2}$ is actually designated by $TK$ and the adversary's account is derived at $RP_{j_2}$.
-\hfill $\square$
-
 \subsection{Privacy against IdP-based Login Tracing}
 \label{subsec:IdP-privacy}
 
@@ -170,7 +167,7 @@ by collecting information from the identity-token requests.
 According to the designs and the detailed protocol in Sections \ref{sec:web-design} and \ref{implementations},
  it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $ReEnpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
-Next, we prove that, \emph{$PID_{RP}$ is indistinguishable from a random variable on $\mathbb{E}$ to the IdP},
+We prove that, \emph{$PID_{RP}$ is indistinguishable from a random variable on $\mathbb{E}$ to the IdP},
     and then
  it cannot (\emph{a}) link multiple logins visiting an RP or (\emph{b}) distinguish a login initiated by a user to visit any RP from those logins visiting other RPs by this user. % based on $PID_{RP}$s in the identity-token requests.
 Therefore, IdP untraceability is ensured.
@@ -203,7 +200,8 @@ In each login, an RP obtains \emph{only} a random number $t$ and an identity tok
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
 
 
-With the trapdoor $t$, $PID_{RP}$ and $PID_U$ can be transformed into $ID_{RP}$ and $Acct$, respectively, and vice versa.
+Given the trapdoor $t$, 
+    adversaries can transform $PID_{RP}$ and $PID_U$ into $ID_{RP}$ and $Acct$, respectively, and vice versa.
 So we denote all the information that an RP learns in a login as a tuple $L =(ID_{RP}, t, Acct)=([r]G, t, [ur]G)$.
 
 When $c$ RPs share information with each other, they create a shared view of all logins visiting any of them, denoted as $\mathbbm{L}$.
@@ -297,36 +295,42 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 
 \subsection{Account Synchronization}
 \label{account-syn}
-If new users are allowed to register after the system initialization,
-in order to distinguish meaningless accounts from meaningful ones in Step 3.3,
- an RP regularly synchronizes its accounts from the IdP.
-For example,
-    when an account is derived but not in the visited RP's local account list,
-        it contacts the IdP to synchronize accounts.
-After this instant account synchronization, 
-    the token holder will be rejected
-     if the derived account is still considered as meaningless (i.e., not in the RP's local account list).
+In order to distinguish meaningless accounts from meaningful ones in Step 3.2,
+ an RP needs to regularly synchronize the accounts at it to maintain an up-to-date list of meaningful accounts;
+otherwise, 
+  a \emph{newly-registered} user will be rejected
+    because in her logins the derived account is falsely considered as meaningless (i.e., not in the visited RP's local account list).
 
-An RP cannot imperceptively treat the token holder with an account not in the list
- as a newly-registered user.
-Although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorems \ref{thm-u-id} and \ref{thm-rp-designation},
- she could log into such an RP as a meaningless but identical account in multiple logins.
+Naive account synchronization may be finished as below.
+On receiving an identity token from which a meaningless account is derived,
+    an RP instantly contacts the IdP to receive the account list of users registered after the RP's last synchronization.
+Then, after this instant account synchronization,\footnote{An RP does not straightforwardly treat the token holder with an account not in its local list
+ as a newly-registered user;
+otherwise,
+although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorem \ref{thm-u-id},
+ she could log into such an RP as an meaningless but identical account in multiple logins.
 For example,
     by choosing ($\hat{t}_1$, $\check{t}_1$) and ($\hat{t}_2$, $\check{t}_2$) in two logins
      where $m=\hat{t}_1/\check{t}_1 = \hat{t}_2/\check{t}_2$,
     as analyzed in the proof of Theorem \ref{thm-u-id}.
-this malicious user would actually own another account $Acct=[mID_U]ID_{RP} \neq [ID_U]ID_{RP}$.
+this malicious user would actually own another account $Acct=[mID_U]ID_{RP} \neq [ID_U]ID_{RP}$.} 
+    the token holder will be rejected
+     if the derived account is still considered as meaningless.
+
 %\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
 
-
-The instant account synchronization can be replaced by conditional $PID_{RP}$ checking as below.
-If an RP derives some account not in its local account list,
+We propose the following ``silient'' account synchronization
+     leveraging \emph{conditional} $PID_{RP}$ checking as below,
+eliminating the communications in the ``active'' synchronization as above.
+When an RP derives some account not in its local account list,
     it additionally checks $PID_{RP}$ in this case:
      If $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$,
-                this account is asserted to belong to a newly-registered user
-                %\footnote{In this case, adversaries cannot manipulate $t$ or submit a token to RPs other than the designated one, and then the derived account is meaningful.}
-                and then the RP updates its account list locally;
-    otherwise, it rejects this token.
-
+                this account is asserted to belong to a newly-registered user (i.e., meaningful)
+                and then the RP locally updates its account list (i.e., this derived account is inserted into the list);
+    otherwise, it rejects this token binding $PID_{RP} \neq [t]ID_{RP}$.
+In this case, adversaries cannot (\emph{a}) manipulate $t$ to visit the designated RP because $t$ is checked in the equation of $PID_{RP} = [t]ID_{RP}$ 
+ or (\emph{b}) submit a token to RPs other than the designated one
+    because they cannot solve $t'$ satisfying that $[t']ID_{RP'} = [t]ID_{RP}$, which is equivalent to solve the ECDLP.
+So the derived account must be meaningful when $PID_{RP}$ equals to $[t]ID_{RP}$.
 
 

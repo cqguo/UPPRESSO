@@ -14,7 +14,7 @@ by presenting identity tokens issued by a trusted IdP   \cite{OpenIDConnect,rfc6
 This security goal is achieved through the following properties of identity tokens.
 
 First of all, \emph{authenticity}, \emph{confidentiality}, and \emph{integrity} of identity tokens are necessary to prevent forging, eavesdropping and tampering.
-In SSO services, identity tokens are issued by the trusted IdP,
+In SSO services, identity tokens are signed by the trusted IdP,
     transmitted over HTTPS/TLS \cite{OpenIDConnect, rfc6749, SAML},
     and finally forwarded to the target RPs by the authenticated user.
 Common security mechanisms within a browser (e.g., the mechanisms of HTTP session and \verb+postMessage+ targetOrigin)
@@ -35,14 +35,13 @@ So an RP usually checks the RP (pseudo-)identity enclosed in a token before acce
 
 %As mentioned above, in order to ensure, the visited RP and the authenticated user are specified in an identity token as their identities or pseudo-identities.
 
-As analyzed in Section \ref{subsec-solutions},
-    existing privacy-preserving solutions of SSO hide only RP identities or user identities
+Existing privacy-preserving solutions of SSO hide only RP identities or user identities
     (i.e., only IdP-based login tracing or RP-based identity linkage is prevented),
-        or introduce an extra fully-trusted server to process the (pseudo-)identities of both RP and user before an identity token is issued.
+        or introduce an extra fully-trusted component to process the (pseudo-)identities of both RP and user before an identity token is issued.
        % \footnote{In privacy-preserving identity federation, a user by herself keeps a long-term secret to mask the relationship of these (pseudo-)identities and accounts.}
 
-UPPRESSO attempts to \emph{simultaneously} transform the identities of RP and user in each login,
-        without extra trusted servers more than the honest-but-curious IdP,
+UPPRESSO \emph{simultaneously} transforms the identities of RP and user in each login,
+        without extra trusted components more than the honest-but-curious IdP,
          to provide untraceable and unlinkable SSO service.
 %
 %Therefore, we try to implement privacy-preserving SSO that ensures security as above, while preventing both IdP-based login tracing and RP-based identity linkage.
@@ -76,10 +75,11 @@ and a sub/super-script (i.e., $i$, $j$, or $l$) may be omitted if it does not ca
 %    we present the identity-transformation approach to provide privacy guarantees.
 
 
-First of all, each user owns her account unique at an RP.
+First of all, each registered user owns her account unique at an RP.
 $\mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j}) = Acct_{i,j}$ is proposed to determine a user's account at an RP.
-An account belonging to some user is \emph{meaningful},
-while a \emph{meaningless} account at an RP does not belong to any user.
+Then, an account is \emph{meaningful} at an RP if it belongs to some \emph{registered} user at this RP,
+while a \emph{meaningless} account $A_m$ at $RP_j$ does not belong to any user, i.e., $\forall ID_{U_i}: A_m \neq \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$.
+That is, meaningless accounts belongs to ``potential'' users but not registered yet.
 
 To ensure IdP untraceability (or prevent IdP-based login tracing),
     a user initiates a login by calculating an \emph{ephemeral} pseudo-identity $PID^l_{RP_j}$  for the target RP and sending an identity-token request for $PID^l_{RP_j}$ (but not $ID_{RP_j}$) to an IdP.
@@ -140,11 +140,11 @@ The following properties are required for the identity transformations:
 %\item \textbf{Account Correctness.} In a login involving no adversary,
 % the visited RP always derives the account belonging to the user who requests the identity token,
 %    by calculating $\mathcal{F}_{Acct}(PID_{U}, PID_{RP})$.
-\item \textbf{User Identification.} From an identity token,
-    the designated honest RP derives only the account exactly identifying the user requesting this token.
 \item \textbf{RP Designation.} 
 An identity token is rejected, at any honest RPs other than the designated one.
 
+\item \textbf{User Identification.} From an identity token,
+    the designated honest RP derives only the account exactly identifying the user requesting this token.
 \item \textbf{IdP Untraceability.}
 The IdP learns nothing on the visited RP from the identity-token requests.
 
@@ -162,6 +162,6 @@ Colluding RPs
 \end{figure}
 
 In addition to the basic requirement of account uniqueness,
-    user identification and RP designation ensure security of SSO services,
+    RP designation and user identification ensure security of SSO services,
     while IdP untraceability and RP unlinkability protect user privacy
 (see Section \ref{sec:analysis} for the formal proofs). 

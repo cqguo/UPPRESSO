@@ -29,20 +29,21 @@ where $G$ is a generator on $\mathbb{E}$ of order $n$.
 %\end{table}
 
 \noindent {\bf $\boldsymbol{ID_{\boldsymbol{U}}}$, $\boldsymbol{ID_{\boldsymbol{RP}}}$ and $\boldsymbol{Acct}$.}
-The IdP assigns a unique random integer $u \in \mathbb{Z}_n$ to a user (i.e., $ID_U = u$),
+The IdP assigns a unique random integer $u \in \mathbb{Z}_n$ to a registered user (i.e., $ID_U = u$),
  and randomly selects unique $ID_{RP} = [r]G$ for an RP. % if it is a point on $\mathbb{E}$.
 Here, %$G$ is a base point on $\mathbb{E}$, and
  $[r]G$ denotes the addition of $G$ on the curve $r$ times.
 Then, $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})= [ID_{U_i}]ID_{RP_j} =[u_ir_j]G$ is automatically assigned to a user at every RP.
 %A user's accounts at different RPs are inherently different and unlinkable.
 
-A user's identity $ID_U = u$ is unknown to all entities except the honest IdP; otherwise, colluding RPs could calculate $[u]ID_{RP_j}$ for any known $u$ and link these accounts.
+All entities except the honest IdP
+    know nothing about a user's identity $ID_U = u$; otherwise, colluding RPs could calculate $[u]ID_{RP_j}$ for any known $u$ and link these accounts.
 Meanwhile, $ID_{RP} = [r]G$ and $Acct = [ID_U]ID_{RP}$ are publicly-known,
  but $r$ is always kept secret;
 otherwise, two colluding RPs with $ID_{RP_j} = [r]G$ and $ID_{RP_{j'}} = [r']G$ could link a user's accounts by checking whether $[r']Acct_j$ is equal to $[r]Acct_{j'}$ or not.
 
-Fortunately, in UPPRESSO $r$ is processed only once by the IdP,
-    while $u$ is used only by the IdP internally and
+Fortunately, $r$ is processed only \emph{once} by the IdP in UPPRESSO,
+    while $u$ is used only by the IdP \emph{internally} and
  not enclosed in any message; see Section \ref{implementations} for details.
 
 
@@ -61,7 +62,7 @@ PID_{RP} = \mathcal{F}_{PID_{RP}}(ID_{RP},t) = [t]{ID_{RP}}
 %It makes no difference if the RP selects $t$ randomly and sends it to the user, as long as both of them calculate $PID_{RP}$ \emph{independently} and check if the received $PID_{RP}$ is equal to the calculated one.
 
 \noindent {\bf $\boldsymbol{ID_U}$-$\boldsymbol{PID_U}$ Transformation.}
-On receiving an identity-token request for $PID_{RP}$ from a user authenticated as $ID_U$, the IdP calculates $PID_{U}$ as below.
+After receiving an identity-token request for $PID_{RP}$ from a user authenticated as $ID_U$, the IdP calculates $PID_{U}$ as below.
 \begin{equation}
 PID_{U} = \mathcal{F}_{PID_U}(ID_U, PID_{RP}) =
   [{ID_U}]{PID_{RP}}
@@ -79,11 +80,11 @@ Acct = \mathcal{F}_{Acct}(PID_{U},t)
    \label{equ:Account}
 \end{equation}
 
-The above identity transformations ensure \emph{account uniqueness}:
+First of all, the above designs ensure \emph{account uniqueness}:
     At an RP, every user owns a unique account, because $ID_{RP} = [r]G$ is also a generator of $\mathbb{E}$ and then
      $Acct = \mathcal{F}_{Acct\ast}()=[ur]G$ is unique at this RP.
 
-Meanwhile, in a login involving no adversary,
+In a login involving no adversary,
  the visited RP always derives the account belonging to the user who requests the identity token,
     by calculating $\mathcal{F}_{Acct}(PID_{U}, PID_{RP})$.
 %\emph{Account correctness} is satisfied:
@@ -96,9 +97,9 @@ From Equations \ref{equ:PIDRP}, \ref{equ:PIDU}, and \ref{equ:Account}, it is der
 \end{equation}
 
 
-In Section \ref{sec:analysis},
-    under the adversarial scenarios, we formally prove the other required properties (i.e.,
-    \emph{user identification}, \emph{RP designation}, \emph{IdP untraceability}, and \emph{RP unlinkability}) of the identity transformations.
+In Section \ref{sec:analysis}
+we formally prove the other required properties (i.e.,
+    \emph{RP designation}, \emph{user identification}, \emph{IdP untraceability}, and \emph{RP unlinkability}) of the identity transformations under the adversarial scenarios.
 % Note that the proofs in Section \ref{sec:analysis} consider adversaries.
 
 \subsection{The Designs Specific for Web Applications}
@@ -107,15 +108,19 @@ In Section \ref{sec:analysis},
 When the required properties of identity transformations are satisfied,
     in UPPRESSO we need to additionally ensure:
 \begin{itemize}
-  \item Authenticity, confidentiality, and integrity of identity tokens,
-  by the common mechanisms in widely-deployed SSO services \cite{OpenIDConnect, rfc6749, SAML,GoogleIdIntegrate,de2014oauth,FettKS14,BrowserID,uber},
-  \item $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the target RP's identity but not any other RPs' (i.e., the target RP is designated) and $t$ is known only to the target RP and the initiating user (but not the honest IdP; otherwise, the IdP is able to infer $ID_{RP}$ from $PID_{RP}$ by itself),
-  \item 
-No direct privacy leakage in the requesting, receiving and forwarding of identity tokens
-(e.g., no HTTP \texttt{referer} header about the RP server is leaked to the IdP in HTTP requests).
+  \item[1.] $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the target RP's identity but not any other RPs' (i.e., the target RP is designated),
+  \item[2.]
+  An identity token is forwarded to the target RP only,
+    as authenticity and integrity of tokens have been ensured by the IdP's signatures
+        and they are transmitted over HTTPS/TLS in UPPRESSO (i.e., the common mechanisms in widely-deployed SSO services),
+\item[3.] 
+$t$ is known only to the target RP and the initiating user (but not the IdP; otherwise, the IdP is able to infer $ID_{RP}$ from $PID_{RP}$ by itself),
+and no direct privacy leakage in the requesting of identity tokens
+(e.g., $ReEnpt_{RP}$ or $ID_{RP}$ is not included in the requests,
+and no HTTP \texttt{referer} header about the RP server is leaked in HTTP requests to the IdP).
 \end{itemize}
 
-In an original OIDC system with pop-up UX, as shown in Figure \ref{fig:OpenID},
+In an SSO system implementing OIDC with pop-up UX, as shown in Figure \ref{fig:OpenID},
 %there is a user-i window responsible for communicate with the IdP (i.e., request an identity token after user authentication and attribute authorization) and a user-r window to communicate with the visited RP (i.e., receive the token). In particular,
     a user requests a token by sending the target RP's identity (i.e., $ID_{RP}$) via the user-i window,
 %For instance, in OIDC services with redirect UX, an RP's endpoint to receive tokens is stored as the \texttt{redirect\_uri} parameter at the IdP.
@@ -126,49 +131,56 @@ In an original OIDC system with pop-up UX, as shown in Figure \ref{fig:OpenID},
 Then, after receiving the token, the user-i script forwards it to the user-r script by \verb+postMessage+
     which is restricted by the origin of $ReEnpt_{RP}$ \cite{SPRESSO,MITREid,BrowserID,GoogleIdIntegrate,de2014oauth,OpenIDConnect}.
 The \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient,
-so this ensures confidentiality of identity tokens because (\emph{a}) only scripts downloaded from the origin of $ReEnpt_{RP}$ are legitimate recipients of the forwarded tokens
+    so the token is forwarded to exactly the target RP because (\emph{a}) only scripts downloaded from the origin of $ReEnpt_{RP}$ are legitimate recipients of the forwarded tokens
     and (\emph{b}) the relationship between $ReEnpt_{RP}$ and $ID_{RP}$ is maintained at the honest IdP server.
 
 %The following designs are proposed, %\footnote{UPPRESSO also works with redirect UX, .}
 %    and the complete UPPRESSO protocol is described in Section \ref{implementations}.
-In UPPRESSO the IdP receives $PID_{RP}$ (but not $ID_{RP}$) in an identity-token request,
+The following improvements are proposed  in UPPRESSO,
+    to satisfy the additional requirements in an OIDC-compatible way.
+First of all, the IdP receives $PID_{RP}$ (but not $ID_{RP}$) in an identity-token request,
     so it cannot reply with $ReEnpt_{RP}$ to the user-i window.
-An RP certificate, denoted as $Cert_{RP}$, is introduced to bind $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP during the RP's initial registration.
+An RP certificate, denoted as $Cert_{RP}$, is introduced to bind $ReEnpt_{RP}$ and $ID_{RP}$, signed by the IdP during the RP's initial registration in UPPRESSO.
 %
 %The user's operations, e.g., request redirection, authorization, and token forwarding, are performed by user agents, such as a browser for web applications.
 %
-
+%
 Then, in each login, 
 as shown in Figure \ref{fig:process},
 when the user-i window is popped up,
-    the RP certificate (i.e., $Cert_{RP}$) and the scope of request user attributes are also carried with the HTTP request to the IdP,
-    which is generated by the user-r script.
+    $Cert_{RP}$ and the scope of request user attributes are processed with the HTTP request to the IdP,
+    all of which are generated by the user-r script downloaded from the target RP.
 This HTTP request downloads the user-i script,
     which in turn verifies $Cert_{RP}$ to extract $ID_{RP}$ and $ReEnpt_{RP}$, and calculates $PID_{RP} = [t]ID_{RP}$. % that binds $ID_{RP}$ and $Enpt_{RP}$.
 Then, after the IdP issues a token,
     the user-i script forwards it to the user-r script by \verb+postMessage+,
     which is restricted by the origin of $ReEnpt_{RP}$.
-This ensures that (\emph{a}) $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the visited RP's identity and (\emph{b}) the token is forwarded to the corresponding RP server,
-    because $ReEnpt_{RP}$ and $ID_{RP}$ are signed in $Cert_{RP}$ by the IdP.
+Besides, on receiving an identity-token request, the IdP web server checks the included HTTP \texttt{origin} header to ensure it is sent by the user-i script,
+which honestly verifies $Cert_{RP}$ to ensure the correct relationship between $ReEnpt_{RP}$ and $ID_{RP}$.
+This ensures that $PID_{RP} = [t]{ID_{RP}}$ is calculated based on the visited RP's identity
+    and only the designated RP receives the token,
+    because (\emph{a}) $ReEnpt_{RP}$ and $ID_{RP}$ are signed in $Cert_{RP}$ 
+        and (\emph{b}) only scripts from the origin of $ReEnpt_{RP}$ are legitimate recipients of \verb+postMessage+.
 
-In the HTTP request to pop up the user-i window, $Cert_{RP}$ and the scope of requested user attributes are carried as \emph{fragments} (but not parameters) \cite{url-fragment}, which are identified by \texttt{\#} instead of \texttt{?},
+In the HTTP request to pop up the user-i window, $Cert_{RP}$ and the scope of requested user attributes are carried and processed as \emph{fragments} (but not parameters) \cite{url-fragment}, which are identified by \texttt{\#} instead of \texttt{?},
     so that they are not sent to the IdP web server but processed by the browser.
-Meanwhile, we save $ReEnpt_{RP}$ and $t$ using the \verb+sessionStorage+ HTML object \cite{htmlStorageHtml},
+Meanwhile, we save $t$ and $ReEnpt_{RP}$ using the \verb+sessionStorage+ HTML object \cite{htmlStorageHtml},
     because the user-i window is refreshed to finish user authentication and attribute consent.
 %The scripts are responsible for communicating with the origin web servers and also the cross-origin communications within the browser.
 % as most browsers do in secure OIDC settings \cite{de2014oauth,GoogleIdIntegrate}.
 %\footnote{The user-i script is recommended in OIDC services for an in-context user experience of attribute authorization \cite{GoogleIdIntegrate,uber}, so the authorization of user attributes is also implemented through this user-i script in UPPRESSO.}
-Therefore, $Cert_{RP}$, $ReEnpt_{RP}$ and $t$ are processed locally within browsers.
+That is, $t$, $ReEnpt_{RP}$ and $Cert_{RP}$ are processed within browsers,
+    not sent to the IdP.
 
-
-On receiving an identity-token request, the IdP web server checks the included HTTP \texttt{origin} header to ensure it is sent by the user-i script,
-which verifies $Cert_{RP}$ to ensure the correct relationship between $ReEnpt_{RP}$ and $ID_{RP}$.
-Besides, the IdP's public key is set in the user-i script to verify $Cert_{RP}$,
-so a user configures nothing locally,
- like in other popular SSO systems \cite{OpenIDConnect, rfc6749, SAML, SAMLIdentifier}.
-%This should be conducted by an \emph{honest} script that obtains $ID_{RP}$ correctly
-%    and does not leak $t$, from which it could calculate $ID_{RP} = [t^{-1}\bmod n]PID_{RP}$.
- %otherwise, it could directly leak the RP's domain to the IdP.\footnote{To eliminate this assumption, we can implement the user-agent functions with trusted browser extensions, which are installed before a user visits RPs.}
+To prevent referer leakage in the HTTP request to pop up the user-i window,
+ we need to ensure this request does not carry an HTTP \texttt{referer} header, which reveals the visited RP's domain to the IdP web server.\footnote{In original OIDC services this privacy leakage commonly exists, but does not matter because such services do not aim to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.
+%
+%Fortunately, in UPPRESSO this pop-up is an HTTP redirection from the new window to the IdP (Steps 1.2-1.3 in Figure \ref{fig:process}), but not a direct visit. The HTTP redirection response from the RP server includes a \texttt{referrer-policy=no-referrer} header, which ensures that the HTTP request to access the IdP carries no \texttt{referer} header.
+This is achieved by setting
+\verb+<meta name="referrer" content="no-referrer">+
+in the RP's SSO login page \cite{referer_policy}.
+%This method is specified by W3C \cite{referer_policy} and widely supported. We have tested it in various browsers such as Chrome, Safari, Edge, Opera, and Firefox, and confirmed no referer leakage.
+%    This HTTP request is the only communication from the user-r window to the IdP.
 
 
 %After receiving an identity token from the IdP, the user-i script needs to ensure the user-r script will forward the token to $Enpt_{RP}$ %, which is bound with $ID_{RP}$
@@ -182,26 +194,25 @@ so a user configures nothing locally,
 %The \emph{RP certificates} deals with the problem of mapping an identity proof with its targeting RP.
 %That is, the IdP script derives the RP's $ID_{RP}$ and origin from the RP certificate, while the $PID_{RP}$ is generated with this $ID_{RP}$. Thus, the IdP script always knows the targeting RP of identity proof, therefore, the \verb+postMessage+ mechanism can guarantee that the identity proof would not be sent to the adversary.
 
-Compared with the original OIDC protocol in Figure \ref{fig:OpenID},
-UPPRESSO adopts the common mechanisms for secure communications,
-except that the relationship between $ID_{RP}$ and $ReEnpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way by the IdP).
-Thus, authenticity, confidentiality, and integrity of identity tokens are still ensured in UPPRESSO.
-Meanwhile, we implement the IdP's authorization endpoint in an OIDC-compatible way \cite{rfc6749,OpenIDConnect}:
-        When receiving a token request for an ``unregistered'' $ID_{RP}$ (i.e., $PID_{RP}$),
-the IdP issues a token but with an ``empty'' $ReEnpt_{RP}$,
-    and the calculation of $PID_{U}$ is considered as a special way to assign PPIDs.
-%The IdP's other endpoints (e.g., authorization endpoint, logout endpoint and RP registration endpoint) are kept unchanged.
+%Finally, authenticity, confidentiality, and integrity of identity tokens are still ensured in UPPRESSO.
 
-Finally, to prevent referer leakage in the HTTP request to pop up the user-i window,
- we need to ensure this request does not carry an HTTP \texttt{referer} header, which reveals the visited RP's domain to the IdP web server.\footnote{In original OIDC services this privacy leakage commonly exists, but does not matter because such services do not aim to prevent IdP-based login tracing.} %Generally, when a browser window visits another website not belonging to its opener's origin, the HTTP request to this website automatically carries a \texttt{referer} header (i.e., the opener's origin). Such an HTTP header leaks the visited RP's domain to the IdP.
-%
-%Fortunately, in UPPRESSO this pop-up is an HTTP redirection from the new window to the IdP (Steps 1.2-1.3 in Figure \ref{fig:process}), but not a direct visit. The HTTP redirection response from the RP server includes a \texttt{referrer-policy=no-referrer} header, which ensures that the HTTP request to access the IdP carries no \texttt{referer} header.
-This is achieved by setting
-\verb+<meta name="referrer" content="no-referrer">+
-in the RP's SSO login page \cite{referer_policy}.
-%This method is specified by W3C \cite{referer_policy} and widely supported. We have tested it in various browsers such as Chrome, Safari, Edge, Opera, and Firefox, and confirmed no referer leakage.
-In Figure \ref{fig:process} we can find that
-    this HTTP request is the only communication from the user-r window to the IdP server.
+%Compared with the original flow in Figure \ref{fig:OpenID}, UPPRESSO adopts the common mechanisms for secure communications, except that the relationship between $ID_{RP}$ and $ReEnpt_{RP}$ is maintained as $Cert_{RP}$ (i.e., in an offline way by the IdP).
+Finally, 
+two endpoints 
+    specified in OIDC for the implicit login flow are implemented in an OIDC-compatible way \cite{rfc6749,OpenIDConnect}.
+When receiving a token request for an ``unregistered'' $ID_{RP}$ (i.e., ephemeral $PID_{RP}$),
+the IdP issues an identity token to an ``empty'' $ReEnpt_{RP}$,
+    and the calculation of $PID_{U}$ is considered as a special way to assign PPIDs in OIDC.
+The RP's redirection endpoint is also implemented compatibly,
+    for $t$ is sent along with the tokens as an optional parameter.
+%Other endpoints specified in OIDC (e.g., userinfo endpoint and RP registration endpoint) are kept unchanged.
+Moreover, the IdP's public key is set in the user-i script to verify $Cert_{RP}$,
+so a user configures nothing locally,
+ like in other OIDC implementations \cite{OpenIDConnect, GoogleIdIntegrate,de2014oauth,uber}.
+%This should be conducted by an \emph{honest} script that obtains $ID_{RP}$ correctly
+%    and does not leak $t$, from which it could calculate $ID_{RP} = [t^{-1}\bmod n]PID_{RP}$.
+ %otherwise, it could directly leak the RP's domain to the IdP.\footnote{To eliminate this assumption, we can implement the user-agent functions with trusted browser extensions, which are installed before a user visits RPs.}
+
 
 \begin{figure*}[htb]
   \centering
@@ -252,10 +263,11 @@ The RP verifies $Cert_{RP}$ using $PK$, and accepts $ID_{RP}$ and $Cert_{RP}$.
 %Each user registers once at the IdP. 
 Each user sets up her unique username and the corresponding credential for the IdP.
 The IdP assigns
-a unique random identity $ID_U = u\in \mathbb{Z}_n$ to the user.
+a random but unique identity $ID_U = u\in \mathbb{Z}_n$ to the user.
 
-It requires that $ID_U$ is known \emph{only} to the IdP.
-In UPPRESSO $ID_U$ is used only by the IdP \emph{internally},
+$ID_U$ is known \emph{only} to the IdP
+    and other entities know nothing about $ID_U$.
+$ID_U$ is used only by the IdP \emph{internally} in UPPRESSO,
  not enclosed in any message.
 %so a user inputs her username in the authentication to the IdP and $ID_U$ is processed only by the IdP internally.
 For example, a user's identity is generated and always restored by hashing her username concatenated with the IdP's private key.
@@ -265,12 +277,11 @@ Then,
 because it is \emph{only} used to calculate $PID_{U}$ as the IdP is signing an identity token binding $PID_{U}=
   [{ID_U}]{PID_{RP}}$.
 
-
-\noindent\textbf{Account Synchronization.} 
 % An account belonging to some registered user is \emph{meaningful}, while \emph{meaningless} accounts at an RP do not belong to any registered user.
-Every RP regularly synchronizes all accounts at it from the IdP,
-    and then locally maintains an up-to-date list of meaningful accounts.
-We discuss account synchronization in Section \ref{account-syn}.
+We assume that an RP with $ID_{RP_j}$
+locally maintains an \emph{up-to-date} list of all meaningful accounts at it,
+i.e., $\{Acct_i\}=\{\mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})\}$ for all registered users.
+We discuss the means of account synchronization in Section \ref{account-syn}.
 
 
 \noindent\textbf{SSO Login.} 
@@ -342,8 +353,7 @@ the user-i script loads $ReEnpt_{RP}$ and $t$,
 The RP verifies the signature and the validity period of the received token, 
 %Then, the RP extracts $PID_{RP}$ from the token, checks if it equals $[t]ID_{RP}$,
 and calculates $Acct = [t^{-1}]{PID_U}$.
-
-\item[3.3] Only if $Acct$ is meaningful in its local account list, the RP allows the user to log in.
+Only if $Acct$ is meaningful in its local account list, the RP allows the user to log in.
 
 \end{itemize}
 
@@ -353,8 +363,8 @@ The IdP rejects an identity-token request if the received $PID_{RP}$ is not a po
 
 In Step 3.2, an RP does not check whether $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$ or not,
     and this efficient design does not result in attacks, which is proved in Section \ref{analysis-security}.
-It requires that in Step 3.3 the RP locally maintains an up-to-date account list,
-    and account synchronization is explained with more details in Section \ref{account-syn}.
+However, it requires that the RP locally maintains an up-to-date account list,
+    to distinguish meaningless accounts from meaningful ones.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。

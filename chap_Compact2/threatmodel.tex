@@ -5,16 +5,16 @@
 
 \subsection{Threat Model}
 \label{subsec:threatmodel}
-The system consists of an honest-but-curious IdP, as well as several honest or malicious RPs and users. This threat model is in line with widely-deployed SSO services in the Internet \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
+The system consists of an honest-but-curious IdP, as well as several honest or malicious RPs and users. This model is in line with widely-deployed SSO services in the Internet \cite{OpenIDConnect,rfc6749, SAML, SAMLIdentifier}.
 
 
 \noindent \textbf{Honest-but-curious IdP.} The IdP strictly follows the protocols,
  while remaining interested in learning about a user's login activities.
 For example, it could store received messages to infer the relationship among $ID_U$, $ID_{RP}$, $PID_{U}$, and $PID_{RP}$.
 It never actively violates the protocols,
- so a script downloaded from the IdP also follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
+ so a user-i script downloaded from the IdP also follows the protocols (see Section \ref{sec:web-design} for specific designs for web applications).
 
-The IdP maintains the private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
+The IdP maintains its private key well for signing identity tokens and RP certificates, %(see Section \ref{implementations} for details)
 and adversaries cannot forge such signed messages.
 
 \noindent \textbf{Malicious RPs.}
@@ -62,18 +62,18 @@ For example, they could manipulate $PID_{RP}$ and $t$ in a login, attempting to 
 
 \subsection{Assumptions}
 We assume secure communications between honest entities, and the cryptographic primitives are secure. The software stack of an honest entity (e.g., a browser) is correctly implemented to transmit messages to receivers as expected.
-These communication assumptions are realized by the commonly-used mechanisms in popular SSO services
+These assumptions are realized by the commonly-used mechanisms in popular SSO services
  (e.g., HTTPS/TLS, HTTP session maintenance, and the \verb+postMessage+ HTML5 API in COTS browsers) \cite{OpenIDConnect, rfc6749, SAML,GoogleIdIntegrate,de2014oauth,FettKS14,BrowserID,uber}.
 
-While $PID_{RP}$ but not $ID_{RP}$ is processed by the IdP,
-it further requires that no other information about the visited RP is leaked to the IdP,
+As $PID_{RP}$ but not $ID_{RP}$ is processed by the IdP,
+it also requires that no other information about the visited RP is leaked to the IdP,
  in the requesting, receiving and forwarding of identity tokens.
-We realize this assumption by specific designs in Section \ref{sec:web-design}.
+We realize this by specific designs in Section \ref{sec:web-design}.
 Our work focuses on the privacy threats introduced by SSO protocols, and does not consider the tracking of user activities by network traffic analysis or crafted web pages, as they can be prevented by other defenses.
 %For example, FedCM \cite{FedCM} proposes to disable iframe and third-party cookies in SSO, which could be exploited to track users.
 
 
 UPPRESSO is designed for users who value privacy,
-        or provides an effective option for such users.
+        and provides an easy-to-deploy option for such users.
 So privacy leakages due to re-identification by distinctive attributes across RPs are out of our scope.
-In UPPRESSO a user never consents to enclose distinctive attributes, such as telephone number, Email address, etc., in tokens or sets such attributes at any RP.
+A user never consents to enclose distinctive attributes, such as telephone number, Email address, etc., in tokens or sets such attributes at any RP.
