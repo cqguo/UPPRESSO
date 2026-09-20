@@ -279,12 +279,6 @@ Then,
 because it is \emph{only} used to calculate $PID_{U}$ as the IdP is signing an identity token binding $PID_{U}=
   [{ID_U}]{PID_{RP}}$.
 
-% An account belonging to some registered user is \emph{meaningful}, while \emph{meaningless} accounts at an RP do not belong to any registered user.
-We assume that an RP with $ID_{RP_j}$
-locally maintains an \emph{up-to-date} set of all meaningful accounts at it,
-i.e., $\{Acct_i\}=\{\mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})\}$ for all registered users.
-We discuss the means of account synchronization in Section \ref{account-syn}.
-
 
 \noindent\textbf{SSO Login.} 
 A login flow %is typically launched through a browser,
@@ -354,8 +348,8 @@ the user-i script loads $ReEnptUrl_{RP}$ and $t$,
 \item[3.2] The user-r script submits it to the RP.
 The RP verifies the signature and the validity period of the received token, 
 %Then, the RP extracts $PID_{RP}$ from the token, checks if it equals $[t]ID_{RP}$,
-and calculates $Acct = [t^{-1}]{PID_U}$.
-Only if $Acct$ is meaningful in its local account set, the RP allows the user to log in.
+and then calculates $Acct = [t^{-1}]{PID_U}$.
+Only if $Acct$ is meaningful, the RP allows the user to log in.
 
 \end{itemize}
 
@@ -363,10 +357,15 @@ If any verification fails, the flow will be immediately terminated.
 For instance, when receiving invalid $Cert_{RP}$ the user halts it.
 The IdP rejects an identity-token request if the received $PID_{RP}$ is not a point on $\mathbb{E}$, and the RP rejects a token if it is not well signed or a meaningless account is derived.
 
-In Step 3.2, an RP does not check whether $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$ or not,
+In Step 3.2 an RP does not check whether $PID_{RP}$ in the token is equal to $[t]ID_{RP}$ or not,
     and this efficient design does not result in attacks, which is proved in Section \ref{analysis-security}.
-It requires that the RP locally maintains an up-to-date account set,
-    to distinguish meaningless accounts from meaningful ones.
+
+In order to distinguish meaningless accounts from meaningful ones in Step 3.2,
+it requires that the RP \emph{locally} maintains an up-to-date account set,
+i.e., 
+$\{Acct_i\}_j=\{[u_{i; 1 \leq i \leq s} r_j]G\}$ for all registered users and $|\{Acct_i\}_j|=s$.
+We discuss the means of account synchronization in Section \ref{account-syn}.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % u泄露，则RP有必要比较！否则，就会伤害security。

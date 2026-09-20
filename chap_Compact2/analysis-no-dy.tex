@@ -75,8 +75,7 @@ In secure SSO systems, an identity token denoted as $TK$, which is requested by 
 Let's assume totally $s$ users and $p$ RPs in UPPRESSO,
     whose identities are denoted as $\mathbbm{ID}_U = \mathbbm{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbbm{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
 $Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept secret to adversaries.
-$RP_j$ maintains an account set of all registered users,
-i.e., $\{Acct_i\}=\{[u_{i; 1 \leq i \leq s} r_j]G\}$.
+%An RP maintains its account set of all registered users, i.e., $\{Acct_i\}_j=\{[u_{i; 1 \leq i \leq s} r_j]G\}$ and $|\{Acct_i\}_j|=s$.
 % There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
 
 $TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
@@ -298,14 +297,14 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 \subsection{Account Synchronization}
 \label{account-syn}
 To distinguish meaningless accounts from meaningful ones in Step 3.2,
- an RP needs to regularly synchronize the accounts from the IdP to maintain an up-to-date set of meaningful accounts;
+ an RP needs to synchronize the accounts from the IdP to maintain an \emph{up-to-date} set of meaningful accounts;
 otherwise, 
   a \emph{newly-registered} user will be rejected
-    because the derived account is \emph{falsely} considered as meaningless (i.e., not in the set).
+    because the derived account is \emph{falsely} considered as meaningless (i.e., not in the local set).
 
 Naive account synchronization may be finished as below.
 On receiving an identity token from which a meaningless account is derived,
-    an RP instantly contacts the IdP to receive the account set of users registered after the RP's last synchronization.
+    an RP instantly contacts the IdP to retrieve the account set of users registered after the RP's last synchronization.
 Then, after this instant account synchronization,\footnote{An RP does not straightforwardly treat the token holder with an account not in its local set
  as a newly-registered user;
 otherwise,
