@@ -5,7 +5,7 @@ SSO allows a user to log into a website from browsers,
  known as the \emph{relying party} (RP), using her account registered at another trusted web service, known as the \emph{identity provider} (IdP).
 An RP delegates its user identification and authentication to the IdP, which issues an \emph{identity token} (such as ``id token'' in OIDC and ``identity assertion'' in SAML) for a user to visit the RP.
 For instance, when an OIDC user initiates a login to visit an RP,
-the target RP constructs an identity-token request with its identity (denoted as $ID_{RP}$) and redirects it to a trusted IdP.
+the target RP constructs an identity-token request with its identity and redirects it to a trusted IdP.
 After authenticating this user, the IdP issues an identity token binding the identities of the authenticated user and the target RP (i.e., $ID_U$ and $ID_{RP}$), which is returned to the user and then forwarded to the RP.
 Finally, the RP verifies the identity token to determine whether the token holder is allowed to log in. Thus, a user maintains only one credential for user authentication to the IdP, instead of multiple credentials for visiting different RPs.
 
@@ -17,7 +17,7 @@ So a curious IdP could trace a user's all login activities
  \cite{BrowserID, SPRESSO},
 called {\em IdP-based login tracing} in this paper.
 Another privacy threat arises from the fact that RPs learn a user's identity from the identity tokens they receive.
-If an identical user identity is enclosed in the tokens for a user to visit different RPs, colluding RPs could link the logins across these RPs %and track the user's activities
+If an \emph{identical} user identity is enclosed in the tokens for a user to visit different RPs, colluding RPs could link the logins across these RPs %and track the user's activities
 to learn the user's online profile \cite{maler2008venn, FirefoxAccount}.
 This is called {\em RP-based identity linkage}. %in this paper.
 
@@ -26,7 +26,7 @@ We propose {\em identity transformations} for SSO services,
  and integrates them into OIDC.
 When visiting an RP in UPPRESSO, a user transforms $ID_{RP}$ into \emph{ephemeral} $PID_{RP}$, which is sent to an IdP to transform $ID_U$ into an \emph{ephemeral} user pseudo-identity $PID_U$.
 Then, the identity token issued by the IdP binds only $PID_U$ and $PID_{RP}$, instead of $ID_U$ and $ID_{RP}$. On receiving the token, % with a matching $PID_{RP}$,
- the target RP transforms $PID_U$ into an account \emph{unique at each RP but identical across multiple logins} visiting this RP.
+ the target RP transforms $PID_U$ into an account \emph{unique at each RP} but \emph{identical across multiple logins} visiting this RP.
 
 
 \begin{figure*}[tb]
@@ -42,7 +42,7 @@ In Section \ref{sec:background} we analyze these solutions,
 %Meanwhile, UPPRESSO implements SSO services
 % works compatibly with widely-used SSO services \cite{OpenIDConnect, rfc6749, NIST2017draft}
 % accessed from commercial-off-the-shelf (COTS) browsers without any plug-ins or extensions.
-UPPRESSO offers an easy-to-deploy option to enhance the protections of user privacy for SSO services, because no extra server is introduced and the services are accessed from commercial-off-the-shelf (COTS) browsers without extensions.
+UPPRESSO offers an easy-to-deploy option to enhance the protections of user privacy for SSO, because no extra component is introduced and the services are accessed from commercial-off-the-shelf (COTS) browsers without extensions.
 Our contributions are as follows.
 \begin{itemize}
 \setlength{\topsep}{0pt}
@@ -51,7 +51,7 @@ Our contributions are as follows.
 \setlength{\parsep}{0pt}
 \setlength{\parskip}{0pt}
 \item We proposed a novel identity-transformation approach for privacy-preserving SSO services and designed identity-transformation algorithms with desirable properties.
-\item We designed the UPPRESSO protocol by integrating the identity transformations into OIDC compatibly, and proved the security or privacy guarantees of SSO services.
+\item We designed the UPPRESSO protocol by integrating the identity transformations into OIDC compatibly, and proved the security and privacy guarantees.
 \item We implemented the UPPRESSO prototype on top of an open-source OIDC implementation. Through performance evaluations, we confirmed that UPPRESSO introduces reasonable overheads.
 \end{itemize}
 

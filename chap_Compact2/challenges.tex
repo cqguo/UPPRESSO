@@ -2,7 +2,7 @@
 \label{sec:challenge}
 
 In this section,
-    we firstly list the security requirements of SSO,
+    we list the security requirements of SSO,
         and present the identity-transformation approach.
 
 \subsection{Security Requirements for SSO Services}
@@ -77,15 +77,15 @@ and a sub/super-script (i.e., $i$, $j$, or $l$) may be omitted if it does not ca
 
 First of all, each registered user owns her account unique at an RP.
 $\mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j}) = Acct_{i,j}$ is proposed to determine a user's account at an RP.
-Then, an account is \emph{meaningful} at an RP if it belongs to some \emph{registered} user at this RP,
-while a \emph{meaningless} account $A_m$ at $RP_j$ does not belong to any user, i.e., $\forall ID_{U_i}: A_m \neq \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$.
+An account is \emph{meaningful} at an RP if it belongs to some \emph{registered} user at this RP,
+while a \emph{meaningless} account $A_m$ at $RP_j$ does not belong to any user, i.e., $\forall ID_{U_i} \in \mathbbm{ID}_U = \{ID_{U_{i; 1 \leq i \leq s}}\}: A_m \neq \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})$.
 That is, meaningless accounts belongs to ``potential'' users but not registered yet.
 
 To ensure IdP untraceability (or prevent IdP-based login tracing),
     a user initiates a login by calculating an \emph{ephemeral} pseudo-identity $PID^l_{RP_j}$  for the target RP and sending an identity-token request for $PID^l_{RP_j}$ (but not $ID_{RP_j}$) to an IdP.
 
 After authenticating the initiating user as $ID_{U_i}$, the IdP calculates an \emph{ephemeral} $PID^l_{U_i,j}$ based on $ID_{U_i}$ and $PID^l_{RP_j}$, and then issues an identity token that binds $PID^l_{U_i,j}$ and $PID^l_{RP_j}$.
-To ensure RP unlinkability (or prevent RP-based identity linkage),
+To ensure RP unlinkability (i.e., prevent RP-based identity linkage),
     $ID_{U_i}$ is not enclosed in the identity token.
 %Meanwhile, the calculation of $PID_U$ involves $ID_U$, and then the user is identified implicitly.
 

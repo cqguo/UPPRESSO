@@ -74,8 +74,10 @@ In secure SSO systems, an identity token denoted as $TK$, which is requested by 
 
 Let's assume totally $s$ users and $p$ RPs in UPPRESSO,
     whose identities are denoted as $\mathbbm{ID}_U = \mathbbm{u} = \{u_{i; 1 \leq i \leq s}\}$ and $\mathbbm{ID}_{RP} = \{[r_{j;1 \leq j \leq p}]G\}$, respectively.
-There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
 $Acct_{i,j}$ and $ID_{RP_j}$ are publicly-known, while $u_{i}$ and $r_{j}$ are kept secret to adversaries.
+$RP_j$ maintains an account set of all registered users,
+i.e., $\{Acct_i\}=\{[u_{i; 1 \leq i \leq s} r_j]G\}$.
+% There are meaningful accounts $Acct_{i,j}=[u_i]ID_{RP_j} = [u_i r_j]G$ at each RP.
 
 $TK$ is signed by the IdP to bind $PID_{RP}$ and $PID_U$,
 where (\emph{a}) the RP with $ID_{RP}$ is designated if $PID_{RP} = [t]ID_{RP}$ is calculated
@@ -100,7 +102,7 @@ So in the proofs we do not assume any relationship among $t$, $ID_{RP}$ and $PID
 % in Step 4.2 an RP does not check whether $PID_{RP}$ in the received token equals to $[t]ID_{RP}$ or not.
 
 RP designation means that, \emph{from $TK$ only the designated honest RP derives meaningful accounts}.
-We prove it by showing that,
+We prove this by showing that,
     at any honest RPs other than the designated one, no meaningful account will be derived from $TK$.
    % under an adversarial scenario involving malicious adversaries.
 
@@ -165,7 +167,7 @@ When $u_{i}$ and $r_{j}$ are kept unknown, this is equivalent to the elliptic-cu
 The honest IdP would attempt to infer the visited RPs,
 by collecting information from the identity-token requests.
 According to the designs and the detailed protocol in Sections \ref{sec:web-design} and \ref{implementations},
- it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $ReEnpt_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
+ it does not obtain any information about the target RP in a login (e.g., $ID_{RP}$, $ReEnptUrl_{RP}$ or $Cert_{RP}$), except the RP's ephemeral pseudo-identity $PID_{RP}$.
 
 We prove that, \emph{$PID_{RP}$ is indistinguishable from a random variable on $\mathbb{E}$ to the IdP},
     and then
@@ -295,16 +297,16 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 
 \subsection{Account Synchronization}
 \label{account-syn}
-In order to distinguish meaningless accounts from meaningful ones in Step 3.2,
- an RP needs to regularly synchronize the accounts at it to maintain an up-to-date list of meaningful accounts;
+To distinguish meaningless accounts from meaningful ones in Step 3.2,
+ an RP needs to regularly synchronize the accounts from the IdP to maintain an up-to-date set of meaningful accounts;
 otherwise, 
   a \emph{newly-registered} user will be rejected
-    because in her logins the derived account is falsely considered as meaningless (i.e., not in the visited RP's local account list).
+    because the derived account is \emph{falsely} considered as meaningless (i.e., not in the set).
 
 Naive account synchronization may be finished as below.
 On receiving an identity token from which a meaningless account is derived,
-    an RP instantly contacts the IdP to receive the account list of users registered after the RP's last synchronization.
-Then, after this instant account synchronization,\footnote{An RP does not straightforwardly treat the token holder with an account not in its local list
+    an RP instantly contacts the IdP to receive the account set of users registered after the RP's last synchronization.
+Then, after this instant account synchronization,\footnote{An RP does not straightforwardly treat the token holder with an account not in its local set
  as a newly-registered user;
 otherwise,
 although a malicious user cannot log into this RP as any meaningful account belonging to others according to Theorem \ref{thm-u-id},
@@ -315,22 +317,22 @@ For example,
     as analyzed in the proof of Theorem \ref{thm-u-id}.
 this malicious user would actually own another account $Acct=[mID_U]ID_{RP} \neq [ID_U]ID_{RP}$.} 
     the token holder will be rejected
-     if the derived account is still considered as meaningless.
+     if the derived account is still not in the updated set.
 
 %\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
 
 We propose the following ``silient'' account synchronization
      leveraging \emph{conditional} $PID_{RP}$ checking as below,
 eliminating the communications in the ``active'' synchronization as above.
-When an RP derives some account not in its local account list,
+When an RP derives some account not in its local account set,
     it additionally checks $PID_{RP}$ in this case:
      If $PID_{RP}$ enclosed in the signed token is equal to $[t]ID_{RP}$,
                 this account is asserted to belong to a newly-registered user (i.e., meaningful)
-                and then the RP locally updates its account list (i.e., this derived account is inserted into the list);
+                and then the RP locally updates its account set (i.e., this derived account is inserted into the set);
     otherwise, it rejects this token binding $PID_{RP} \neq [t]ID_{RP}$.
 In this case, adversaries cannot (\emph{a}) manipulate $t$ to visit the designated RP because $t$ is checked in the equation of $PID_{RP} = [t]ID_{RP}$ 
- or (\emph{b}) submit a token to RPs other than the designated one
+ or (\emph{b}) induce any RP other than the designated one to accept this token
     because they cannot solve $t'$ satisfying that $[t']ID_{RP'} = [t]ID_{RP}$, which is equivalent to solve the ECDLP.
-So the derived account must be meaningful when $PID_{RP}$ equals to $[t]ID_{RP}$.
+So the derived account must be meaningful when $PID_{RP}$ is equal to $[t]ID_{RP}$.
 
 

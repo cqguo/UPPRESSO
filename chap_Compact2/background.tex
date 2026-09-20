@@ -9,18 +9,18 @@ We present our designs in the implicit flow and discuss the support for the auth
 
 Users and RPs register at an IdP with their identities
 and other information such as user credentials (e.g., passwords)
-and RP \emph{redirection endpoints} \cite{rfc6749} (i.e., the URLs to receive tokens,
-denoted as $ReEnpt_{RP}$), respectively.
+and RP \emph{redirection endpoint URLs} to receive tokens
+denoted as $ReEnptUrl_{RP}$, respectively  \cite{rfc6749}.
 
 User operations in the login flows are conducted on a user agent (or browser typically).
-The flow with pop-up UX \cite{dimvaLiM16,GoogleIdIntegrate,uber} is proposed to provide an in-context user experience.
+The flow with pop-up UX is proposed to provide an in-context user experience \cite{dimvaLiM16,GoogleIdIntegrate,uber}.
 As shown in Figure \ref{fig:OpenID},
 when a user clicks the SSO login button in a browser window visiting the target RP 
 (called the \emph{user-r window}),
- an identity-token request is constructed with the RP's identity and the scope of requested user attributes.
+ an identity-token request is constructed with the RP's identity, the RP's redirection endpoint URL, and the scope of requested user attributes.
 It pops up another window (i.e., the \emph{user-i window}),
-    and this request is sent to the IdP's \emph{authorization endpoint} (i.e., the URL to issue tokens \cite{rfc6749,OpenIDConnect}).
-After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the consented user attributes, a validity period, etc.
+    and this request is sent to the IdP's \emph{authorization endpoint} where tokens are issued \cite{rfc6749,OpenIDConnect}.
+After authenticating the user, the IdP issues an identity token that encloses the (pseudo-)identities of the authenticated user and the target RP, the user attributes, a validity period, etc.
 The token is then forwarded to the RP's redirection endpoint via the user-i window.
 Finally, the RP verifies the token and allows the token holder to log in as the enclosed user (pseudo-)identity.
 There are scripts in two browser windows (called the \emph{user-r script} and the \emph{user-i script}),
@@ -33,11 +33,14 @@ communications by the \verb+postMessage+ HTML5 API \cite{postm-targeto} within t
 %To process responses from an IdP and forward tokens to the target RP correctly,
 
 Alternatively, if a browser works as the user agent of OIDC but with only one window,
-        user attributes are consented in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}, 
-        which is called \emph{redirect UX}.
+        user attributes are consented in this window when redirected to the IdP \cite{OpenIDConnect,rfc6749,GoogleIdIntegrate}.
+        This is called \emph{redirect UX}.
 After a token is issued by the IdP,
-    it is sent to the RP's redirection endpoint as a fragment (but not parameters) of the URL due to security considerations,
-so that a script from the RP is needed to handle this \cite{de2014oauth}.
+    it is sent to the RP's redirection endpoint as a fragment (but not query parameters) of the URL due to security considerations,
+so a script from the RP is needed to handle this \cite{de2014oauth}.
+The UPPRESSO prototype is built with pop-up UX,
+    and we discuss the support for redirect UX in Section \ref{sec:discussion}.
+
 
 \begin{table*}[tb]
     \caption{Privacy-preserving solutions of SSO and identity federation}
@@ -46,7 +49,7 @@ so that a script from the RP is needed to handle this \cite{de2014oauth}.
   \hline
   & \multirow{2}*{\textbf{Solution}} &
   \multicolumn{2}{c|}{\textbf{Privacy Threat}$^{\sharp}$} & \textbf{Extra Trusted} & \textbf{Accounts Derived from} \\ \cline{3-4}
-  & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Server}$^{\dag}$ & \textbf{User-maintained Secret}$^{\ddag}$ \\\hline
+  & & IdP-based Login Tracing & RP-based Identity Linkage & \textbf{Component}$^{\dag}$ & \textbf{User Secret}$^{\ddag}$ \\\hline
 
   \multirow{6}*{SSO} & OIDC w/ PPID \cite{NIST2017draft} & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
    & BrowserID \cite{BrowserID} & $\CIRCLE$ & $\Circle$ & $\CIRCLE$ & $\CIRCLE$ \\ \cline{2-6}
@@ -70,8 +73,8 @@ so that a script from the RP is needed to handle this \cite{de2014oauth}.
 \begin{itemize}
 \item[]
 ${\sharp}$ \textbf{Privacy Threat}: $\CIRCLE$ prevented, $\Circle$ not prevented.
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ${\dag}$ \textbf{Extra Trusted Server}: $\CIRCLE$ no, $\Circle$ required.\\
-${\ddag}$ \textbf{Accounts Derived from User-maintained Secret}: $\CIRCLE$ no, $\Circle$ yes.
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ${\dag}$ \textbf{Extra Trusted Component}: $\CIRCLE$ no, $\Circle$ required.\\
+${\ddag}$ \textbf{Accounts Derived from User Secret}: $\CIRCLE$ no, $\Circle$ yes.
 
 \item[1.]
 SPRESSO assumes a malicious IdP, so a trusted forwarder server is introduced to decrypt the RP identity and forward tokens to the RP.
@@ -106,14 +109,14 @@ A user's login activities are leaked due to these identities:
 
 \noindent\textbf{Privacy-preserving SSO.}
 %Some schemes \cite{BrowserID, SPRESSO, NIST2017draft} prevent either IdP-based login tracing or RP-based identity linkage, but not both.
-Existing SSO solutions propose various mechanisms to hide (\emph{a}) RP identities from the IdP and (\emph{b}) user identities from the colluding RPs.
+Existing solutions propose various mechanisms to hide (\emph{a}) RP identities from the IdP and (\emph{b}) user identities from the colluding RPs.
 Table \ref{tbl:comparison-protocol} compares these schemes,
 and only UPPRESSO provides services accessed from COTS browsers while preventing both of the two privacy threats and not introducing extra trusted components in addition to the honest IdP.
 
 
-Pairwise pseudonymous identifiers (PPIDs) are specified \cite{OpenIDConnect, SAMLIdentifier,NIST2017draft} to protect user privacy against colluding RPs.
+Pairwise pseudonymous identifiers (PPIDs) are specified  to protect user privacy against colluding RPs \cite{OpenIDConnect, SAMLIdentifier,NIST2017draft}.
 An IdP assigns a unique PPID for a user to log into every RP and encloses it in identity tokens, so colluding RPs cannot link the user by PPIDs.
-It does not prevent IdP-based login tracing because the IdP needs the RP's identity to assign PPIDs.
+It does not prevent IdP-based login tracing, because the IdP needs the RP's identity to assign PPIDs.
 
 Other privacy-preserving schemes prevent IdP-based login tracing but leave users vulnerable to RP-based identity linkage, due to the identical user identities enclosed in identity tokens.
 For example, in BrowserID \cite{BrowserID} 
@@ -144,10 +147,9 @@ but %authentication operations between the user and RPs are involved, so
 a long-term user secret is involved in the derivation of accounts,\footnote{Although the term ``single sign-on (SSO)'' was used in some schemes \cite{PseudoID, Opaak, ELPASSO, WangWS13, HanCSTW18, HanCSTWW20}, this paper refers to them as \emph{identity federation} to emphasize the difference.
 Such a user-maintained secret used to derive accounts in identity federation harm the user convenience:
 Once it is lost or leaked, the user has to notify all RPs to update her accounts derived from this secret %, or additional revocation checking will be needed 
-\cite{ELPASSO, UnlimitID}
     and then the ``singleness'' property is broken,
 while SSO aims to minimize a user's interactions with RPs.
-Note that this user secret involved in the derivation of accounts is very different from the credential for user authentication to the IdP in SSO: If the credential is lost or leaked, the user  needs to renew it at the IdP only.}
+Note that this user secret involved in the derivation of accounts is very different from the credential for user authentication to the IdP: If this credential is lost or leaked in SSO, a user  renews it at the IdP only.}
  so browser extensions are required to maintain this user secret.
 %In Section \ref{sec:discussion} we particularly discuss the prevention against IdP-RP collusive attacks by this secret and also the harm to user experience.
 
@@ -167,7 +169,7 @@ The user then unblinds this token,
     and then authenticates herself to an RP by this secret.
 
 Privacy-preserving identity federation schemes are designed based on anonymous credentials \cite{anon-credential-2001, idemix, anon-credential}.
-In Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, U-Prove \cite{uprov}, and EL PASSO \cite{ELPASSO}, the IdP signs anonymous credentials, each of which binds a user secret, %, with which users can authenticate to an RP.
+In Opaak \cite{Opaak}, UnlimitID \cite{UnlimitID}, U-Prove \cite{uprov}, and EL PASSO \cite{ELPASSO}, the IdP signs anonymous credentials, which bind a user secret, %, with which users can authenticate to an RP.
 and a user proves ownership of the anonymous credentials using her secret.
   %   and discloses IdP-confirmed attributes in the credentials in most schemes except Opaak.
 Similarly, Fabric \cite{hyperledge-idemix} integrates Idemix anonymous credentials \cite{idemix} for unlinkable pseudonyms. % and IdP-confirmed attribute provision.
@@ -189,21 +191,21 @@ They even protect user privacy against collusive attacks by the IdP and RPs, as 
 \noindent\textbf{Anonymous identity federation.}
 Such approaches offer the strongest privacy,
     as a user visits RPs with pseudonyms that cannot be exploited to link any two actions.
-Anonymous identity federation was formalized and constructed using cryptographic primitives (e.g., ZKP and group signature) \cite{WangWS13, HanCSTWW20, HanCSTW18}.
+Anonymous identity federation was formalized and constructed using cryptographic primitives (e.g., ZKP and group signature) \cite{HanCSTWW20, HanCSTW18, WangWS13}.
 Extended features including proxy re-verification \cite{HanCSTWW20}, designated verification \cite{HanCSTW18} and distributed IdP servers \cite{TSAPP}, are also considered. 
-
+%
 These completely-anonymous authentication services only work for special scenarios and do not support user identification (or account uniqueness) at each RP, a common requirement in most applications.
 
 \subsection{OPRF-based Applications}
-PrivacyPass \cite{privacypass} and TrustToken \cite{trusttoken} adopted the oblivious pseudo-random function (OPRF) protocol of Hash(EC)DH \cite{oprf-proved,voprf-proved} to generate anonymous tokens. %, with which a user ly accesses protected resources.
+PrivacyPass \cite{privacypass} and TrustToken \cite{trusttoken} adopted the oblivious pseudo-random function (OPRF) of Hash(EC)DH \cite{oprf-proved,voprf-proved} to sign anonymous tokens. %, with which a user ly accesses protected resources.
 A user generates a random number $e$ to blind an unsigned token $T$ into $[e]T$. After authenticating the user, a token server signs $[e]T$ using its private key $k$ and returns $[k e]T$. The user then uses $e$ to convert it into ($T, [k]T$),
-        which is redeemed when she anonymously accesses protected resources.
+        which is redeemed when she anonymously accesses resources.
 In this procedure, the token server obliviously calculates a pseudo-random output as an anonymous token,
     because ($T, [k]T$) and ($[e]T, [ke]T$) cannot be linked.
 
 % RPs do not identify each user if we use such anonymous tokens in SSO services, because these tokens are indistinguishable.
 
-UPPRESSO employs a similar cryptographic technique (see Section \ref{subsec:overview} for details).\footnote{We designed and implemented UPPRESSO in 2020 \cite{uppresso-arxiv}, and in 2023 someone reminded us that the identity transformations in UPPRESSO are very similar to the Hash(EC)DH OPRF.} 
+UPPRESSO employs a similar cryptographic technique (see Section \ref{subsec:overview} for details).
  A user selects $t$ to transform $ID_{RP}$ into $PID_{RP} = [t]ID_{RP}$.
   % protecting $ID_{RP}$ from the IdP.
 Then, the IdP uses the user's permanent identity $u$ to calculate $PID_U = [u]PID_{RP} = [ut]ID_{RP}$,
@@ -211,7 +213,7 @@ similar to token signing by the token server in PrivacyPass/TrustToken.
 IdP untraceability in UPPRESSO, i.e., the IdP cannot link $ID_{RP}$ and $[t]ID_{RP}$,
  roughly corresponds to unlinkability of token signing-redemption, i.e., the token server cannot link $T$ and $[e]T$  in PrivacyPass/TrustToken.
 
-UPPRESSO leverages this cryptographic technique in very different ways.
+UPPRESSO leverages this cryptographic technique in very different ways.\footnote{We designed and implemented UPPRESSO in 2020 \cite{uppresso-arxiv}, and in 2023 someone reminded us that the identity transformations in UPPRESSO are very similar to the Hash(EC)DH OPRF.} 
 First, 
 it works among three parties, unlike the two-party PrivacyPass/TrustToken protocols.
 UPPRESSO shares the user-selected random number $t$ with the target RP,
