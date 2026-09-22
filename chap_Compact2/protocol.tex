@@ -30,10 +30,10 @@ where $G$ is a generator on $\mathbb{E}$ of order $n$.
 
 \noindent {\bf $\boldsymbol{ID_{\boldsymbol{U}}}$, $\boldsymbol{ID_{\boldsymbol{RP}}}$ and $\boldsymbol{Acct}$.}
 The IdP assigns a unique random integer $u \in \mathbb{Z}_n$ to a registered user (i.e., $ID_U = u$),
- and randomly selects unique $ID_{RP} = [r]G$ for an RP. % if it is a point on $\mathbb{E}$.
+ and randomly selects unique $ID_{RP} = [r]G$ for a registered RP. % if it is a point on $\mathbb{E}$.
 Here, %$G$ is a base point on $\mathbb{E}$, and
  $[r]G$ denotes the addition of $G$ on the curve $r$ times.
-Then, $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})= [ID_{U_i}]ID_{RP_j} =[u_ir_j]G$ is automatically assigned to a registered user at every RP.
+So $Acct_{i,j} = \mathcal{F}_{Acct\ast}(ID_{U_i}, ID_{RP_j})= [ID_{U_i}]ID_{RP_j} =[u_ir_j]G$ is automatically assigned to a registered user at every RP.
 %A user's accounts at different RPs are inherently different and unlinkable.
 
 All entities except the IdP
@@ -218,7 +218,7 @@ so a user configures nothing locally,
 
 \begin{figure*}[htb]
   \centering
-  \includegraphics[width=0.76\linewidth]{fig/pop-up-process.pdf}
+  \includegraphics[width=0.762\linewidth]{fig/pop-up-process.pdf}
   \caption{The SSO login flow of UPPRESSO}
   \label{fig:process}
 \end{figure*}
@@ -361,9 +361,9 @@ In Step 3.2 an RP does not check whether $PID_{RP}$ in the token is equal to $[t
     and this efficient design does not result in attacks, which is proved in Section \ref{analysis-security}.
 
 In order to distinguish meaningless accounts from meaningful ones in Step 3.2,
-it requires that the RP \emph{locally} maintains an up-to-date account set,
+it requires that the RP \emph{locally} maintains an up-to-date account set for all registered users,
 i.e., 
-$\{Acct_i\}_j=\{[u_{i; 1 \leq i \leq s} r_j]G\}$ for all registered users and $|\{Acct_i\}_j|=s$.
+$\{Acct_i\}_j=\{[u_{i; 1 \leq i \leq s} r_j]G\}$ and $|\{Acct_i\}_j|=s$.
 We discuss the means of account synchronization in Section \ref{account-syn}.
 
 
