@@ -296,11 +296,12 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 
 \subsection{Account Synchronization}
 \label{account-syn}
-To distinguish meaningless accounts from meaningful ones in Step 3.2,
+If new users are allowed to register after the initialization,
+to distinguish meaningless accounts from meaningful ones in Step 3.2,
  an RP needs to synchronize the accounts from the IdP to maintain an \emph{up-to-date} set of meaningful accounts;
 otherwise, 
   a \emph{newly-registered} user will be rejected
-    because the derived account is \emph{falsely} considered as meaningless (i.e., not in the local set).
+    because the derived account is \emph{falsely} considered as meaningless (i.e., not in its local set).
 
 Naive account synchronization may be finished as below.
 On receiving an identity token from which a meaningless account is derived,
