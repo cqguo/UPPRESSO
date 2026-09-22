@@ -57,13 +57,13 @@ Then, in the flow an authorization code (but not the token) will be sent to the 
 This code serves as an index to retrieve tokens by the RP, not disclosing any information about the user.
 On receiving an authorization code, the RP uses it as well as a credential issued by the IdP during the initial registration \cite{OpenIDConnect}, to retrieve identity tokens from the IdP's token endpoint \cite{rfc6749}.
 
-Meanwhile, to hide RP identities from the IdP in the retrieval of identity tokens in the authorization code flow,
+Moreover, to hide RP identities from the IdP in the retrieval of identity tokens in this flow,
  privacy-preserving credentials
     %(e.g., ring or group signatures \cite{ring-sig,chaum1991group})
     (e.g., ring signatures \cite{ring-sig} or privacy passes \cite{privacypass,trusttoken})
- and anonymous communications (e.g., Tor \cite{tor} or oblivious proxies \cite{ohttp-rfc}) need to be adopted for RPs;
-Otherwise, %if the visited RP is not anonymously authenticated to the IdP in the retrieval of tokens,
-    IdP untraceability is broken.
+ and anonymous communications (e.g., Tor \cite{tor} or oblivious proxies \cite{ohttp-rfc}) need to be adopted for RPs.
+%Otherwise, if the visited RP is not anonymously authenticated to the IdP in the retrieval of tokens,
+   % IdP untraceability is broken.
 
 
 
