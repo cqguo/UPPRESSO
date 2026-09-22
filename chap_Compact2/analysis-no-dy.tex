@@ -222,7 +222,7 @@ where $L^m_{i, j}=([r_j]G, t_{i,j}, [u_ir_j]G) \in \mathbbm{L}$ for $1 \le i \le
   \label{fig:dalgorithm}
 \end{figure}
 
-In Theorem \ref{thm-rp-unlinkability} we prove that, 
+Next, in Theorem \ref{thm-rp-unlinkability} we prove that, 
 even when a number of semi-honest users share information with them,
 \emph{the semi-honest RPs still cannot link any login visiting a semi-honest RP by an honest user to any other logins visiting other semi-honest RPs by honest users}.
 Then, RP unlinkability is ensured.
@@ -296,12 +296,11 @@ Because $RP_b$ is any semi-honest RP, this proof can be extended from $RP_b$ to 
 
 \subsection{Account Synchronization}
 \label{account-syn}
-If new users are allowed to register after the initialization,
-to distinguish meaningless accounts from meaningful ones in Step 3.2,
+To distinguish meaningless accounts from meaningful ones in Step 3.2,
  an RP needs to synchronize the accounts from the IdP to maintain an \emph{up-to-date} set of meaningful accounts;
 otherwise, 
   a \emph{newly-registered} user will be rejected
-    because the derived account is \emph{falsely} considered as meaningless (i.e., not in its local set).
+    because the derived account is \emph{falsely} considered as meaningless (i.e., not in the local set).
 
 Naive account synchronization may be finished as below.
 On receiving an identity token from which a meaningless account is derived,
@@ -321,8 +320,8 @@ this malicious user would actually own another account $Acct=[mID_U]ID_{RP} \neq
 
 %\footnote{In this case, $\hat{t}$ and $\check{t}$ are long-term secrets kept by the malicious user, and $\check{t}$ is sent to the RP. For such a malicious user, the system actually provides services of identity federation. Then, even when the IdP is colluding with RPs, the ``meaningless'' accounts belong to this user across RPs cannot be linked because $\hat{t}$ masks the relationship among these accounts.}
 
-The following ``silient'' account synchronization
-     leverages \emph{conditional} $PID_{RP}$ checking as below,
+We propose the following ``silient'' account synchronization
+     leveraging \emph{conditional} $PID_{RP}$ checking as below,
 eliminating the communications in the ``active'' synchronization as above.
 When an RP derives some account not in its local account set,
     it additionally checks $PID_{RP}$ in this case:
@@ -333,6 +332,6 @@ When an RP derives some account not in its local account set,
 In this case, adversaries cannot (\emph{a}) manipulate $t$ to visit the designated RP because $t$ is checked in the equation of $PID_{RP} = [t]ID_{RP}$ 
  or (\emph{b}) induce any RP other than the designated one to accept this token
     because they cannot solve $t'$ satisfying that $[t']ID_{RP'} = [t]ID_{RP}$, which is equivalent to solve the ECDLP.
-So the derived account must be meaningful if $PID_{RP}$ is equal to $[t]ID_{RP}$.
+So the derived account must be meaningful when $PID_{RP}$ is equal to $[t]ID_{RP}$.
 
 
