@@ -23,7 +23,7 @@ This is called {\em RP-based identity linkage}. %in this paper.
 
 This paper presents UPPRESSO, an Untraceable and Unlinkable Privacy-PREserving Single Sign-On protocol.
 We propose {\em identity transformations} for SSO services,
- and integrates them into OIDC.
+ and integrate them into OIDC.
 When visiting an RP in UPPRESSO, a user transforms $ID_{RP}$ into \emph{ephemeral} $PID_{RP}$, which is sent to an IdP to transform $ID_U$ into an \emph{ephemeral} user pseudo-identity $PID_U$.
 Then, the identity token issued by the IdP binds only $PID_U$ and $PID_{RP}$, instead of $ID_U$ and $ID_{RP}$. On receiving the token, % with a matching $PID_{RP}$,
  the target RP transforms $PID_U$ into an account \emph{unique at each RP} but \emph{identical across multiple logins} visiting this RP.
