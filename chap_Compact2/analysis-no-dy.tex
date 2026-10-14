@@ -197,7 +197,7 @@ Semi-honest RPs and users share their information, attempting to
 %infer the identities of honest users or 
 link an honest user's accounts across the semi-honest RPs.
 %
-In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it learns only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
+In each login, an RP obtains \emph{only} a random number $t$ and an identity token enclosing $PID_{RP}$ and $PID_U$. From the token, it receives only an ephemeral pseudo-identity $PID_{U} = [{ID_U}]{PID_{RP}}$ of the initiating user, from which it derives a \emph{permanent} locally-unique identifier (or account) $Acct = [ID_U]ID_{RP}$.
 It cannot directly calculate $ID_U$ from $PID_{U}$ or $Acct$ due to the ECDLP.
 
 

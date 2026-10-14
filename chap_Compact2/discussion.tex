@@ -93,7 +93,7 @@ Then, to forward the signed token to the RP,
     in the original OIDC protocol
         the IdP server constructs a server-side HTTP redirection to $ReEnptUrl_{RP}$.
 However, in UPPRESSO the IdP does not know the visited RP,
-    so it returns the signed token to the user-i script but with an empty $ReEnptUrl_{RP}$.
+    so it returns the signed token to the user-i script but not $ReEnptUrl_{RP}$.
 Then, the user-i script loads $ReEnptUrl_{RP}$ and $t$ locally from \verb+sessionStorage+, and submits the identity token and also $t$ to the RP's redirection endpoint 
 by a client-side redirection (e.g., by \verb+window.location.href+).
 
@@ -117,7 +117,7 @@ It also guarantees that the target RP has already registered itself at the IdP a
 
 An alternative method to bind $ID_{RP}$ and $ReEnptUrl_{RP}$ is
  a deterministic scheme to calculate unique $ID_{RP}$ based on the RP's unambiguous name such as its domain.
-This can be achieved by encoding the domain with a hashing-to-elliptic-curves function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the elliptic-curve discrete logarithm of the output. It generates a point on $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
+This can be achieved by encoding the domain with a hashing-to-elliptic-curve function \cite{irtf-cfrg-hash-to-curve-16}, which provides collision resistance but not revealing the elliptic-curve discrete logarithm of the output. It generates a point on $\mathbb{E}$ as $ID_{RP}$, ensuring the \emph{uniqueness} of $ID_{RP} = [r]G$ while keeping $r$ unknown. %For example, using a hash function $Hs()$ to encode an RP's domain or the RP script's origin, e.g., verb+https://RP.com+)
 In this case, in Step 1.2 the user-r script sends only the RP's redirection endpoint URL but not its RP certificate, and the user-i script calculates $ID_{RP}$ by itself based on the RP's domain. 
 Then, any RP can be visited through the SSO services, either registered or not.
 
@@ -131,6 +131,9 @@ otherwise, it implies two colluding RPs could link a user's accounts across thes
 \noindent \textbf{Restriction of the targetOrigin mechanism.}
 The user-i script forwards tokens to the user-r script, and the \verb+postMessage+ targetOrigin mechanism \cite{postm-targeto} restricts the recipient of the forwarded identity tokens, to ensure that the tokens will be sent to the intended $ReEnptUrl_{RP}$, as specified in the RP certificate. The targetOrigin is specified as a combination of protocol, port (if not present, 80 for \verb+http+ and 443 for \verb+https+), and domain (e.g., \verb+RP.com+).
 The origin of the user-r script must accurately match the targetOrigin to receive tokens.
+Thus, if a malicious RP (or the user-r script) presents a fake RP certificate belonging to others,
+this RP will not be designated in the requested token but
+    it cannot receive the token.
 
 The targetOrigin mechanism does not check the whole URL path in $ReEnptUrl_{RP}$, but it introduces no additional risk.
 %This assumes only one RP runs on a domain.
